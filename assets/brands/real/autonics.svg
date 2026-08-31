@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60">
+  <text x="100" y="34" font-size="26" font-weight="700" fill="#003478" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" letter-spacing="1">Autonics</text>
+  <line x1="84" y1="42" x2="116" y2="42" stroke="#003478" stroke-width="2" stroke-linecap="round"/>
+  
+</svg>

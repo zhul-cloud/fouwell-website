@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact &amp; Inquiry | Fouwell — Get a Quote Within Hours</title>
+  <meta name="description" content="Contact Fouwell for stock check, pricing and technical support. Email info@fouwell.com, WhatsApp +86 133 8591 5251. Quotes typically within 1 hour during working hours.">
+  <link rel="icon" type="image/png" href="assets/logo-square.png">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <div class="topbar">
+    <div class="container">
+      <span>📧 info@fouwell.com &nbsp;·&nbsp; 📱 +86 133 8591 5251 (WhatsApp)</span>
+      <div class="topbar-links">
+        <span>🇺🇸 English</span>
+        <a href="#inquiry">Get a Quote</a>
+      </div>
+    </div>
+  </div>
+
+  <header class="site-header">
+    <div class="container">
+      <a href="index.html" class="brand-lockup">
+        <img src="assets/logo.png" alt="Fouwell logo">
+        <span class="brand-text">
+          <span class="en">FOUWELL</span><br>
+          <span class="cn">INDUSTRIAL AUTOMATION</span>
+        </span>
+      </a>
+      <button class="nav-toggle" onclick="document.querySelector('.main-nav').classList.toggle('open')">☰</button>
+      <nav class="main-nav">
+        <a href="index.html">Home</a>
+        <a href="products.html">Products</a>
+        <a href="about.html">About Us</a>
+        <a href="contact.html" class="active">Contact</a>
+        <a href="#inquiry" class="nav-cta">Request Quote</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="page-hero">
+    <div class="container">
+      <div class="breadcrumb"><a href="index.html">Home</a> / Contact</div>
+      <h1>Contact Us</h1>
+      <p>Send your part number list with quantities and destination — we reply with stock status and a quotation, typically within 1 hour during working hours (GMT+8).</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="contact-grid">
+
+        <div>
+          <div class="contact-card">
+            <h3>Direct Contacts</h3>
+            <div class="contact-line">
+              <div class="ico">📧</div>
+              <div><div class="k">Email</div><div class="v">info@fouwell.com<small>Best for part lists &amp; RFQs</small></div></div>
+            </div>
+            <div class="contact-line">
+              <div class="ico">📱</div>
+              <div><div class="k">Phone / WhatsApp / WeChat</div><div class="v">+86 133 8591 5251<small>Fastest response channel</small></div></div>
+            </div>
+            <div class="contact-line">
+              <div class="ico">🌐</div>
+              <div><div class="k">Website</div><div class="v">www.fouwell.com</div></div>
+            </div>
+          </div>
+
+          <div class="contact-card">
+            <h3>Company &amp; Warehouse</h3>
+            <div class="contact-line">
+              <div class="ico">🏢</div>
+              <div><div class="k">Head Office</div><div class="v">Fuzhou Fouwell Technology Co., Ltd.<small>Unit 1707, Building 2, No. 69 Wulongjiang South Ave., Nanyu Town, Minhou County, Fuzhou, Fujian, China</small></div></div>
+            </div>
+          </div>
+
+          <div class="contact-card">
+            <h3>Working Hours &amp; Payments</h3>
+            <div class="contact-line">
+              <div class="ico">🕐</div>
+              <div><div class="k">Working Hours</div><div class="v">Mon–Sat 9:00–18:30 (GMT+8)<small>Urgent messages answered outside hours</small></div></div>
+            </div>
+            <div class="contact-line" style="margin-bottom:0;">
+              <div class="ico">💳</div>
+              <div><div class="k">Payment Terms</div><div class="v">T/T (USD via JPMorgan Singapore) · 30% deposit + balance before shipment<small>Flexible terms for repeat customers</small></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="inquiry-form" id="inquiry">
+          <h2>Send Your Inquiry</h2>
+          <p class="sub">Fields marked <span style="color:var(--red)">*</span> are required. The more details you share (part numbers, quantity, destination), the faster and more accurate our quote.</p>
+          <div class="form-success" id="form-success"></div>
+          <form id="inquiry-form">
+            <div class="form-grid">
+              <div class="form-field">
+                <label for="if-name">Your Name <span class="req">*</span></label>
+                <input id="if-name" type="text" required placeholder="e.g. John Miller">
+              </div>
+              <div class="form-field">
+                <label for="if-email">Email <span class="req">*</span></label>
+                <input id="if-email" type="email" required placeholder="you@company.com">
+              </div>
+              <div class="form-field">
+                <label for="if-country">Country / Region</label>
+                <input id="if-country" type="text" placeholder="e.g. Germany, Vietnam, Brazil…">
+              </div>
+              <div class="form-field">
+                <label for="if-type">I am a…</label>
+                <select id="if-type">
+                  <option>System Integrator</option>
+                  <option>MRO / Maintenance Buyer</option>
+                  <option>Equipment Manufacturer (OEM)</option>
+                  <option>Distributor / Stockist</option>
+                  <option>Other</option>
+                </select>
+              </div>
+              <div class="form-field full">
+                <label for="if-parts">Part Numbers &amp; Quantity <span class="req">*</span></label>
+                <textarea id="if-parts" required placeholder="One per line, e.g.&#10;6ES7212-1AE40-0XB0 × 2&#10;CIMR-AB4A0011FBA × 1"></textarea>
+              </div>
+              <div class="form-field full">
+                <label for="if-message">Message</label>
+                <textarea id="if-message" placeholder="Application, target price, required delivery date, Incoterms…"></textarea>
+              </div>
+            </div>
+            <div style="margin-top:20px;">
+              <button type="submit" class="btn btn-primary">Send Inquiry →</button>
+            </div>
+            <p class="form-note">Your inquiry is sent straight to <b>info@fouwell.com</b> — nothing is stored on this website. Prefer WhatsApp? Message +86 133 8591 5251 directly.</p>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="section alt">
+    <div class="container">
+      <div class="section-head">
+        <div class="eyebrow">Before You Write</div>
+        <h2>What Makes a Fast, Accurate Quote</h2>
+      </div>
+      <div class="process">
+        <div class="step"><h4>Part Number</h4><p>The exact model code (e.g. 6ES7212-1AE40-0XB0), not just the series name.</p></div>
+        <div class="step"><h4>Quantity</h4><p>Per-item quantity — we offer volume-tier pricing.</p></div>
+        <div class="step"><h4>Destination</h4><p>Country &amp; city, so we can quote the best shipping option.</p></div>
+        <div class="step"><h4>Condition Need</h4><p>New original by default — tell us if you accept alternatives.</p></div>
+        <div class="step"><h4>Deadline</h4><p>Machine down? Say so — in-stock items ship within 24 hours.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-main">
+        <div>
+          <img class="footer-logo" src="assets/logo.png" alt="Fouwell">
+          <p>Fuzhou Fouwell Technology Co., Ltd.<br>10+ years supplying genuine industrial automation parts from 25+ global brands to clients worldwide.</p>
+        </div>
+        <div>
+          <h4>Products</h4>
+          <ul>
+            <li><a href="products.html?cat=controllers">PLC &amp; Controllers</a></li>
+            <li><a href="products.html?cat=hmi">HMI &amp; Panel PCs</a></li>
+            <li><a href="products.html?cat=servo">Servo Systems</a></li>
+            <li><a href="products.html?cat=drives">Inverters &amp; Starters</a></li>
+            <li><a href="products.html?cat=sensors">Sensors &amp; Instruments</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Company</h4>
+          <ul>
+            <li><a href="about.html">About Fouwell</a></li>
+            <li><a href="about.html#founder">Meet the Founder</a></li>
+            <li><a href="contact.html">Contact Us</a></li>
+            <li><a href="contact.html#inquiry">Request a Quote</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Contact</h4>
+          <ul>
+            <li>📧 info@fouwell.com</li>
+            <li>📱 +86 133 8591 5251</li>
+            <li>📍 Fuzhou, Fujian, China</li>
+            <li>🏬 HK warehouse available</li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="container">
+          <span>© 2026 Fuzhou Fouwell Technology Co., Ltd. All rights reserved.</span>
+          <span>Authentic products · 100% inspection · Global shipping</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

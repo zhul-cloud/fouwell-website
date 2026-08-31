@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60">
+  <text x="100" y="34" font-size="32" font-weight="700" fill="#E60012" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" letter-spacing="1">CHINT</text>
+  <line x1="85" y1="42" x2="115" y2="42" stroke="#E60012" stroke-width="2" stroke-linecap="round"/>
+  
+</svg>
