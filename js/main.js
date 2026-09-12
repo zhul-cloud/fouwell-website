@@ -87,9 +87,9 @@ function injectProductSchema(p) {
     offers: {
       '@type': 'Offer',
       url: url,
-      priceCurrency: 'USD',
-      price: '0',
-      priceValidUntil: '2027-12-31',
+      // No fixed public price (quote-based B2B pricing) — omitting price/priceCurrency
+      // rather than publishing a fake "0", which Google can flag as invalid/misleading
+      // structured data. This trades away price-display rich results for correctness.
       availability: STATUS_AVAIL[p.status] || 'https://schema.org/InStock',
       itemCondition: 'https://schema.org/NewCondition',
       seller: { '@type': 'Organization', name: 'Fuzhou Fouwell Technology Co., Ltd.' }
@@ -201,6 +201,10 @@ function renderProductCompatibility(p) {
   if (!Array.isArray(p.compatibility) || !p.compatibility.length) {
     section.style.display = 'none';
     return;
+  }
+  const intro = document.getElementById('pd-compat-intro');
+  if (intro) {
+    intro.textContent = 'If your machine uses an older or different ' + p.brand + ' part number, the table below shows drop-in options. Send your exact part number to info@fouwell.com and we’ll confirm compatibility before shipment.';
   }
   tbl.innerHTML =
     '<thead><tr><th>Original Part Number</th><th>Compatibility Note</th></tr></thead>' +
@@ -317,8 +321,19 @@ function renderProductDetail(p) {
     (p.cat ? '<a href="/products/?cat=' + p.cat + '">' + esc(CATEGORIES[p.cat]) + '</a> / ' : '') +
     '<span>' + esc(p.model) + '</span>';
   document.title = p.brand + ' ' + p.model + ' | Fouwell Industrial Automation';
-  document.getElementById('page-title').textContent = p.model;
+  document.getElementById('page-title').textContent = p.brand + ' ' + p.model;
   document.getElementById('page-sub').textContent = p.spec;
+
+  // ---- meta description (per-product, was previously a single generic string for all pages) ----
+  const availPhrase = p.status === 'discont' ? 'Replaced by a current equivalent'
+    : p.status === 'legacy' ? 'Legacy line, still sourceable'
+    : 'In stock, ships in 24h';
+  const metaDesc = document.querySelector('meta[name="description"]');
+  if (metaDesc) {
+    metaDesc.setAttribute('content',
+      'Genuine ' + p.brand + ' ' + p.model + ' — ' + p.spec + '. ' +
+      availPhrase + '. Get a fast quote from Fouwell, verified industrial automation parts supplier.');
+  }
 
   // ---- canonical link ----
   let canonical = document.querySelector('link[rel="canonical"]');
