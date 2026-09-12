@@ -134,26 +134,31 @@
   </section>
 
   <!-- Stage B: Typical Applications — rendered when product.applications[] is set. -->
-  <section class="section alt" id="detail-applications-section" style="display:none;">
+  <section class="section alt" id="detail-applications-section">
     <div class="container">
       <div class="section-head" style="text-align:left; margin-bottom:24px;">
         <div class="eyebrow">Where It Goes</div>
         <h2>Typical Applications</h2>
-        <p style="text-align:left; margin:0 auto 0; color:#5a6473; max-width:760px;">Compact mid-range controllers like this one are widely used across factory, building and process automation.</p>
+        <p id="pd-app-intro" style="text-align:left; margin:0 auto 0; color:#5a6473; max-width:760px;">Siemens 6ES7212-1AE40-0XB0 is typically used in the following applications:</p>
       </div>
-      <div class="pd-app-grid" id="pd-applications"></div>
+      <div class="pd-app-grid" id="pd-applications">
+        <div class="pd-app-card"><div class="pd-app-icon" aria-hidden="true">🏭</div><div class="pd-app-title">Small machine control</div><div class="pd-app-desc">Conveyors, packaging lines, mixers, filling machines — replaces relay logic and replaces micro-PLCs in 8–32 I/O class.</div></div>
+        <div class="pd-app-card"><div class="pd-app-icon" aria-hidden="true">💧</div><div class="pd-app-title">Water &amp; pump stations</div><div class="pd-app-desc">Pump sequencing, level control, pressure regulation — built-in PID and retentive memory handle unattended operation after power loss.</div></div>
+        <div class="pd-app-card"><div class="pd-app-icon" aria-hidden="true">🏢</div><div class="pd-app-title">Building automation</div><div class="pd-app-desc">HVAC, lighting, access control — the on-board PROFINET port talks directly to ET 200 remote I/O and HMI without extra modules.</div></div>
+        <div class="pd-app-card"><div class="pd-app-icon" aria-hidden="true">🧵</div><div class="pd-app-title">Textile &amp; printing machines</div><div class="pd-app-desc">High-speed counting via 4 onboard HSC inputs (up to 100 kHz) — direct connection to encoders without extra counters.</div></div>
+      </div>
     </div>
   </section>
 
   <!-- Stage B: Cross-reference / compatibility — rendered when product.compatibility[] is set. -->
-  <section class="section" id="detail-compat-section" style="display:none;">
+  <section class="section" id="detail-compat-section">
     <div class="container">
       <div class="section-head" style="text-align:left; margin-bottom:24px;">
         <div class="eyebrow">Cross Reference</div>
         <h2>Compatible &amp; Replacement Part Numbers</h2>
-        <p id="pd-compat-intro" style="text-align:left; margin:0 auto 0; color:#5a6473; max-width:760px;">If your machine uses an older or different part number, the table below shows drop-in options. Send your exact part number to info@fouwell.com and we'll confirm compatibility before shipment.</p>
+        <p id="pd-compat-intro" style="text-align:left; margin:0 auto 0; color:#5a6473; max-width:760px;">If your machine uses an older or different Siemens part number, the table below shows drop-in options. Send your exact part number to info@fouwell.com and we’ll confirm compatibility before shipment.</p>
       </div>
-      <table class="pd-compat-table" id="pd-compat-table"></table>
+      <table class="pd-compat-table" id="pd-compat-table"><thead><tr><th>Original Part Number</th><th>Compatibility Note</th></tr></thead><tbody><tr><td><code class="pd-compat-code">6ES7212-1AE30-0XB0</code></td><td>Direct predecessor — same firmware, same pin-out, drop-in replacement.</td></tr><tr><td><code class="pd-compat-code">6ES7212-1AE31-0XB0</code></td><td>Earlier firmware revision — also compatible, same I/O count.</td></tr><tr><td><code class="pd-compat-code">6ES7212-1BE40-0XB0</code></td><td>Different firmware signature — check project; can be migrated via TIA Portal.</td></tr><tr><td><code class="pd-compat-code">6ES7212-1HE40-0XB0</code></td><td>AC/DC/RLY variant — same CPU, only PSU/relay outputs differ. Verify output type before swap.</td></tr></tbody></table>
     </div>
   </section>
 
@@ -165,7 +170,16 @@
         <div class="eyebrow">Buyer Questions, Engineer Answers</div>
         <h2>Frequently Asked Questions</h2>
       </div>
-      <div class="faq-list" id="pd-faq-list"></div>
+      <div class="faq-list" id="pd-faq-list">
+        <details class="faq-item"><summary>What does the order code 6ES7212-1AE40-0XB0 mean?<span class="faq-mark" aria-hidden="true"></span></summary><div class="faq-answer"><p>It is a Siemens SIMATIC S7-1200 CPU 1212C with DC/DC/DC power supply, 8 digital inputs, 6 digital outputs and 2 analog inputs, in 24 VDC — supplied with CE and CCC approvals. Fouwell sources this part from official Siemens channels and ships it worldwide with full traceability.</p></div></details>
+        <details class="faq-item"><summary>Is this CPU 1212C compatible with Siemens TIA Portal and STEP 7?<span class="faq-mark" aria-hidden="true"></span></summary><div class="faq-answer"><p>Yes. The 6ES7212-1AE40-0XB0 is fully supported by Siemens TIA Portal V13 SP1 and later, and by STEP 7 Basic in the same line. Programming, hardware configuration and firmware updates all work the same as other S7-1200 CPUs.</p></div></details>
+        <details class="faq-item"><summary>How does the CPU 1212C compare with other S7-1200 models (1211C / 1214C / 1215C / 1217C)?<span class="faq-mark" aria-hidden="true"></span></summary><div class="faq-answer"><p>The 1212C sits in the middle of the family: bigger than the 1211C (6DI/4DO/2AI, 30 KB) but smaller than 1214C (14DI/10DO/2AI), 1215C (14DI/10DO/2AI/2AO with 2 PROFINET ports and analog outputs) and 1217C (16DI/16DO with 1 ns bit time). For 8DI/6DO/2AI it gives the best price-per-I/O and leaves expansion room via one SB (signal board) and up to 3 CM (communication) modules.</p></div></details>
+        <details class="faq-item"><summary>What are the limits on bit memory, counters, timers and retentive data?<span class="faq-mark" aria-hidden="true"></span></summary><div class="faq-answer"><p>Bit memory (M) is 4 KB; counters, timers and function blocks are limited only by program memory (50 KB). Retentive data is 10 KB of non-volatile memory that survives power loss — enough to hold recipes, counters and operator setpoints without a battery. If your project needs more, move up to the 1214C (75 KB program / 10 KB retentive) or 1215C (100 KB / 10 KB).</p></div></details>
+        <details class="faq-item"><summary>What fieldbus and HMI protocols are supported out of the box?<span class="faq-mark" aria-hidden="true"></span></summary><div class="faq-answer"><p>The on-board PROFINET interface supports PROFINET IO (controller and device), S7 communication, TCP/IP, ISO-on-TCP, Modbus TCP (via library) and open user comm. Through the RS485 / CM 1241 add-on you get Modbus RTU master/slave, USS and ASCII. PROFINET also natively drives Siemens HMI (KTP / Comfort / Unified) and third-party HMI via the open Ethernet protocol.</p></div></details>
+        <details class="faq-item"><summary>How is the unit shipped and how long does delivery take?<span class="faq-mark" aria-hidden="true"></span></summary><div class="faq-answer"><p>In-stock units ship within 24 hours via DHL, FedEx or UPS with full insurance. Economy air freight to most Asian / Middle East / European destinations arrives in 3–5 working days; sea freight is available for larger orders. Each box ships in original Siemens packaging with an inspection report.</p></div></details>
+        <details class="faq-item"><summary>Do you offer a warranty on this Siemens PLC?<span class="faq-mark" aria-hidden="true"></span></summary><div class="faq-answer"><p>Yes. Every Fouwell-supplied Siemens part is 100% genuine, factory-sealed, and backed by a 12-month replacement warranty against manufacturing defects. Warranty does not cover damage from improper installation, lightning, or use outside the official Siemens specifications.</p></div></details>
+        <details class="faq-item"><summary>Can you cross-reference an old or hard-to-find S7-1200 part number?<span class="faq-mark" aria-hidden="true"></span></summary><div class="faq-answer"><p>Yes. Send your original Siemens part number (e.g. 6ES7212-1AE30-0XB0 or any S7-1200 / S7-1500 / ET 200 code) to info@fouwell.com and our engineers will reply with current availability, alternatives and a price within one business day — usually within an hour during Asia/Shanghai office hours.</p></div></details>
+      </div>
       <p class="pd-faq-cta">Still have a question? <a id="pd-faq-cta-link" href="/contact/#inquiry">Send it to our engineers →</a></p>
     </div>
   </section>
@@ -247,6 +261,7 @@
   <script src="/js/data.js?v=20260911final"></script>
   <script src="/js/photos.js?v=20260911final"></script>
   <script src="/js/videos.js?v=20260911final"></script>
+  <script src="/js/faq-templates.js?v=20260912final"></script>
   <script src="/js/main.js?v=20260911final"></script>
 </body>
 </html>

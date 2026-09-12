@@ -124,11 +124,16 @@ function injectProductSchema(p) {
   });
 
   const scripts = [product, breadcrumb];
-  if (Array.isArray(p.faq) && p.faq.length) {
+  // Same hand-written-FAQ-wins-else-generic-template fallback as renderProductFAQ(), so
+  // the FAQPage schema stays in sync with what's actually rendered on the page.
+  const faqForSchema = (Array.isArray(p.faq) && p.faq.length)
+    ? p.faq
+    : (typeof genericFaqFor === 'function' ? genericFaqFor(p, (typeof CATEGORIES !== 'undefined' && CATEGORIES[p.cat]) || p.cat) : []);
+  if (faqForSchema.length) {
     scripts.push({
       '@context': 'https://schema.org',
       '@type': 'FAQPage',
-      mainEntity: p.faq.map(f => ({
+      mainEntity: faqForSchema.map(f => ({
         '@type': 'Question',
         name: f.q,
         acceptedAnswer: { '@type': 'Answer', text: f.a }
@@ -149,13 +154,19 @@ function injectProductSchema(p) {
 function renderProductFAQ(p) {
   const list = document.getElementById('pd-faq-list');
   if (!list) return;
-  if (!Array.isArray(p.faq) || !p.faq.length) {
-    // Hide the whole FAQ section if there are no questions
+  // Hand-written FAQ (deep pages) wins; standard pages fall back to the generic,
+  // category-aware FAQ template (js/faq-templates.js) instead of hiding the section —
+  // every claim in it is already published elsewhere on the site (pd-points, /about/,
+  // /contact/), just restated as extractable Q&A pairs.
+  const faq = (Array.isArray(p.faq) && p.faq.length)
+    ? p.faq
+    : (typeof genericFaqFor === 'function' ? genericFaqFor(p, (typeof CATEGORIES !== 'undefined' && CATEGORIES[p.cat]) || p.cat) : []);
+  if (!faq.length) {
     const section = document.getElementById('detail-faq-section');
     if (section) section.style.display = 'none';
     return;
   }
-  list.innerHTML = p.faq.map((f, i) =>
+  list.innerHTML = faq.map((f, i) =>
     '<details class="faq-item">' +
       '<summary>' + _escFaq(f.q) + '<span class="faq-mark" aria-hidden="true"></span></summary>' +
       '<div class="faq-answer"><p>' + _escFaq(f.a) + '</p></div>' +
@@ -188,6 +199,10 @@ function renderProductApplications(p) {
   if (!Array.isArray(p.applications) || !p.applications.length) {
     section.style.display = 'none';
     return;
+  }
+  const intro = document.getElementById('pd-app-intro');
+  if (intro) {
+    intro.textContent = (p.brand + ' ' + p.model) + ' is typically used in the following applications:';
   }
   list.innerHTML = p.applications.map(a =>
     '<div class="pd-app-card">' +

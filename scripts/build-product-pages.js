@@ -23,7 +23,46 @@ const {
   ROOT, loadGlobals, productSlug, productUrl, categoryUrl, brandUrl, STATUS_AVAIL, escHtml
 } = require('./lib/site-data');
 
-const { PRODUCTS, BRANDS, CATEGORIES, PRODUCT_VIDEOS } = loadGlobals('js/data.js', 'js/videos.js');
+const { PRODUCTS, BRANDS, CATEGORIES, PRODUCT_VIDEOS, genericFaqFor } = loadGlobals('js/data.js', 'js/videos.js', 'js/faq-templates.js');
+
+/* Hand-written p.faq[] (deep pages) wins; standard pages fall back to the generic,
+   category-aware FAQ template — same rule as renderProductFAQ()/injectProductSchema()
+   in js/main.js, kept in sync here so the FAQ is crawler-visible even without JS. */
+function faqFor(p) {
+  return (Array.isArray(p.faq) && p.faq.length) ? p.faq : genericFaqFor(p, CATEGORIES[p.cat] || p.cat);
+}
+
+/* ---- port of renderProductFAQ() in js/main.js — static version ---- */
+function buildFaqHtml(p) {
+  return faqFor(p).map(f =>
+    '<details class="faq-item">' +
+      '<summary>' + escHtml(f.q) + '<span class="faq-mark" aria-hidden="true"></span></summary>' +
+      '<div class="faq-answer"><p>' + escHtml(f.a) + '</p></div>' +
+    '</details>'
+  ).join('\n        ');
+}
+
+/* ---- port of renderProductApplications() in js/main.js — static version ---- */
+function buildApplicationsHtml(p) {
+  return p.applications.map(a =>
+    '<div class="pd-app-card">' +
+      '<div class="pd-app-icon" aria-hidden="true">' + (a.icon || '●') + '</div>' +
+      '<div class="pd-app-title">' + escHtml(a.title || '') + '</div>' +
+      '<div class="pd-app-desc">'  + escHtml(a.desc  || '') + '</div>' +
+    '</div>'
+  ).join('\n        ');
+}
+
+/* ---- port of renderProductCompatibility() in js/main.js — static version ---- */
+function buildCompatibilityHtml(p) {
+  return '<thead><tr><th>Original Part Number</th><th>Compatibility Note</th></tr></thead>' +
+    '<tbody>' +
+      p.compatibility.map(c =>
+        '<tr><td><code class="pd-compat-code">' + escHtml(c.from || '') + '</code></td>' +
+        '<td>' + escHtml(c.note || '') + '</td></tr>'
+      ).join('') +
+    '</tbody>';
+}
 
 /* ---- port of injectProductSchema() in js/main.js — keep in sync ---- */
 function buildSchemas(p) {
@@ -66,10 +105,11 @@ function buildSchemas(p) {
   });
 
   const schemas = [product, breadcrumb];
-  if (Array.isArray(p.faq) && p.faq.length) {
+  const faq = faqFor(p);
+  if (faq.length) {
     schemas.push({
       '@context': 'https://schema.org', '@type': 'FAQPage',
-      mainEntity: p.faq.map(f => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } }))
+      mainEntity: faq.map(f => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } }))
     });
   }
   return schemas;
@@ -138,6 +178,49 @@ function renderPage(p) {
       '<a href="' + categoryUrl(p.cat) + '">' + escHtml(CATEGORIES[p.cat]) + '</a> · ' +
       '<a href="' + brandUrl(p.brand) + '">' + escHtml(p.brand) + ' parts</a></p>'
   );
+  // Static FAQ — hand-written for deep pages, generic category template otherwise (see
+  // faqFor()/genericFaqFor() above) — baked into the HTML so it's crawler-visible even
+  // without JS, not just present in the FAQPage JSON-LD.
+  html = html.replace(
+    '<div class="faq-list" id="pd-faq-list"></div>',
+    '<div class="faq-list" id="pd-faq-list">\n        ' + buildFaqHtml(p) + '\n      </div>'
+  );
+  // Static "Typical Applications" — deep pages only (p.applications[] hand-written);
+  // standard pages keep the section hidden exactly as before (no fabricated content).
+  if (Array.isArray(p.applications) && p.applications.length) {
+    html = html
+      .replace(
+        '<section class="section alt" id="detail-applications-section" style="display:none;">',
+        '<section class="section alt" id="detail-applications-section">'
+      )
+      .replace(
+        '<p id="pd-app-intro" style="text-align:left; margin:0 auto 0; color:#5a6473; max-width:760px;">See where this part is typically used.</p>',
+        '<p id="pd-app-intro" style="text-align:left; margin:0 auto 0; color:#5a6473; max-width:760px;">' +
+          escHtml(p.brand + ' ' + p.model) + ' is typically used in the following applications:</p>'
+      )
+      .replace(
+        '<div class="pd-app-grid" id="pd-applications"></div>',
+        '<div class="pd-app-grid" id="pd-applications">\n        ' + buildApplicationsHtml(p) + '\n      </div>'
+      );
+  }
+  // Static "Compatible & Replacement Part Numbers" — deep pages only (p.compatibility[]
+  // hand-written); standard pages keep the section hidden, same as before.
+  if (Array.isArray(p.compatibility) && p.compatibility.length) {
+    html = html
+      .replace(
+        '<section class="section" id="detail-compat-section" style="display:none;">',
+        '<section class="section" id="detail-compat-section">'
+      )
+      .replace(
+        '<p id="pd-compat-intro" style="text-align:left; margin:0 auto 0; color:#5a6473; max-width:760px;">If your machine uses an older or different part number, the table below shows drop-in options. Send your exact part number to info@fouwell.com and we\'ll confirm compatibility before shipment.</p>',
+        '<p id="pd-compat-intro" style="text-align:left; margin:0 auto 0; color:#5a6473; max-width:760px;">If your machine uses an older or different ' +
+          escHtml(p.brand) + ' part number, the table below shows drop-in options. Send your exact part number to info@fouwell.com and we’ll confirm compatibility before shipment.</p>'
+      )
+      .replace(
+        '<table class="pd-compat-table" id="pd-compat-table"></table>',
+        '<table class="pd-compat-table" id="pd-compat-table">' + buildCompatibilityHtml(p) + '</table>'
+      );
+  }
   return html;
 }
 

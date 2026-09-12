@@ -79,18 +79,151 @@ const PRODUCTS = [
   { brand: "Mitsubishi", model: "MR-J3-60B", series: "MELSERVO-J3", cat: "servo", spec: "600W servo amplifier, 200–230V input, Japan original", status: "legacy", photo: "MR-J3-60B.jpg", linkedin: "MR-J3-60B.png" },
 
   // ---- OMRON ----
-  { brand: "OMRON", model: "NS10-TV01B-V2", series: "NS10", cat: "hmi", spec: "10.4\" TFT touchscreen, 640×480, RS-232/422/485 + Ethernet, IP65, Japan original", status: "instock", photo: "NS10-TV01B-V2.jpg", linkedin: "NS10-TV01B-V2.png" },
+  { brand: "OMRON", model: "NS10-TV01B-V2", series: "NS10", cat: "hmi",
+    spec: "10.4\" TFT touchscreen, 640×480, RS-232/422/485 + Ethernet, IP65, Japan original",
+    status: "instock", photo: "NS10-TV01B-V2.jpg", linkedin: "NS10-TV01B-V2.png",
+    specs: [
+      ["Order code",           "NS10-TV01B-V2"],
+      ["Product type",         "NS10-series HMI touch panel"],
+      ["Display",              "10.4\" TFT color touchscreen, 640×480 (VGA)"],
+      ["Communication",        "RS-232/RS-422/RS-485 serial (Host Link/NT Link) + Ethernet"],
+      ["Programming software", "OMRON CX-Designer"],
+      ["Enclosure rating",     "IP65 front panel"],
+      ["Compatible controllers", "OMRON CS/CJ/CP1-series PLCs via serial or Ethernet; other brands via standard protocols where supported"],
+      ["Product line position", "NS-series — OMRON's HMI line prior to the current NA-series"],
+      ["Country of origin",    "Japan (OMRON official channel)"]
+    ],
+    applications: [
+      { icon: "🖥️", title: "Machine operator interface",
+        desc: "Standard operator panel for status display, alarm handling and manual control on production machines using OMRON CS/CJ/CP1 controllers." },
+      { icon: "🏭", title: "Retrofit of legacy OMRON control panels",
+        desc: "Common replacement part for panels originally built around the NS-series when the PLC side stays on CS/CJ/CP1 and only the HMI needs replacing." },
+      { icon: "📊", title: "Process monitoring & recipe screens",
+        desc: "640×480 resolution and Ethernet connectivity support multi-screen recipe management and trend/alarm display for small-to-mid process lines." }
+    ],
+    compatibility: [
+      { from: "NS10-TV00B / earlier NS10 hardware revisions", note: "Same NS10 form factor and mounting cutout — confirm firmware/CX-Designer project compatibility before swapping." },
+      { from: "OMRON NA-series (current HMI line)", note: "NA-series is OMRON's current-generation HMI and isn't a drop-in replacement (different mounting, different software — Sysmac Studio/NA-Designer instead of CX-Designer). Treat it as a planned upgrade, not a direct swap." }
+    ],
+    faq: [
+      { q: "What does NS10-TV01B-V2 mean, and what size screen is it?",
+        a: "It's an OMRON NS-series HMI with a 10.4-inch TFT color touchscreen at 640×480 resolution, IP65-rated front panel, with serial (RS-232/422/485) and Ethernet communication." },
+      { q: "What software do I need to program this HMI?",
+        a: "OMRON CX-Designer — the official screen-editing software for the NS-series. If you don't have an existing project file for your machine, we can help confirm what's needed based on your PLC model." },
+      { q: "Which PLCs does the NS10-TV01B-V2 connect to?",
+        a: "It's designed for OMRON's CS/CJ/CP1-series PLCs over serial (Host Link/NT Link) or Ethernet. Connection to other brands' PLCs is possible where a supported protocol driver exists in CX-Designer — tell us your PLC model and we'll confirm." },
+      { q: "Is there a current-generation replacement for the NS-series?",
+        a: "Yes — OMRON's current HMI line is the NA-series, but it isn't a drop-in swap (different mounting cutout and different programming software). If you're planning a longer-term upgrade rather than an urgent repair, ask us about migration options." },
+      { q: "Is the NS10-TV01B-V2 in stock and how fast can it ship?",
+        a: "Yes, this is an in-stock item — it ships within 24 hours via DHL, FedEx or UPS, with air freight typically arriving in 3–5 working days to most Asian, Middle Eastern and European destinations." },
+      { q: "Do you offer a warranty on this HMI?",
+        a: "Yes. Every Fouwell-supplied part is backed by a 12-month replacement warranty against manufacturing defects. Warranty doesn't cover damage from improper installation, incorrect wiring/voltage, or use outside OMRON's official specifications." },
+      { q: "Can you help cross-reference an older or discontinued OMRON HMI?",
+        a: "Yes. Send your exact original part number to info@fouwell.com and our engineers will confirm the current equivalent, availability and pricing — usually within one business day." }
+    ]
+  },
   { brand: "OMRON", model: "3G3MX2-AB002-V1", series: "MX2", cat: "drives", spec: "0.2kW compact inverter, single-phase 200V", status: "discont", photo: null, linkedin: "3G3MX2-AB002-V1.png" },
   { brand: "OMRON", model: "3G3MX2-AB002-V2", series: "MX2", cat: "drives", spec: "0.2kW — V1 replacement, identical specifications", status: "instock", photo: null, linkedin: "3G3MX2-AB002-V1.png" },
   { brand: "OMRON", model: "R88M-KE75030H", series: "Accurax G5", cat: "servo", spec: "750W servo motor, 2.4N·m, 3000r/min, 3φAC120V, IP67, CE/UL", status: "instock", photo: "R88M-KE75030H.jpg", linkedin: "R88M-KE75030H.png" },
-  { brand: "OMRON", model: "R88D-KN08H-ECT", series: "Accurax G5", cat: "servo", spec: "750W servo drive, 200–240VAC, EtherCAT, matches R88M-KE75030H, CE/UL/TUV", status: "instock", photo: "R88D-KN08H-ECT.jpg", linkedin: "R88D-KN08H-ECT.png" },
+  { brand: "OMRON", model: "R88D-KN08H-ECT", series: "Accurax G5", cat: "servo",
+    spec: "750W servo drive, 200–240VAC, EtherCAT, matches R88M-KE75030H, CE/UL/TUV",
+    status: "instock", photo: "R88D-KN08H-ECT.jpg", linkedin: "R88D-KN08H-ECT.png",
+    specs: [
+      ["Order code",              "R88D-KN08H-ECT"],
+      ["Product type",            "Accurax G5 servo drive (EtherCAT)"],
+      ["Power supply",            "200–240 VAC, single/3-phase"],
+      ["Rated output",            "750 W"],
+      ["Communication",           "EtherCAT (CiA402 drive profile)"],
+      ["Control modes",           "Position / speed / torque control"],
+      ["Matching motor",          "OMRON R88M-KE75030H (750W, 3000 r/min) — also in our catalog"],
+      ["Programming software",    "CX-Drive for drive-level setup/tuning; Sysmac Studio when paired with an NJ/NX machine controller"],
+      ["Certifications",         "CE, UL, TÜV"],
+      ["Country of origin",       "Japan (OMRON official channel)"]
+    ],
+    applications: [
+      { icon: "🤖", title: "Pick-and-place & assembly",
+        desc: "EtherCAT's deterministic cycle time makes the G5 a common choice for multi-axis pick-and-place cells and small assembly robots." },
+      { icon: "📦", title: "Packaging & labeling machines",
+        desc: "Precise position control keeps indexing, cutting and labeling stations synchronized to line speed." },
+      { icon: "🏭", title: "CNC & dedicated machine axes",
+        desc: "750W class output suits light-duty axis drives on dedicated machines where a full CNC servo package isn't needed." },
+      { icon: "🔧", title: "Retrofit of older OMRON servo lines",
+        desc: "A common upgrade path when replacing older non-EtherCAT OMRON servo systems that need to join a networked control architecture." }
+    ],
+    compatibility: [
+      { from: "R88M-KE75030H", note: "Matched OMRON Accurax G5 motor for this drive — same catalog, sold separately. Confirm the cable/connector kit when ordering both." },
+      { from: "Older non-EtherCAT Accurax G5 (pulse/analog interface)", note: "Same G5 motor family but a different communication interface — check your controller's network before treating this as a drop-in replacement." },
+      { from: "Discontinued OMRON G-series (pre-Accurax)", note: "Different generation, different connectors/cabling — send your exact original part number and we'll confirm true compatibility rather than going by series name alone." }
+    ],
+    faq: [
+      { q: "What does the order code R88D-KN08H-ECT mean?",
+        a: "It's an OMRON Accurax G5 servo drive rated for 750W output, 200–240VAC single/3-phase supply, with an EtherCAT (ECT) communication interface — the direct drive-side match for the R88M-KE75030H servo motor also in our catalog." },
+      { q: "Does the R88D-KN08H-ECT need a specific OMRON motor, or does it work with any servo motor?",
+        a: "Accurax G5 drives are matched to specific OMRON Accurax G5 motors — this drive is rated for the R88M-KE75030H (750W). It isn't designed to run third-party servo motors; if you need a different power rating, tell us the application and we can match the correct drive+motor pair." },
+      { q: "What controllers and software work with this EtherCAT drive?",
+        a: "Any EtherCAT master supporting the CiA402 drive profile can control it. On the OMRON side that's typically an NJ/NX-series machine controller programmed in Sysmac Studio, or a CJ/CS controller with an EtherCAT master unit. CX-Drive is used for drive-level parameter setup and tuning." },
+      { q: "Is the R88D-KN08H-ECT in stock and how fast can it ship?",
+        a: "Yes, this is an in-stock item — it ships within 24 hours via DHL, FedEx or UPS, with air freight typically arriving in 3–5 working days to most Asian, Middle Eastern and European destinations." },
+      { q: "Do you offer a warranty on this servo drive?",
+        a: "Yes. Every Fouwell-supplied part is backed by a 12-month replacement warranty against manufacturing defects. Warranty doesn't cover damage from improper installation, incorrect wiring/voltage, or use outside OMRON's official specifications." },
+      { q: "Can you help cross-reference an older or discontinued OMRON servo drive?",
+        a: "Yes. Send your exact original part number to info@fouwell.com and our engineers will confirm the current equivalent, availability and pricing — usually within one business day." },
+      { q: "How is it shipped internationally?",
+        a: "Worldwide via DHL, FedEx, UPS (air) or sea freight for larger orders, with full insurance and original OMRON packaging. We also maintain an HK warehouse for faster regional consolidation on some orders." }
+    ]
+  },
   { brand: "OMRON", model: "E5AC-QR4D5M-000", series: "E5AC", cat: "sensors", spec: "Digital temperature controller, 96×96mm, 4 auxiliary outputs, 24VAC/VDC", status: "instock", photo: null, linkedin: "E5AC-QR4D5M-000.png" },
 
   // ---- Yaskawa ----
   { brand: "Yaskawa", model: "CIMR-VB4A0038FBA", series: "V1000", cat: "drives", spec: "18.5kW(ND)/15kW(HD) inverter, 3-phase 380V", status: "legacy", photo: null, linkedin: "CIMR-VB4A0038FBA.png" },
   { brand: "Yaskawa", model: "GA50C4038EBA", series: "GA500", cat: "drives", spec: "18.5kW(ND)/15kW(HD) — V1000 replacement", status: "instock", photo: null, linkedin: "CIMR-VB4A0038FBA.png" },
   { brand: "Yaskawa", model: "CIPR-GA70D4038ABMA-AAAABA", series: "GA700", cat: "drives", spec: "18.5kW HD / 22kW ND inverter, 3-phase 400V, built-in EMC filter", status: "instock", photo: null, linkedin: "CIPR-GA70D4038ABMA-AAAABA.png" },
-  { brand: "Yaskawa", model: "CIMR-AB4A0011FBA", series: "A1000", cat: "drives", spec: "5.5kW(ND)/3.7kW(HD) inverter, 3-phase 400V, open/closed-loop vector control", status: "instock", photo: "CIMR-AB4A0011FBA.jpg", linkedin: "CIMR-AB4A0011FBA.png" },
+  { brand: "Yaskawa", model: "CIMR-AB4A0011FBA", series: "A1000", cat: "drives",
+    spec: "5.5kW(ND)/3.7kW(HD) inverter, 3-phase 400V, open/closed-loop vector control",
+    status: "instock", photo: "CIMR-AB4A0011FBA.jpg", linkedin: "CIMR-AB4A0011FBA.png",
+    specs: [
+      ["Order code",           "CIMR-AB4A0011FBA"],
+      ["Product type",         "Yaskawa A1000 vector AC drive"],
+      ["Rated capacity",       "5.5 kW Normal Duty / 3.7 kW Heavy Duty"],
+      ["Input/output",         "3-phase, 380–480V class"],
+      ["Control modes",        "V/f, open-loop vector, closed-loop vector (with PG feedback option card)"],
+      ["Communication",        "Built-in Modbus RTU; optional cards for EtherNet/IP, PROFIBUS-DP, DeviceNet, CC-Link"],
+      ["Programming/monitoring", "Yaskawa DriveWizard software, or the LCD digital operator with a copy function"],
+      ["Product line position", "A1000 is Yaskawa's flagship vector-control drive line, successor to the earlier F7/G7 series"],
+      ["Country of origin",    "Japan (Yaskawa official channel)"]
+    ],
+    applications: [
+      { icon: "🌀", title: "Pumps & fans (HVAC, water treatment)",
+        desc: "Vector control with a wide speed range suits variable-torque pump/fan loads as well as constant-torque duty." },
+      { icon: "🏗️", title: "Conveyors & material handling",
+        desc: "Open-loop vector control gives strong starting torque for belt/roller conveyors without added encoder hardware." },
+      { icon: "🧵", title: "Extrusion & winding lines",
+        desc: "Closed-loop vector mode (with a PG feedback card) supports tension-control applications common in extrusion, winding and unwinding lines." },
+      { icon: "⚙️", title: "Machine-tool spindle & auxiliary drives",
+        desc: "5.5kW/3.7kW class fits auxiliary spindle drives and mid-size machine-tool axes where full servo control isn't required." }
+    ],
+    compatibility: [
+      { from: "Yaskawa F7 / G7 series (predecessor lines)", note: "A1000 is the direct successor to Yaskawa's older F7 (fan/pump) and G7 (general vector) drives — same-power-class parts are usually a straightforward panel-wiring swap, but confirm the terminal layout before replacing." },
+      { from: "Yaskawa GA700 (current-generation replacement)", note: "For a new installation rather than replacing an existing A1000, Yaskawa's current flagship vector drive is the GA700 — we also stock CIPR-GA70D4038ABMA-AAAABA in a comparable power class." },
+      { from: "Different voltage/power variant of CIMR-AB", note: "Same A1000 family but a different kW rating or voltage class — send your nameplate details and we'll confirm the exact cross-reference." }
+    ],
+    faq: [
+      { q: "What does the order code CIMR-AB4A0011FBA mean?",
+        a: "It identifies a Yaskawa A1000-series vector AC drive rated 5.5kW Normal Duty / 3.7kW Heavy Duty, for 3-phase 380–480V input — Yaskawa's flagship vector-control drive line." },
+      { q: "What control modes does the A1000 support?",
+        a: "V/f (basic), open-loop vector (higher starting torque without feedback hardware), and closed-loop vector with a PG feedback option card for the tightest speed regulation — selectable in the drive's parameters." },
+      { q: "Does this drive need special software to program, or can it be set up from the keypad?",
+        a: "Both. Every parameter can be set from the built-in LCD digital operator, including a copy function to clone settings across multiple drives. Yaskawa's free DriveWizard software adds graphing, more detailed parameter descriptions and PC-based backup." },
+      { q: "Is there a newer Yaskawa drive that replaces the A1000?",
+        a: "Yaskawa's current-generation flagship vector drive is the GA700, which we also stock (CIPR-GA70D4038ABMA-AAAABA). The A1000 is still a fully supported active line — we can help you decide between staying with A1000 for parts commonality or moving to GA700 for new installations." },
+      { q: "Is the CIMR-AB4A0011FBA in stock and how fast can it ship?",
+        a: "Yes, this is an in-stock item — it ships within 24 hours via DHL, FedEx or UPS, with air freight typically arriving in 3–5 working days to most Asian, Middle Eastern and European destinations." },
+      { q: "Do you offer a warranty on this drive?",
+        a: "Yes. Every Fouwell-supplied part is backed by a 12-month replacement warranty against manufacturing defects. Warranty doesn't cover damage from improper installation, incorrect wiring/voltage, or use outside Yaskawa's official specifications." },
+      { q: "Can you help cross-reference an older or discontinued Yaskawa drive?",
+        a: "Yes. Send your exact original part number to info@fouwell.com and our engineers will confirm the current equivalent, availability and pricing — usually within one business day." }
+    ]
+  },
   { brand: "Yaskawa", model: "SGM7J-08A6A6C", series: "Sigma-7", cat: "servo", spec: "750W servo motor, 200V, 24-bit absolute encoder, with brake, IP67", status: "instock", photo: null, linkedin: "SGM7J-08A6A6C.png" },
   { brand: "Yaskawa", model: "SGMAH-04ADA-TF13", series: "Sigma-II", cat: "servo", spec: "400W servo motor, 200V, 2.6A, 1.27N·m, 3000r/min, Japan original legacy spare", status: "legacy", photo: "SGMAH-04ADA-TF13.jpg", linkedin: "SGMAH-04ADA-TF13.png" },
 
@@ -101,7 +234,47 @@ const PRODUCTS = [
   // ---- ABB ----
   { brand: "ABB", model: "3AFE68257913", series: "AIBP-51", cat: "spares", spec: "Input bridge protection board, 3× Vishay components, RoHS, Finland original", status: "instock", photo: "3AFE68257913.jpg", linkedin: null },
   { brand: "ABB", model: "3AFE68249457", series: "APOW-01C + NRED-61", cat: "spares", spec: "Power supply board for drives, Finland original", status: "instock", photo: "3AFE68249457.jpg", linkedin: null },
-  { brand: "ABB", model: "68561906A", series: "AGDR-71C", cat: "spares", spec: "IGBT gate drive board with Fuji 6MBI225U-120 module, for ACS800/ACS880", status: "instock", photo: "68561906A.png", linkedin: "68561906A.png" },
+  { brand: "ABB", model: "68561906A", series: "AGDR-71C", cat: "spares",
+    spec: "IGBT gate drive board with Fuji 6MBI225U-120 module, for ACS800/ACS880",
+    status: "instock", photo: "68561906A.png", linkedin: "68561906A.png",
+    specs: [
+      ["Order code",        "68561906A"],
+      ["Product type",      "AGDR-71C — IGBT gate driver board"],
+      ["Used in",           "ABB ACS800 and ACS880 series industrial drives"],
+      ["Key component",     "Interfaces with a Fuji Electric 6MBI225U-120 IGBT module"],
+      ["Board function",    "Converts low-level control signals into the gate drive signals needed to switch the power IGBT module, and reports fault/status back to the drive's control board"],
+      ["Handling",          "ESD-sensitive board — anti-static precautions required during installation"],
+      ["Country of origin", "Finland (ABB official channel — original ABB drives spares business)"]
+    ],
+    applications: [
+      { icon: "⚙️", title: "ACS800 general-purpose drives",
+        desc: "Common gate-driver replacement part for ACS800-series drives built around the Fuji 6MBI225U-120 IGBT module." },
+      { icon: "🏭", title: "ACS880 industrial drives",
+        desc: "Also used in relevant ACS880 configurations sharing the same power module and gate-drive interface." },
+      { icon: "🔧", title: "Drive repair & refurbishment",
+        desc: "Frequently sourced by panel builders and drive repair shops replacing a failed gate-driver stage rather than the entire power module or full drive." }
+    ],
+    compatibility: [
+      { from: "Other AGDR-7xC board revisions", note: "ABB has released multiple AGDR-7xC board revisions across ACS800/ACS880 generations — confirm your drive's exact type code and IGBT module (e.g. Fuji 6MBI225U-120) before ordering, since boards for different IGBT modules aren't interchangeable." },
+      { from: "Full ACS800/ACS880 power stage replacement", note: "If the IGBT module itself (not just the gate driver) has failed, you'll need the module and board together — send us your drive's full type code and we'll confirm what's needed." }
+    ],
+    faq: [
+      { q: "What is the ABB 68561906A / AGDR-71C board used for?",
+        a: "It's an IGBT gate driver board used in ABB ACS800 and ACS880 series industrial drives, built around the Fuji Electric 6MBI225U-120 IGBT module — it converts the drive's control signals into the gate signals needed to switch the power module and reports fault/status back to the drive." },
+      { q: "How do I know if this is the right board for my drive?",
+        a: "Send us your ABB drive's full type code (from the nameplate) and, if visible, the IGBT module part number — we'll confirm whether the AGDR-71C / 68561906A is the correct board revision for your specific unit before you order." },
+      { q: "Is this a new or refurbished/repaired board?",
+        a: "We supply genuine ABB-sourced boards through official channels; if a tested-used option is also available for your specific need, we'll tell you clearly which one you're quoted — we don't sell mismatched or generically-compatible clones as ABB originals." },
+      { q: "Can you also supply the matching Fuji 6MBI225U-120 IGBT module if that's the failed component?",
+        a: "Yes — if you need the power module as well as (or instead of) the gate driver board, tell us your drive's full type code and we'll quote both as a set or separately depending on what actually failed." },
+      { q: "Is the 68561906A in stock and how fast can it ship?",
+        a: "Yes, this is an in-stock item — it ships within 24 hours via DHL, FedEx or UPS, with air freight typically arriving in 3–5 working days to most Asian, Middle Eastern and European destinations." },
+      { q: "Do you offer a warranty on this board?",
+        a: "Yes. Every Fouwell-supplied part is backed by a 12-month replacement warranty against manufacturing defects. Warranty doesn't cover damage from improper installation, incorrect wiring/voltage, or use outside ABB's official specifications." },
+      { q: "Can you help cross-reference an older or different ABB drive board part number?",
+        a: "Yes. Send your exact part number to info@fouwell.com and our engineers will confirm the current equivalent, availability and pricing — usually within one business day." }
+    ]
+  },
   { brand: "ABB", model: "3ABD64644521", series: "RPLC-03C", cat: "spares", spec: "Drive control panel cable, 3m", status: "instock", photo: "3ABD64644521.jpg", linkedin: "3ABD64644521.png" },
   { brand: "ABB", model: "61059113", series: "Plastic Fibre Optic", cat: "spares", spec: "Double plastic fibre optic cable, 5m, gate drive ↔ main control board", status: "instock", photo: "61059113.jpg", linkedin: "61059113.png" },
 
@@ -121,7 +294,50 @@ const PRODUCTS = [
   { brand: "Beckhoff", model: "CP6702-1028-0040", series: "CP6702", cat: "hmi", spec: "15\" touch Panel PC, Celeron 1.4GHz, 2GB RAM, 20GB CFast, DC24V", status: "instock", photo: null, linkedin: "CP6702-1028-0040.png" },
 
   // ---- Sensors & instruments ----
-  { brand: "VEGA", model: "PS6X.2SWYDBXATKMKHAXXXXXXX", series: "VEGAPULS 6X", cat: "sensors", spec: "80GHz radar level meter, PP horn antenna, 120m range, 4–20mA HART, IP66/68, Germany original", status: "instock", photo: "PS6X.2SWYDBXATKMKHAXXXXXXX.jpg", linkedin: "PS6X.2SWYDBXATKMKHAXXXXXXX.png" },
+  { brand: "VEGA", model: "PS6X.2SWYDBXATKMKHAXXXXXXX", series: "VEGAPULS 6X", cat: "sensors",
+    spec: "80GHz radar level meter, PP horn antenna, 120m range, 4–20mA HART, IP66/68, Germany original",
+    status: "instock", photo: "PS6X.2SWYDBXATKMKHAXXXXXXX.jpg", linkedin: "PS6X.2SWYDBXATKMKHAXXXXXXX.png",
+    specs: [
+      ["Order code",           "PS6X.2SWYDBXATKMKHAXXXXXXX"],
+      ["Product type",         "VEGAPULS 6X — 80GHz radar level transmitter"],
+      ["Antenna",              "PP (polypropylene) horn antenna"],
+      ["Measuring range",      "Up to 120 m"],
+      ["Output signal",        "4–20mA HART (2-wire loop-powered)"],
+      ["Protection rating",    "IP66/IP68"],
+      ["Commissioning",        "Bluetooth (VEGA Tools smartphone app) or PACTware/DTM — no need to open the housing"],
+      ["Process connection",   "Threaded or flanged per ordering code — confirm the exact connection size from your original order"],
+      ["Product line position", "6X series — VEGA's current 80GHz radar generation, successor to the earlier 26GHz 60-series (e.g. VEGAPULS 64, also in our catalog)"],
+      ["Country of origin",    "Germany (VEGA official channel)"]
+    ],
+    applications: [
+      { icon: "🛢️", title: "Bulk solids & silo level",
+        desc: "80GHz focusing handles dusty conditions and internal obstructions (agitators, ladders) common in solids storage better than lower-frequency radar." },
+      { icon: "💧", title: "Liquid storage tanks",
+        desc: "Non-contact measurement with no moving parts — suited to tanks where fouling, foam or vapor would affect contact-based level sensors." },
+      { icon: "🏭", title: "Process vessels with condensation/turbulence",
+        desc: "The narrow beam angle and advanced signal processing filter out false echoes from condensation, agitator blades and turbulent surfaces." }
+    ],
+    compatibility: [
+      { from: "VEGAPULS 64 (26GHz, also in our catalog)", note: "A different radar generation, not a direct swap — the 64 is VEGA's compact 26GHz line, the 6X is the newer 80GHz line with a narrower beam angle. Confirm which frequency your application was originally specified for before substituting." },
+      { from: "Earlier VEGAPULS 6X hardware/firmware revisions", note: "Same 80GHz platform — send your exact order code (the long string on the nameplate) and we'll confirm parameter/output compatibility before shipment." }
+    ],
+    faq: [
+      { q: "What does the long order code on this VEGAPULS 6X mean?",
+        a: "It's VEGA's ordering code encoding antenna type (PP horn), process connection, output signal, seal material and other build options for this specific 80GHz radar level sensor. Send us your full nameplate code and we can confirm the exact configuration or find the closest sourceable match." },
+      { q: "What's the difference between this VEGAPULS 6X and the VEGAPULS 64 you also sell?",
+        a: "They're different radar generations: the 6X operates at 80GHz with a narrower beam angle (better for tight nozzles and internal obstructions), while the 64 is VEGA's 26GHz compact line. They aren't interchangeable — the right choice depends on your tank geometry and process conditions, which we're happy to help confirm." },
+      { q: "How do I configure or commission this sensor?",
+        a: "Through Bluetooth using the VEGA Tools smartphone app, or via PACTware with the VEGA DTM — no need to open the housing or bring a special programming cable to site." },
+      { q: "What output signal does this unit provide?",
+        a: "4–20mA with HART, in a standard 2-wire loop-powered configuration — compatible with most existing analog level-monitoring loops and PLC analog inputs." },
+      { q: "Is this VEGAPULS 6X in stock and how fast can it ship?",
+        a: "Yes, this is an in-stock item — it ships within 24 hours via DHL, FedEx or UPS, with air freight typically arriving in 3–5 working days to most Asian, Middle Eastern and European destinations." },
+      { q: "Do you offer a warranty on this sensor?",
+        a: "Yes. Every Fouwell-supplied part is backed by a 12-month replacement warranty against manufacturing defects. Warranty doesn't cover damage from improper installation, incorrect wiring/voltage, or use outside VEGA's official specifications." },
+      { q: "Can you help cross-reference an older or different VEGA part number?",
+        a: "Yes. Send your exact order code to info@fouwell.com and our engineers will confirm the current equivalent, availability and pricing — usually within one business day." }
+    ]
+  },
   { brand: "VEGA", model: "PS6X-222-2TC", series: "VEGAPULS 6X", cat: "sensors", spec: "80GHz radar level meter, outdoor IP66/IP67 Type 4X, 4–20mA HART, Germany original", status: "instock", photo: "VEGAPULS-6X.jpg", linkedin: "PS6X-222-2TC.png" },
   { brand: "VEGA", model: "PS64.RXHCAHXBM00M", series: "VEGAPULS 64", cat: "sensors", spec: "80GHz compact radar, full stainless steel, PTFE, −1~10bar, 30m range, Germany original", status: "instock", photo: "VEGAPULS-64.jpg", linkedin: "PS64.RXHCAHXBM00M.png" },
   { brand: "Honeywell", model: "943-F4V-2D-1C0-300E", series: "943", cat: "sensors", spec: "Proximity sensor, analog 0–10V + switching output, teach-in, 15–30VDC", status: "instock", photo: "943-F4V-2D-1C0-300E.jpg", linkedin: null },
