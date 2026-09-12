@@ -11,56 +11,19 @@
  * Run: node scripts/build-product-pages.js
  * Safe to re-run any time data.js/videos.js changes — fully regenerates all product pages.
  *
- * IMPORTANT: the slug/JSON-LD/meta-description logic here is intentionally kept in lockstep
- * with the equivalent functions in js/main.js (productSlug/_slugPiece, injectProductSchema,
- * the meta-description template in renderProductDetail). If those change, update this file too.
+ * IMPORTANT: the slug/JSON-LD/meta-description/breadcrumb logic here is intentionally kept
+ * in lockstep with the equivalent functions in js/main.js (productSlug/_slugPiece,
+ * injectProductSchema, renderProductDetail's breadcrumb + meta description). If those
+ * change, update this file too. Shared slug/URL helpers live in scripts/lib/site-data.js —
+ * update there once and both this script and build-hub-pages.js pick it up.
  */
 const fs = require('fs');
 const path = require('path');
-const vm = require('vm');
+const {
+  ROOT, loadGlobals, productSlug, productUrl, categoryUrl, brandUrl, STATUS_AVAIL, escHtml
+} = require('./lib/site-data');
 
-const ROOT = path.join(__dirname, '..');
-
-/* ---- load data.js / videos.js as plain data (they're written as browser globals,
-   not CommonJS modules — sandbox-eval them rather than touching those files) ---- */
-function loadGlobals(...files) {
-  const sandbox = {};
-  vm.createContext(sandbox);
-  for (const f of files) {
-    let code = fs.readFileSync(path.join(ROOT, f), 'utf8');
-    // Top-level `const`/`let` create lexical bindings, not properties on the vm context
-    // object — rewrite to `var` (only at statement start) so they attach to the sandbox
-    // and are readable afterwards. These files are our own first-party data files.
-    code = code.replace(/^(const|let)\b/gm, 'var');
-    vm.runInContext(code, sandbox, { filename: f });
-  }
-  return sandbox;
-}
 const { PRODUCTS, BRANDS, CATEGORIES, PRODUCT_VIDEOS } = loadGlobals('js/data.js', 'js/videos.js');
-
-/* ---- port of js/main.js's _slugPiece/productSlug — keep in sync ---- */
-function slugPiece(s) {
-  return String(s == null ? '' : s)
-    .toLowerCase()
-    .replace(/[\s_./]+/g, '-')
-    .replace(/[^a-z0-9-]/g, '')
-    .replace(/-+/g, '-')
-    .replace(/^-|-$/g, '');
-}
-function productSlug(p) {
-  return [slugPiece(p.brand), slugPiece(p.series), slugPiece(p.model)].filter(Boolean).join('-');
-}
-function productUrl(p) { return '/products/' + productSlug(p) + '/'; }
-
-const STATUS_AVAIL = {
-  instock: 'https://schema.org/InStock',
-  legacy: 'https://schema.org/LimitedAvailability',
-  discont: 'https://schema.org/Discontinued'
-};
-
-function escHtml(s) {
-  return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-}
 
 /* ---- port of injectProductSchema() in js/main.js — keep in sync ---- */
 function buildSchemas(p) {
@@ -95,7 +58,7 @@ function buildSchemas(p) {
   if (p.cat) {
     breadcrumb.itemListElement.push({
       '@type': 'ListItem', position: 3, name: CATEGORIES[p.cat],
-      item: 'https://fouwell.com/products/?cat=' + p.cat
+      item: 'https://fouwell.com' + categoryUrl(p.cat)
     });
   }
   breadcrumb.itemListElement.push({
@@ -119,6 +82,13 @@ function buildMetaDescription(p) {
     : 'In stock, ships in 24h';
   return 'Genuine ' + p.brand + ' ' + p.model + ' — ' + p.spec + '. ' +
     availPhrase + '. Get a fast quote from Fouwell, verified industrial automation parts supplier.';
+}
+
+/* ---- port of the breadcrumb built in renderProductDetail() — keep in sync ---- */
+function buildBreadcrumbHtml(p) {
+  return '<a href="/">Home</a> / <a href="/products/">Products</a> / ' +
+    (p.cat ? '<a href="' + categoryUrl(p.cat) + '">' + escHtml(CATEGORIES[p.cat]) + '</a> / ' : '') +
+    '<span>' + escHtml(p.model) + '</span>';
 }
 
 /* ---- assemble one static HTML file from the product.html template ---- */
@@ -146,6 +116,12 @@ function renderPage(p) {
     '</head>',
     '  <link rel="canonical" href="' + url + '">\n  ' + schemaTags + '\n</head>'
   );
+  // Real, crawlable breadcrumb (was previously JS-only via #breadcrumb) — links to the
+  // category hub page, establishing the real internal-link hierarchy from day one.
+  html = html.replace(
+    /<div class="breadcrumb" id="breadcrumb">[^<]*(?:<a[^>]*>[^<]*<\/a>[^<]*)*<\/div>/,
+    '<div class="breadcrumb" id="breadcrumb">' + buildBreadcrumbHtml(p) + '</div>'
+  );
   html = html.replace(
     '<h1 id="page-title">Product Detail</h1>',
     '<h1 id="page-title">' + escHtml(p.brand + ' ' + p.model) + '</h1>'
@@ -153,6 +129,14 @@ function renderPage(p) {
   html = html.replace(
     '<p id="page-sub">Genuine industrial automation parts, sourced from official channels.</p>',
     '<p id="page-sub">' + escHtml(p.spec) + '</p>'
+  );
+  // Static cross-links to the category + brand hub pages — real, crawlable version of
+  // what main.js's renderProductDetail() also writes into #pd-crosslinks at runtime.
+  html = html.replace(
+    '<p class="pd-crosslinks" id="pd-crosslinks"></p>',
+    '<p class="pd-crosslinks" id="pd-crosslinks">Browse more: ' +
+      '<a href="' + categoryUrl(p.cat) + '">' + escHtml(CATEGORIES[p.cat]) + '</a> · ' +
+      '<a href="' + brandUrl(p.brand) + '">' + escHtml(p.brand) + ' parts</a></p>'
   );
   return html;
 }
