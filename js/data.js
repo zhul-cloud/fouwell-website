@@ -14,7 +14,7 @@ const PRODUCTS = [
   // ---- Siemens ----
   { brand: "Siemens", model: "6ES7212-1AE40-0XB0", series: "S7-1200", cat: "controllers",
     spec: "CPU 1212C DC/DC/DC, 8DI/6DO/2AI, 24VDC, CE/CCC",
-    status: "instock", photo: "6ES7212-1AE40-0XB0.jpg", linkedin: "6ES7212-1AE40-0XB0.png",
+    status: "instock", photo: "6ES7212-1AE40-0XB0.jpg", linkedin: "6ES7212-1AE40-0XB0.png", sell_price: 246.1, sell_price_currency: "USD", price_source: "ebay_ref",
     /* ---- Stage B: rich fields (other 47 products can adopt this template) ---- */
     datasheet: "/datasheets/6ES7212-1AE40-0XB0.pdf",
     specs: [
@@ -73,22 +73,22 @@ const PRODUCTS = [
         a: "Yes. Send your original Siemens part number (e.g. 6ES7212-1AE30-0XB0 or any S7-1200 / S7-1500 / ET 200 code) to info@fouwell.com and our engineers will reply with current availability, alternatives and a price within one business day — usually within an hour during Asia/Shanghai office hours." }
     ]
   },
-  { brand: "Siemens", model: "3RM1002-1AA04", series: "SIRIUS 3RM1", cat: "drives", spec: "Solid-state motor starter with overload protection, 0.4–2.0A, 230/400/500V, Made in Germany", status: "instock", photo: "3RM1002-1AA04.jpg", linkedin: "3RM1002-1AA04.png" },
+  { brand: "Siemens", model: "3RM1002-1AA04", series: "SIRIUS 3RM1", cat: "drives", spec: "Solid-state motor starter with overload protection, 0.4–2.0A, 230/400/500V, Made in Germany", status: "instock", photo: "3RM1002-1AA04.jpg", linkedin: "3RM1002-1AA04.png", sell_price: 240.84, sell_price_currency: "USD", price_source: "ebay_ref" },
 
   // ---- Schneider ----
-  { brand: "Schneider", model: "ATV12HU15M2", series: "Altivar 12", cat: "drives", spec: "1.5kW inverter, single-phase 200–240V input, 3-phase output, 7.5A", status: "instock", photo: "ATV12HU15M2.jpg", linkedin: "ATV12HU15M2.png" },
-  { brand: "Schneider", model: "LT3-SA00M", series: "LT3SA (Telemecanique)", cat: "spares", spec: "PTC thermistor motor protection relay, 115/230V dual voltage, 2 relay outputs, Made in France", status: "instock", photo: "LT3-SA00M.jpg", linkedin: "LT3-SA00M.png" },
+  { brand: "Schneider", model: "ATV12HU15M2", series: "Altivar 12", cat: "drives", spec: "1.5kW inverter, single-phase 200–240V input, 3-phase output, 7.5A", status: "instock", photo: "ATV12HU15M2.jpg", linkedin: "ATV12HU15M2.png", sell_price: 215.66, sell_price_currency: "USD", price_source: "ebay_ref" },
+  { brand: "Schneider", model: "LT3-SA00M", series: "LT3SA (Telemecanique)", cat: "spares", spec: "PTC thermistor motor protection relay, 115/230V dual voltage, 2 relay outputs, Made in France", status: "instock", photo: "LT3-SA00M.jpg", linkedin: "LT3-SA00M.png", sell_price: 267.66, sell_price_currency: "USD", price_source: "ebay_ref" },
 
   // ---- Mitsubishi ----
-  { brand: "Mitsubishi", model: "FR-D740-050-EC", series: "FR-D700", cat: "drives", spec: "2.2kW inverter, 3-phase 400V, 5.0A, CE certified", status: "instock", photo: null, linkedin: "FR-D740-050-EC.png" },
-  { brand: "Mitsubishi", model: "FR-A740-7.5K", series: "FR-A700", cat: "drives", spec: "7.5kW inverter, 3-phase 400V, vector control", status: "discont", photo: null, linkedin: "FR-A740-7.5K.png" },
+  { brand: "Mitsubishi", model: "FR-D740-050-EC", series: "FR-D700", cat: "drives", spec: "2.2kW inverter, 3-phase 400V, 5.0A, CE certified", status: "instock", photo: null, linkedin: "FR-D740-050-EC.png", sell_price: 739.98, sell_price_currency: "USD", price_source: "ebay_ref" },
+  { brand: "Mitsubishi", model: "FR-A740-7.5K", series: "FR-A700", cat: "drives", spec: "7.5kW inverter, 3-phase 400V, vector control", status: "discont", photo: null, linkedin: "FR-A740-7.5K.png", sell_price: 789.17, sell_price_currency: "USD", price_source: "ebay_ref" },
   { brand: "Mitsubishi", model: "FR-A840-7.5K", series: "FR-A800", cat: "drives", spec: "7.5kW — direct replacement for FR-A740-7.5K", status: "instock", photo: null, linkedin: "FR-A740-7.5K.png" },
-  { brand: "Mitsubishi", model: "MR-J3-60B", series: "MELSERVO-J3", cat: "servo", spec: "600W servo amplifier, 200–230V input, Japan original", status: "legacy", photo: "MR-J3-60B.jpg", linkedin: "MR-J3-60B.png" },
+  { brand: "Mitsubishi", model: "MR-J3-60B", series: "MELSERVO-J3", cat: "servo", spec: "600W servo amplifier, 200–230V input, Japan original", status: "legacy", photo: "MR-J3-60B.jpg", linkedin: "MR-J3-60B.png", sell_price: 251.58, sell_price_currency: "USD", price_source: "ebay_ref" },
 
   // ---- OMRON ----
   { brand: "OMRON", model: "NS10-TV01B-V2", series: "NS10", cat: "hmi",
     spec: "10.4\" TFT touchscreen, 640×480, RS-232/422/485 + Ethernet, IP65, Japan original",
-    status: "instock", photo: "NS10-TV01B-V2.jpg", linkedin: "NS10-TV01B-V2.png",
+    status: "instock", photo: "NS10-TV01B-V2.jpg", linkedin: "NS10-TV01B-V2.png", sell_price: 892.45, sell_price_currency: "USD", price_source: "ebay_ref",
     specs: [
       ["Order code",           "NS10-TV01B-V2"],
       ["Product type",         "NS10-series HMI touch panel"],
@@ -129,12 +129,12 @@ const PRODUCTS = [
         a: "Yes. Send your exact original part number to info@fouwell.com and our engineers will confirm the current equivalent, availability and pricing — usually within one business day." }
     ]
   },
-  { brand: "OMRON", model: "3G3MX2-AB002-V1", series: "MX2", cat: "drives", spec: "0.2kW compact inverter, single-phase 200V", status: "discont", photo: null, linkedin: "3G3MX2-AB002-V1.png" },
-  { brand: "OMRON", model: "3G3MX2-AB002-V2", series: "MX2", cat: "drives", spec: "0.2kW — V1 replacement, identical specifications", status: "instock", photo: null, linkedin: "3G3MX2-AB002-V1.png" },
+  { brand: "OMRON", model: "3G3MX2-AB002-V1", series: "MX2", cat: "drives", spec: "0.2kW compact inverter, single-phase 200V", status: "discont", photo: null, linkedin: "3G3MX2-AB002-V1.png", sell_price: 671.0, sell_price_currency: "USD", price_source: "ebay_ref" },
+  { brand: "OMRON", model: "3G3MX2-AB002-V2", series: "MX2", cat: "drives", spec: "0.2kW — V1 replacement, identical specifications", status: "instock", photo: null, linkedin: "3G3MX2-AB002-V1.png", sell_price: 345.0, sell_price_currency: "USD", price_source: "ebay_ref" },
   { brand: "OMRON", model: "R88M-KE75030H", series: "Accurax G5", cat: "servo", spec: "750W servo motor, 2.4N·m, 3000r/min, 3φAC120V, IP67, CE/UL", status: "instock", photo: "R88M-KE75030H.jpg", linkedin: "R88M-KE75030H.png" },
   { brand: "OMRON", model: "R88D-KN08H-ECT", series: "Accurax G5", cat: "servo",
     spec: "750W servo drive, 200–240VAC, EtherCAT, matches R88M-KE75030H, CE/UL/TUV",
-    status: "instock", photo: "R88D-KN08H-ECT.jpg", linkedin: "R88D-KN08H-ECT.png",
+    status: "instock", photo: "R88D-KN08H-ECT.jpg", linkedin: "R88D-KN08H-ECT.png", sell_price: 241.39, sell_price_currency: "USD", price_source: "ebay_ref",
     specs: [
       ["Order code",              "R88D-KN08H-ECT"],
       ["Product type",            "Accurax G5 servo drive (EtherCAT)"],
@@ -183,12 +183,12 @@ const PRODUCTS = [
     sell_price: 216.38, sell_price_currency: "USD", price_source: "ebay_ref" },
 
   // ---- Yaskawa ----
-  { brand: "Yaskawa", model: "CIMR-VB4A0038FBA", series: "V1000", cat: "drives", spec: "18.5kW(ND)/15kW(HD) inverter, 3-phase 380V", status: "legacy", photo: null, linkedin: "CIMR-VB4A0038FBA.png" },
+  { brand: "Yaskawa", model: "CIMR-VB4A0038FBA", series: "V1000", cat: "drives", spec: "18.5kW(ND)/15kW(HD) inverter, 3-phase 380V", status: "legacy", photo: null, linkedin: "CIMR-VB4A0038FBA.png", sell_price: 698.28, sell_price_currency: "USD", price_source: "ebay_ref" },
   { brand: "Yaskawa", model: "GA50C4038EBA", series: "GA500", cat: "drives", spec: "18.5kW(ND)/15kW(HD) — V1000 replacement", status: "instock", photo: null, linkedin: "CIMR-VB4A0038FBA.png" },
-  { brand: "Yaskawa", model: "CIPR-GA70D4038ABMA-AAAABA", series: "GA700", cat: "drives", spec: "18.5kW HD / 22kW ND inverter, 3-phase 400V, built-in EMC filter", status: "instock", photo: null, linkedin: "CIPR-GA70D4038ABMA-AAAABA.png" },
+  { brand: "Yaskawa", model: "CIPR-GA70D4038ABMA-AAAABA", series: "GA700", cat: "drives", spec: "18.5kW HD / 22kW ND inverter, 3-phase 400V, built-in EMC filter", status: "instock", photo: null, linkedin: "CIPR-GA70D4038ABMA-AAAABA.png", sell_price: 1950.0, sell_price_currency: "USD", price_source: "ebay_ref" },
   { brand: "Yaskawa", model: "CIMR-AB4A0011FBA", series: "A1000", cat: "drives",
     spec: "5.5kW(ND)/3.7kW(HD) inverter, 3-phase 400V, open/closed-loop vector control",
-    status: "instock", photo: "CIMR-AB4A0011FBA.jpg", linkedin: "CIMR-AB4A0011FBA.png",
+    status: "instock", photo: "CIMR-AB4A0011FBA.jpg", linkedin: "CIMR-AB4A0011FBA.png", sell_price: 648.0, sell_price_currency: "USD", price_source: "ebay_ref",
     specs: [
       ["Order code",           "CIMR-AB4A0011FBA"],
       ["Product type",         "Yaskawa A1000 vector AC drive"],
@@ -232,12 +232,12 @@ const PRODUCTS = [
         a: "Yes. Send your exact original part number to info@fouwell.com and our engineers will confirm the current equivalent, availability and pricing — usually within one business day." }
     ]
   },
-  { brand: "Yaskawa", model: "SGM7J-08A6A6C", series: "Sigma-7", cat: "servo", spec: "750W servo motor, 200V, 24-bit absolute encoder, with brake, IP67", status: "instock", photo: null, linkedin: "SGM7J-08A6A6C.png" },
-  { brand: "Yaskawa", model: "SGMAH-04ADA-TF13", series: "Sigma-II", cat: "servo", spec: "400W servo motor, 200V, 2.6A, 1.27N·m, 3000r/min, Japan original legacy spare", status: "legacy", photo: "SGMAH-04ADA-TF13.jpg", linkedin: "SGMAH-04ADA-TF13.png" },
+  { brand: "Yaskawa", model: "SGM7J-08A6A6C", series: "Sigma-7", cat: "servo", spec: "750W servo motor, 200V, 24-bit absolute encoder, with brake, IP67", status: "instock", photo: null, linkedin: "SGM7J-08A6A6C.png", sell_price: 368.79, sell_price_currency: "USD", price_source: "ebay_ref" },
+  { brand: "Yaskawa", model: "SGMAH-04ADA-TF13", series: "Sigma-II", cat: "servo", spec: "400W servo motor, 200V, 2.6A, 1.27N·m, 3000r/min, Japan original legacy spare", status: "legacy", photo: "SGMAH-04ADA-TF13.jpg", linkedin: "SGMAH-04ADA-TF13.png", sell_price: 1005.27, sell_price_currency: "USD", price_source: "ebay_ref" },
 
   // ---- Allen-Bradley ----
-  { brand: "Allen-Bradley", model: "2097-V34PR6-LM", series: "Kinetix 350", cat: "servo", spec: "Single-axis servo drive, 400/480VAC, 6.0A, STO CAT.3/D, EtherNet/IP, USA original", status: "instock", photo: "2097-V34PR6-LM.jpg", linkedin: "2097-V34PR6-LM.png" },
-  { brand: "Allen-Bradley", model: "150-C30NBD", series: "SMC-3", cat: "drives", spec: "Soft starter, 30A (3-wire)/51A (Delta), 3-phase 200–480V", status: "instock", photo: "150-C30NBD.jpg", linkedin: "150-C30NBD.png" },
+  { brand: "Allen-Bradley", model: "2097-V34PR6-LM", series: "Kinetix 350", cat: "servo", spec: "Single-axis servo drive, 400/480VAC, 6.0A, STO CAT.3/D, EtherNet/IP, USA original", status: "instock", photo: "2097-V34PR6-LM.jpg", linkedin: "2097-V34PR6-LM.png", sell_price: 1911.68, sell_price_currency: "USD", price_source: "ebay_ref" },
+  { brand: "Allen-Bradley", model: "150-C30NBD", series: "SMC-3", cat: "drives", spec: "Soft starter, 30A (3-wire)/51A (Delta), 3-phase 200–480V", status: "instock", photo: "150-C30NBD.jpg", linkedin: "150-C30NBD.png", sell_price: 402.36, sell_price_currency: "USD", price_source: "ebay_ref" },
 
   // ---- ABB ----
   { brand: "ABB", model: "3AFE68257913", series: "AIBP-51", cat: "spares", spec: "Input bridge protection board, 3× Vishay components, RoHS, Finland original", status: "instock", photo: "3AFE68257913.jpg", linkedin: null },
@@ -287,19 +287,19 @@ const PRODUCTS = [
   { brand: "ABB", model: "61059113", series: "Plastic Fibre Optic", cat: "spares", spec: "Double plastic fibre optic cable, 5m, gate drive ↔ main control board", status: "instock", photo: "61059113.jpg", linkedin: "61059113.png" },
 
   // ---- Delta ----
-  { brand: "Delta", model: "AS228P-A", series: "AS200", cat: "controllers", spec: "PLC CPU module, 16DI/12DO, 24VDC, built-in Ethernet + 2×RS485 + CAN, CE/UKCA/UL", status: "instock", photo: "AS228P-A.jpg", linkedin: "AS228P-A.png" },
-  { brand: "Delta", model: "ASD-B3-0721-M", series: "ASDA-B3", cat: "servo", spec: "750W servo drive, 200–230VAC, CE/UKCA/UL certified", status: "instock", photo: "ASD-B3-0721-M.jpg", linkedin: "ASD-B3-0721-M.png" },
+  { brand: "Delta", model: "AS228P-A", series: "AS200", cat: "controllers", spec: "PLC CPU module, 16DI/12DO, 24VDC, built-in Ethernet + 2×RS485 + CAN, CE/UKCA/UL", status: "instock", photo: "AS228P-A.jpg", linkedin: "AS228P-A.png", sell_price: 356.59, sell_price_currency: "USD", price_source: "ebay_ref" },
+  { brand: "Delta", model: "ASD-B3-0721-M", series: "ASDA-B3", cat: "servo", spec: "750W servo drive, 200–230VAC, CE/UKCA/UL certified", status: "instock", photo: "ASD-B3-0721-M.jpg", linkedin: "ASD-B3-0721-M.png", sell_price: 381.09, sell_price_currency: "USD", price_source: "ebay_ref" },
 
   // ---- LS Electric ----
   { brand: "LS Electric", model: "LSLV0004G100-4E0NN", series: "G100", cat: "drives", spec: "0.4kW/0.5HP inverter, 3-phase 380–480V, CE/UL, built-in EMC", status: "instock", photo: "LSLV0004G100-4E0NN.jpg", linkedin: "LSLV0004G100-4E0NN.png" },
-  { brand: "LS Electric", model: "XGF-PD4H", series: "XGT", cat: "controllers", spec: "Positioning module, line-drive differential pulse output, 4-axis, UL/CE/KC, Made in Korea", status: "instock", photo: "XGF-PD4H.jpg", linkedin: "XGF-PD4H.png" },
+  { brand: "LS Electric", model: "XGF-PD4H", series: "XGT", cat: "controllers", spec: "Positioning module, line-drive differential pulse output, 4-axis, UL/CE/KC, Made in Korea", status: "instock", photo: "XGF-PD4H.jpg", linkedin: "XGF-PD4H.png", sell_price: 920.84, sell_price_currency: "USD", price_source: "ebay_ref" },
 
   // ---- INVT ----
-  { brand: "INVT", model: "GD200A-018G/022P-4", series: "GD200A", cat: "drives", spec: "18.5kW (G heavy duty) / 22kW (P variable torque) inverter, 3-phase 380–440V", status: "instock", photo: null, linkedin: "GD200A-018G_022P-4.png" },
+  { brand: "INVT", model: "GD200A-018G/022P-4", series: "GD200A", cat: "drives", spec: "18.5kW (G heavy duty) / 22kW (P variable torque) inverter, 3-phase 380–440V", status: "instock", photo: null, linkedin: "GD200A-018G_022P-4.png", sell_price: 1110.59, sell_price_currency: "USD", price_source: "ebay_ref" },
 
   // ---- Pro-face / Beckhoff ----
-  { brand: "Pro-face", model: "PFXGP4301TADW", series: "GP4000", cat: "hmi", spec: "7.5\" TFT touchscreen, 640×480, RS-232/485 + Ethernet, IP65, DC24V", status: "instock", photo: "PFXGP4301TADW.jpg", linkedin: "PFXGP4301TADW.png" },
-  { brand: "Beckhoff", model: "CP6702-1028-0040", series: "CP6702", cat: "hmi", spec: "15\" touch Panel PC, Celeron 1.4GHz, 2GB RAM, 20GB CFast, DC24V", status: "instock", photo: null, linkedin: "CP6702-1028-0040.png" },
+  { brand: "Pro-face", model: "PFXGP4301TADW", series: "GP4000", cat: "hmi", spec: "7.5\" TFT touchscreen, 640×480, RS-232/485 + Ethernet, IP65, DC24V", status: "instock", photo: "PFXGP4301TADW.jpg", linkedin: "PFXGP4301TADW.png", sell_price: 292.71, sell_price_currency: "USD", price_source: "ebay_ref" },
+  { brand: "Beckhoff", model: "CP6702-1028-0040", series: "CP6702", cat: "hmi", spec: "15\" touch Panel PC, Celeron 1.4GHz, 2GB RAM, 20GB CFast, DC24V", status: "instock", photo: null, linkedin: "CP6702-1028-0040.png", sell_price: 9932.25, sell_price_currency: "USD", price_source: "ebay_ref" },
 
   // ---- Sensors & instruments ----
   { brand: "VEGA", model: "PS6X.2SWYDBXATKMKHAXXXXXXX", series: "VEGAPULS 6X", cat: "sensors",
@@ -348,19 +348,19 @@ const PRODUCTS = [
   },
   { brand: "VEGA", model: "PS6X-222-2TC", series: "VEGAPULS 6X", cat: "sensors", spec: "80GHz radar level meter, outdoor IP66/IP67 Type 4X, 4–20mA HART, Germany original", status: "instock", photo: "VEGAPULS-6X.jpg", linkedin: "PS6X-222-2TC.png" },
   { brand: "VEGA", model: "PS64.RXHCAHXBM00M", series: "VEGAPULS 64", cat: "sensors", spec: "80GHz compact radar, full stainless steel, PTFE, −1~10bar, 30m range, Germany original", status: "instock", photo: "VEGAPULS-64.jpg", linkedin: "PS64.RXHCAHXBM00M.png" },
-  { brand: "Honeywell", model: "943-F4V-2D-1C0-300E", series: "943", cat: "sensors", spec: "Proximity sensor, analog 0–10V + switching output, teach-in, 15–30VDC", status: "instock", photo: "943-F4V-2D-1C0-300E.jpg", linkedin: null },
-  { brand: "TURCK", model: "Ni5-G12K-AP6X", series: "Ni5-G12K", cat: "sensors", spec: "M12 inductive proximity switch, PNP NO 3-wire, Sn 5mm, 10–30VDC, CE/UL", status: "instock", photo: "Ni5-G12K-AP6X.jpg", linkedin: "Ni5-G12K-AP6X.png" },
-  { brand: "Barksdale", model: "B2T-A48SS-P5", series: "B2T", cat: "sensors", spec: "Pressure switch, 240–4800 PSI, SS wetted parts, NEMA 4, 10A, USA original", status: "instock", photo: "B2T-A48SS-P5.jpg", linkedin: "B2T-A48SS-P5.png" },
-  { brand: "POSITAL", model: "OCD-DPC1B-1212-C100-H3P", series: "OCD-DPC1B", cat: "sensors", spec: "Multiturn absolute encoder, 4096×4096 (24-bit), Profibus DP, Made in Poland", status: "instock", photo: "OCD-DPC1B-1212-C100-H3P.jpg", linkedin: "OCD-DPC1B-1212-C100-H3P.png" },
-  { brand: "CX", model: "CSP50-8-500BZ-5-30TG5", series: "CSP50", cat: "sensors", spec: "Incremental rotary encoder, 500PPR, 8mm shaft, DC5–30V, differential ABZ output", status: "instock", photo: "CSP50-8-500BZ-5-30TG5.jpg", linkedin: "CSP50-8-500BZ-5-30TG5.png" },
+  { brand: "Honeywell", model: "943-F4V-2D-1C0-300E", series: "943", cat: "sensors", spec: "Proximity sensor, analog 0–10V + switching output, teach-in, 15–30VDC", status: "instock", photo: "943-F4V-2D-1C0-300E.jpg", linkedin: null, sell_price: 709.04, sell_price_currency: "USD", price_source: "ebay_ref" },
+  { brand: "TURCK", model: "Ni5-G12K-AP6X", series: "Ni5-G12K", cat: "sensors", spec: "M12 inductive proximity switch, PNP NO 3-wire, Sn 5mm, 10–30VDC, CE/UL", status: "instock", photo: "Ni5-G12K-AP6X.jpg", linkedin: "Ni5-G12K-AP6X.png", sell_price: 25.46, sell_price_currency: "USD", price_source: "ebay_ref" },
+  { brand: "Barksdale", model: "B2T-A48SS-P5", series: "B2T", cat: "sensors", spec: "Pressure switch, 240–4800 PSI, SS wetted parts, NEMA 4, 10A, USA original", status: "instock", photo: "B2T-A48SS-P5.jpg", linkedin: "B2T-A48SS-P5.png", sell_price: 866.0, sell_price_currency: "USD", price_source: "ebay_ref" },
+  { brand: "POSITAL", model: "OCD-DPC1B-1212-C100-H3P", series: "OCD-DPC1B", cat: "sensors", spec: "Multiturn absolute encoder, 4096×4096 (24-bit), Profibus DP, Made in Poland", status: "instock", photo: "OCD-DPC1B-1212-C100-H3P.jpg", linkedin: "OCD-DPC1B-1212-C100-H3P.png", sell_price: 635.63, sell_price_currency: "USD", price_source: "ebay_ref" },
+  { brand: "CX", model: "CSP50-8-500BZ-5-30TG5", series: "CSP50", cat: "sensors", spec: "Incremental rotary encoder, 500PPR, 8mm shaft, DC5–30V, differential ABZ output", status: "instock", photo: "CSP50-8-500BZ-5-30TG5.jpg", linkedin: "CSP50-8-500BZ-5-30TG5.png", sell_price: 76.76, sell_price_currency: "USD", price_source: "ebay_ref" },
 
   // ---- Components & spares ----
-  { brand: "Weidmüller", model: "SKH-F48", series: "SKH", cat: "spares", spec: "Passive interface terminal module, 32-point screw terminal ↔ ribbon cable, DIN rail, CE, Made in Poland", status: "instock", photo: "SKH-F48.jpg", linkedin: "SKH-F48.png" },
-  { brand: "FANOX", model: "U3N-400", series: "U3N", cat: "spares", spec: "3-phase + neutral voltage monitoring relay, 400VAC, DIP-adjustable thresholds, 2 relay outputs, Made in Spain", status: "instock", photo: "U3N-400.jpg", linkedin: "U3N-400.png" },
-  { brand: "Bosch Rexroth", model: "1.0630-H6XL-A00-0-M", series: "H6XL", cat: "spares", spec: "Replacement hydraulic filter element, German factory original", status: "instock", photo: "1.0630-H6XL-A00-0-M.jpg", linkedin: null },
-  { brand: "Tianhe", model: "WDJ36-II", series: "WDJ36", cat: "sensors", spec: "Precision conductive-plastic potentiometer, custom resistance/travel, bulk stock", status: "instock", photo: "WDJ36-II.jpg", linkedin: "WDJ36-II.png" },
-  { brand: "DPG", model: "5GN-20-K", series: "5IK120GN-CF", cat: "drives", spec: "Single-phase AC gear motor, 120W, 220V 60Hz, 1350r/min, 20:1 ratio", status: "instock", photo: "5GN-20-K.jpg", linkedin: "5GN-20-K.png" },
-  { brand: "General", model: "80ST-M02430", series: "80ST", cat: "servo", spec: "0.75kW AC servo motor, 220V, 2.39N·m, 3000RPM", status: "instock", photo: null, linkedin: "R88M-KE75030H.png" },
+  { brand: "Weidmüller", model: "SKH-F48", series: "SKH", cat: "spares", spec: "Passive interface terminal module, 32-point screw terminal ↔ ribbon cable, DIN rail, CE, Made in Poland", status: "instock", photo: "SKH-F48.jpg", linkedin: "SKH-F48.png", sell_price: 33.0, sell_price_currency: "USD", price_source: "ebay_ref" },
+  { brand: "FANOX", model: "U3N-400", series: "U3N", cat: "spares", spec: "3-phase + neutral voltage monitoring relay, 400VAC, DIP-adjustable thresholds, 2 relay outputs, Made in Spain", status: "instock", photo: "U3N-400.jpg", linkedin: "U3N-400.png", sell_price: 209.95, sell_price_currency: "USD", price_source: "ebay_ref" },
+  { brand: "Bosch Rexroth", model: "1.0630-H6XL-A00-0-M", series: "H6XL", cat: "spares", spec: "Replacement hydraulic filter element, German factory original", status: "instock", photo: "1.0630-H6XL-A00-0-M.jpg", linkedin: null, sell_price: 234.8, sell_price_currency: "USD", price_source: "ebay_ref" },
+  { brand: "Tianhe", model: "WDJ36-II", series: "WDJ36", cat: "sensors", spec: "Precision conductive-plastic potentiometer, custom resistance/travel, bulk stock", status: "instock", photo: "WDJ36-II.jpg", linkedin: "WDJ36-II.png", sell_price: 87.97, sell_price_currency: "USD", price_source: "ebay_ref" },
+  { brand: "DPG", model: "5GN-20-K", series: "5IK120GN-CF", cat: "drives", spec: "Single-phase AC gear motor, 120W, 220V 60Hz, 1350r/min, 20:1 ratio", status: "instock", photo: "5GN-20-K.jpg", linkedin: "5GN-20-K.png", sell_price: 257.21, sell_price_currency: "USD", price_source: "ebay_ref" },
+  { brand: "General", model: "80ST-M02430", series: "80ST", cat: "servo", spec: "0.75kW AC servo motor, 220V, 2.39N·m, 3000RPM", status: "instock", photo: null, linkedin: "R88M-KE75030H.png", sell_price: 364.94, sell_price_currency: "USD", price_source: "ebay_ref" },
 ];
 
 /* ---- Brand wall — 35+ brands we supply
