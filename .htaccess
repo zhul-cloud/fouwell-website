@@ -7,7 +7,15 @@ RewriteCond %{HTTPS} off [OR]
 RewriteCond %{HTTP_HOST} ^www\.fouwell\.com$ [NC]
 RewriteRule ^(.*)$ https://fouwell.com/$1 [R=301,L]
 
-# 2. SEO-friendly product URLs:
+# 2a. Prerendered product pages (scripts/build-product-pages.js output) win first:
+#     if products/<slug>/index.html physically exists, serve it directly — real
+#     per-product Title/Meta/H1/JSON-LD baked in, no query-string rewrite needed.
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# 2b. Fallback for any slug not yet prerendered (e.g. a product added to data.js
+#     before the next build-product-pages.js run): serve the JS-driven template,
+#     which resolves the slug client-side same as before.
 #    /products/<slug>/   -->  /product.html?slug=<slug>
 #    where slug is built from brand + series + model (e.g. siemens-s7-1200-6es7212-1ae40-0xb0)
 RewriteRule ^products/([a-z0-9][a-z0-9-]*)/?$ /product.html?slug=$1 [L,QSA]
