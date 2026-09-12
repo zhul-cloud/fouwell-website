@@ -1,7 +1,14 @@
 /* Fouwell product catalog data
    Categories: controllers | hmi | servo | drives | sensors | spares
    Status: instock | legacy | discont
-   `linkedin`: path to marketing image under wiki/marketing/<brand>/.../LinkedIn/ (used as photo fallback) */
+   `linkedin`: path to marketing image under wiki/marketing/<brand>/.../LinkedIn/ (used as photo fallback)
+   `sell_price` / `sell_price_currency`: when present, published as Offer.price/priceCurrency
+   in the Product schema (see injectProductSchema() / build-product-pages.js). Sourced from
+   internal 采购价/售价/同行价 when available, else an external reference price (eBay first,
+   then general web search; median if multiple; converted to USD) — see
+   schema/products-schema.md "AI价格解析" for the full procedure and the 2026-09-12 decision
+   record. `price_source` (internal-only, not published in Schema) notes where each SKU's
+   number came from, e.g. "internal:sell_price", "ebay_ref", "web_ref:median_of_4". */
 
 const PRODUCTS = [
   // ---- Siemens ----

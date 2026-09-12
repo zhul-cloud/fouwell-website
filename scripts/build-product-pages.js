@@ -78,12 +78,18 @@ function buildSchemas(p) {
     description: p.spec, image: imgAbs,
     brand: { '@type': 'Brand', name: p.brand },
     category: CATEGORIES[p.cat] || p.cat, url,
-    offers: {
-      '@type': 'Offer', url,
-      availability: STATUS_AVAIL[p.status] || 'https://schema.org/InStock',
-      itemCondition: 'https://schema.org/NewCondition',
-      seller: { '@type': 'Organization', name: 'Fuzhou Fouwell Technology Co., Ltd.' }
-    }
+    // price/priceCurrency only present when p.sell_price is set — see
+    // schema/products-schema.md "AI价格解析" (internal 采购价/售价/同行价 preferred;
+    // external reference price as fallback, 2026-09-12 decision).
+    offers: Object.assign(
+      {
+        '@type': 'Offer', url,
+        availability: STATUS_AVAIL[p.status] || 'https://schema.org/InStock',
+        itemCondition: 'https://schema.org/NewCondition',
+        seller: { '@type': 'Organization', name: 'Fuzhou Fouwell Technology Co., Ltd.' }
+      },
+      (typeof p.sell_price === 'number') ? { price: p.sell_price, priceCurrency: p.sell_price_currency || 'USD' } : {}
+    )
   };
   if (brand) product.manufacturer = { '@type': 'Organization', name: brand.name };
 

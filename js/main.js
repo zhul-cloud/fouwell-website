@@ -90,16 +90,22 @@ function injectProductSchema(p) {
     brand: { '@type': 'Brand', name: p.brand },
     category: (typeof CATEGORIES !== 'undefined' && CATEGORIES[p.cat]) || p.cat,
     url: url,
-    offers: {
-      '@type': 'Offer',
-      url: url,
-      // No fixed public price (quote-based B2B pricing) — omitting price/priceCurrency
-      // rather than publishing a fake "0", which Google can flag as invalid/misleading
-      // structured data. This trades away price-display rich results for correctness.
-      availability: STATUS_AVAIL[p.status] || 'https://schema.org/InStock',
-      itemCondition: 'https://schema.org/NewCondition',
-      seller: { '@type': 'Organization', name: 'Fuzhou Fouwell Technology Co., Ltd.' }
-    }
+    offers: Object.assign(
+      {
+        '@type': 'Offer',
+        url: url,
+        availability: STATUS_AVAIL[p.status] || 'https://schema.org/InStock',
+        itemCondition: 'https://schema.org/NewCondition',
+        seller: { '@type': 'Organization', name: 'Fuzhou Fouwell Technology Co., Ltd.' }
+      },
+      // price/priceCurrency only present when p.sell_price is set — see
+      // schema/products-schema.md "AI价格解析" for how it's populated (internal
+      // 采购价/售价/同行价 preferred; external reference price — eBay first, then
+      // general web search, median if multiple, converted to USD — as fallback,
+      // 2026-09-12 decision). No price published for SKUs with none of the above,
+      // rather than a fake placeholder.
+      (typeof p.sell_price === 'number') ? { price: p.sell_price, priceCurrency: p.sell_price_currency || 'USD' } : {}
+    )
   };
   if (brand) product.manufacturer = { '@type': 'Organization', name: brand.name };
 
