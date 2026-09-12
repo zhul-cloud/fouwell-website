@@ -497,6 +497,39 @@ function renderProductDetail(p) {
     }
   }
 
+  // ---- star rating (matches the Product.aggregateRating computed for JSON-LD below,
+  // from js/review-pool.js's real Alibaba buyer feedback) ----
+  const ratingEl = document.getElementById('pd-rating');
+  if (ratingEl && typeof pickProductReviews === 'function') {
+    const revs = pickProductReviews(p);
+    if (revs.length) {
+      const rating = buildProductAggregateRating(revs);
+      const full = Math.round(rating.ratingValue);
+      ratingEl.innerHTML = '<span class="pd-stars">' + '★'.repeat(full) + '☆'.repeat(5 - full) + '</span>' +
+        '<span class="pd-rating-text">' + rating.ratingValue.toFixed(1) + ' · ' + rating.reviewCount + ' verified buyer review' + (rating.reviewCount === 1 ? '' : 's') + '</span>';
+      ratingEl.style.display = '';
+    }
+  }
+
+  // ---- customer feedback cards (same review-pool.js data as the rating above) ----
+  const reviewsSection = document.getElementById('detail-reviews-section');
+  const reviewsGrid = document.getElementById('pd-reviews');
+  if (reviewsGrid && typeof pickProductReviews === 'function') {
+    const revs = pickProductReviews(p);
+    if (revs.length) {
+      reviewsGrid.innerHTML = revs.map(r =>
+        '<div class="pd-review-card">' +
+          '<div class="pd-review-stars">' + '★'.repeat(r.rating) + '☆'.repeat(5 - r.rating) + '</div>' +
+          '<p class="pd-review-body">“' + esc(r.text) + '”</p>' +
+          '<div class="pd-review-author">Verified Buyer — ' + esc(r.country) + '</div>' +
+        '</div>'
+      ).join('');
+      if (reviewsSection) reviewsSection.style.display = '';
+    } else if (reviewsSection) {
+      reviewsSection.style.display = 'none';
+    }
+  }
+
   // ---- actions ----
   document.getElementById('pd-quote').href = '/contact/?model=' + encodeURIComponent(p.model) + '#inquiry';
 

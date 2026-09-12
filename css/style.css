@@ -822,6 +822,9 @@ a.pill.cat:hover { text-decoration: underline; }
 }
 .pd-price-ref strong { color: var(--ink); font-size: 17px; }
 .pd-price-ref .pd-price-note { color: var(--gray-500); font-size: 12.5px; display: block; margin-top: 2px; }
+.pd-rating { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; font-size: 13.5px; }
+.pd-rating .pd-stars { color: #f5a623; font-size: 15px; letter-spacing: 1px; }
+.pd-rating .pd-rating-text { color: var(--gray-500); }
 .pd-points { list-style: none; margin-bottom: 24px; }
 .pd-points li { font-size: 13.5px; color: var(--gray-700); margin-bottom: 7px; display: flex; gap: 8px; }
 .pd-points .pt { color: #1e9e5a; font-weight: 800; }
@@ -1287,6 +1290,20 @@ a.pill.cat:hover { text-decoration: underline; }
   color: var(--gray-700, #4a5468);
   line-height: 1.6;
 }
+.pd-review-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 18px;
+}
+.pd-review-card {
+  background: #fff;
+  border: 1px solid var(--gray-200, #dfe5ee);
+  border-radius: 10px;
+  padding: 20px;
+}
+.pd-review-stars { color: #f5a623; font-size: 14px; letter-spacing: 1px; margin-bottom: 8px; }
+.pd-review-body { font-size: 14px; color: var(--ink, #0e1f3a); line-height: 1.6; margin-bottom: 10px; }
+.pd-review-author { font-size: 12.5px; color: var(--gray-500); }
 
 /* Compatibility / cross-reference — clean table with mono part numbers. */
 .pd-compat-table {

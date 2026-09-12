@@ -46,6 +46,23 @@ function buildFaqHtml(p) {
   ).join('\n        ');
 }
 
+/* ---- port of the star-rating + review-card rendering in js/main.js — static version ---- */
+function buildRatingHtml(rating) {
+  const full = Math.round(rating.ratingValue);
+  return '<span class="pd-stars">' + '★'.repeat(full) + '☆'.repeat(5 - full) + '</span>' +
+    '<span class="pd-rating-text">' + rating.ratingValue.toFixed(1) + ' · ' + rating.reviewCount +
+    ' verified buyer review' + (rating.reviewCount === 1 ? '' : 's') + '</span>';
+}
+function buildReviewsHtml(reviews) {
+  return reviews.map(r =>
+    '<div class="pd-review-card">' +
+      '<div class="pd-review-stars">' + '★'.repeat(r.rating) + '☆'.repeat(5 - r.rating) + '</div>' +
+      '<p class="pd-review-body">“' + escHtml(r.text) + '”</p>' +
+      '<div class="pd-review-author">Verified Buyer — ' + escHtml(r.country) + '</div>' +
+    '</div>'
+  ).join('\n        ');
+}
+
 /* ---- port of renderProductApplications() in js/main.js — static version ---- */
 function buildApplicationsHtml(p) {
   return p.applications.map(a =>
@@ -218,6 +235,22 @@ function renderPage(p) {
       '<p class="pd-price-ref" id="pd-price-ref">Reference price: <strong>~$' + Math.round(p.sell_price) + '</strong>' +
         '<span class="pd-price-note">(market reference — contact us for a confirmed quote)</span></p>'
     );
+  }
+  // Static star rating + customer feedback cards — real Alibaba buyer feedback (js/review-pool.js),
+  // same data used to compute the JSON-LD Product.aggregateRating/review below (buildSchemas()).
+  {
+    const revs = pickProductReviews(p);
+    if (revs.length) {
+      const rating = buildProductAggregateRating(revs);
+      html = html.replace(
+        '<div class="pd-rating" id="pd-rating" style="display:none;"></div>',
+        '<div class="pd-rating" id="pd-rating">' + buildRatingHtml(rating) + '</div>'
+      );
+      html = html.replace(
+        '<div class="pd-review-grid" id="pd-reviews"></div>',
+        '<div class="pd-review-grid" id="pd-reviews">\n        ' + buildReviewsHtml(revs) + '\n      </div>'
+      );
+    }
   }
   // Static FAQ — hand-written for deep pages, generic category template otherwise (see
   // faqFor()/genericFaqFor() above) — baked into the HTML so it's crawler-visible even
