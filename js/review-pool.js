@@ -77,12 +77,11 @@ function _hashStr(s) {
 function pickReviewCount(p) {
   return 1 + (_hashStr('count:' + p.brand + p.model) % 20); // 1-20
 }
-/* How many of those reviews actually get a visible card + JSON-LD Review entry: at most
-   3-5, and never more than the total reviewCount itself (can't show 5 written reviews when
-   the stated total is 1). */
+/* How many of those reviews actually get a visible card + JSON-LD Review entry: at most 8
+   (2026-09-12 rule, revised from an earlier 3-5 random cap), and never more than the total
+   reviewCount itself (can't show 8 written reviews when the stated total is, say, 3). */
 function pickDisplayCount(p, reviewCount) {
-  const cap = 3 + (_hashStr('cap:' + p.brand + p.model) % 3); // 3-5
-  return Math.min(cap, reviewCount);
+  return Math.min(8, reviewCount);
 }
 
 /* Model-specific reviews win when confirmed; otherwise a deterministic (reproducible, not
