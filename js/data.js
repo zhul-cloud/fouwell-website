@@ -179,7 +179,8 @@ const PRODUCTS = [
         a: "Worldwide via DHL, FedEx, UPS (air) or sea freight for larger orders, with full insurance and original OMRON packaging. We also maintain an HK warehouse for faster regional consolidation on some orders." }
     ]
   },
-  { brand: "OMRON", model: "E5AC-QR4D5M-000", series: "E5AC", cat: "sensors", spec: "Digital temperature controller, 96×96mm, 4 auxiliary outputs, 24VAC/VDC", status: "instock", photo: null, linkedin: "E5AC-QR4D5M-000.png" },
+  { brand: "OMRON", model: "E5AC-QR4D5M-000", series: "E5AC", cat: "sensors", spec: "Digital temperature controller, 96×96mm, 4 auxiliary outputs, 24VAC/VDC", status: "instock", photo: null, linkedin: "E5AC-QR4D5M-000.png",
+    sell_price: 216.38, sell_price_currency: "USD", price_source: "ebay_ref" },
 
   // ---- Yaskawa ----
   { brand: "Yaskawa", model: "CIMR-VB4A0038FBA", series: "V1000", cat: "drives", spec: "18.5kW(ND)/15kW(HD) inverter, 3-phase 380V", status: "legacy", photo: null, linkedin: "CIMR-VB4A0038FBA.png" },
