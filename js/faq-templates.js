@@ -5,9 +5,16 @@
  * "深度页/标准页" content-tier strategy (see wiki/analyses/福唯独立站SEO-GEO解决方案.md and
  * schema/products-schema.md's 标准页字段结构 — "没有[客户原始问题]则用品类通用FAQ模板").
  *
- * Deliberately does NOT fabricate a compatibility/cross-reference table for standard pages —
- * unlike FAQ, a "compatible part number" claim would be actual false data if invented, so
- * renderProductCompatibility() keeps hiding that section until a SKU has a real p.compatibility[].
+ * genericApplicationsFor() below follows the same "safe to genericize" logic as the FAQ
+ * template: these are broad, category-level statements about what this TYPE of product is
+ * typically used for, not a specific technical claim about this exact SKU — same standard
+ * as the FAQ content.
+ *
+ * Deliberately does NOT fabricate a compatibility/cross-reference TABLE for standard pages —
+ * unlike applications/FAQ, "part number X replaces part number Y" is a specific, checkable
+ * technical claim that could lead to a real wrong-part order if invented. Standard pages show
+ * the Compatible & Replacement section with an inquiry CTA instead of a table (2026-09-12,
+ * see renderProductCompatibility() in js/main.js) — never a fabricated table.
  *
  * Loaded as a plain browser global (like data.js) AND via the same Node vm sandbox used by
  * scripts/lib/site-data.js's loadGlobals() for build-product-pages.js — keep it free of
@@ -57,4 +64,44 @@ function genericFaqFor(p, categoryName) {
       a: 'We ship worldwide via DHL, FedEx, UPS (air) or sea freight for larger orders, with full insurance and original manufacturer packaging. We also maintain an HK warehouse for faster regional consolidation on some orders.'
     }
   ];
+}
+
+/* Generic, category-level "Typical Applications" for standard pages without a hand-written
+   p.applications[]. Broad, true-for-the-category statements (not a specific claim about this
+   exact SKU) — same safety standard as genericFaqFor() above. */
+const GENERIC_APPLICATIONS_BY_CATEGORY = {
+  controllers: [
+    { icon: '🏭', title: 'Machine control', desc: 'Conveyors, packaging lines, mixers and filling machines — small-to-mid I/O count PLCs commonly replace relay logic in this class of equipment.' },
+    { icon: '🏢', title: 'Building automation', desc: 'HVAC, lighting and access control panels where a compact controller handles a fixed, well-defined set of I/O points.' },
+    { icon: '💧', title: 'Water & process control', desc: 'Pump sequencing, level control and simple process loops on skid-mounted or standalone equipment.' },
+    { icon: '🔧', title: 'Retrofit of legacy panels', desc: 'A common replacement part when an older PLC in an existing control panel needs to be swapped for a current, sourceable model.' }
+  ],
+  hmi: [
+    { icon: '🖥️', title: 'Machine operator interface', desc: 'Status display, alarm handling and manual control for production machines and skid equipment.' },
+    { icon: '📊', title: 'Recipe & production monitoring', desc: 'Multi-screen recipe management and trend/alarm display for small-to-mid process lines.' },
+    { icon: '🔧', title: 'Retrofit of legacy panels', desc: 'A common replacement part when an older touch panel in an existing control cabinet needs to be swapped for a current, sourceable model.' }
+  ],
+  servo: [
+    { icon: '🤖', title: 'Pick-and-place & assembly', desc: 'Multi-axis pick-and-place cells and small assembly automation where precise, repeatable positioning is required.' },
+    { icon: '📦', title: 'Packaging & labeling machines', desc: 'Indexing, cutting and labeling stations that need to stay synchronized to line speed.' },
+    { icon: '⚙️', title: 'CNC & dedicated machine axes', desc: 'Axis drives on dedicated machines and light-duty CNC applications.' }
+  ],
+  drives: [
+    { icon: '🌀', title: 'Pumps & fans', desc: 'HVAC and water-treatment pump/fan loads that benefit from variable-speed control for energy savings and process control.' },
+    { icon: '🏗️', title: 'Conveyors & material handling', desc: 'Belt and roller conveyor speed control, often needing strong starting torque without added feedback hardware.' },
+    { icon: '⚙️', title: 'General machine motor control', desc: 'Auxiliary and main motor control on general-purpose industrial machinery.' }
+  ],
+  sensors: [
+    { icon: '📏', title: 'Level, position & pressure monitoring', desc: 'Process vessels, tanks and pipelines where continuous or point-level measurement feeds into a control loop.' },
+    { icon: '🛑', title: 'Machine safety & part detection', desc: 'Presence/position sensing for machine safety interlocks and part-detection on production lines.' },
+    { icon: '🔁', title: 'Process control feedback', desc: 'Analog or digital feedback signals into PLCs and process controllers for closed-loop control.' }
+  ],
+  spares: [
+    { icon: '🔧', title: 'Drive & PLC panel repair', desc: 'Replacement boards, cables and interface components for maintaining existing control panels.' },
+    { icon: '♻️', title: 'Obsolete/discontinued part replacement', desc: 'Sourcing for components no longer available through standard distribution, to keep existing equipment running.' },
+    { icon: '🏗️', title: 'New panel builds', desc: 'Standard spare/interface components stocked for panel builders assembling new control cabinets.' }
+  ]
+};
+function genericApplicationsFor(p) {
+  return GENERIC_APPLICATIONS_BY_CATEGORY[p.cat] || [];
 }

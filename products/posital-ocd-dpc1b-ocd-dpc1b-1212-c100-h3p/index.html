@@ -137,26 +137,31 @@
   </section>
 
   <!-- Stage B: Typical Applications — rendered when product.applications[] is set. -->
-  <section class="section alt" id="detail-applications-section" style="display:none;">
+  <section class="section alt" id="detail-applications-section">
     <div class="container">
       <div class="section-head" style="text-align:left; margin-bottom:24px;">
         <div class="eyebrow">Where It Goes</div>
         <h2>Typical Applications</h2>
-        <p id="pd-app-intro" style="text-align:left; margin:0 auto 0; color:#5a6473; max-width:760px;">See where this part is typically used.</p>
+        <p id="pd-app-intro" style="text-align:left; margin:0 auto 0; color:#5a6473; max-width:760px;">Sensors &amp; Instruments like this one are typically used in the following applications:</p>
       </div>
-      <div class="pd-app-grid" id="pd-applications"></div>
+      <div class="pd-app-grid" id="pd-applications">
+        <div class="pd-app-card"><div class="pd-app-icon" aria-hidden="true">📏</div><div class="pd-app-title">Level, position &amp; pressure monitoring</div><div class="pd-app-desc">Process vessels, tanks and pipelines where continuous or point-level measurement feeds into a control loop.</div></div>
+        <div class="pd-app-card"><div class="pd-app-icon" aria-hidden="true">🛑</div><div class="pd-app-title">Machine safety &amp; part detection</div><div class="pd-app-desc">Presence/position sensing for machine safety interlocks and part-detection on production lines.</div></div>
+        <div class="pd-app-card"><div class="pd-app-icon" aria-hidden="true">🔁</div><div class="pd-app-title">Process control feedback</div><div class="pd-app-desc">Analog or digital feedback signals into PLCs and process controllers for closed-loop control.</div></div>
+      </div>
     </div>
   </section>
 
   <!-- Stage B: Cross-reference / compatibility — rendered when product.compatibility[] is set. -->
-  <section class="section" id="detail-compat-section" style="display:none;">
+  <section class="section" id="detail-compat-section">
     <div class="container">
       <div class="section-head" style="text-align:left; margin-bottom:24px;">
         <div class="eyebrow">Cross Reference</div>
         <h2>Compatible &amp; Replacement Part Numbers</h2>
-        <p id="pd-compat-intro" style="text-align:left; margin:0 auto 0; color:#5a6473; max-width:760px;">If your machine uses an older or different part number, the table below shows drop-in options. Send your exact part number to info@fouwell.com and we'll confirm compatibility before shipment.</p>
+        <p id="pd-compat-intro" style="text-align:left; margin:0 auto 0; color:#5a6473; max-width:760px;">If your machine uses an older or different POSITAL part number, we can confirm compatibility for you directly — we don’t have a pre-built cross-reference table for this exact model yet.</p>
       </div>
-      <table class="pd-compat-table" id="pd-compat-table"></table>
+      <table class="pd-compat-table" id="pd-compat-table" style="display:none;"></table>
+      <div class="pd-compat-cta" id="pd-compat-cta"><a class="btn btn-primary" href="/contact/?model=OCD-DPC1B-1212-C100-H3P#inquiry">Send Your Part Number →</a></div>
     </div>
   </section>
 

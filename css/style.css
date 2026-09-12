@@ -1341,6 +1341,13 @@ a.pill.cat:hover { text-decoration: underline; }
   color: var(--blue-deep, #0a3e75);
   border: 1px solid var(--gray-200, #dfe5ee);
 }
+.pd-compat-cta {
+  background: var(--gray-100, #f1f4f9);
+  border: 1px dashed var(--gray-300, #c9d2e0);
+  border-radius: 10px;
+  padding: 28px 24px;
+  text-align: center;
+}
 
 /* Responsive collapse for the new sections on small screens. */
 @media (max-width: 720px) {

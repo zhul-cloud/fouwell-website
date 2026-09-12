@@ -228,20 +228,26 @@ function renderProductDatasheet(p) {
   section.style.display = '';
 }
 
-/* Stage B: Render the "Typical Applications" cards. Shown only when p.applications[] is set. */
+/* Stage B: Render the "Typical Applications" cards. Hand-written p.applications[] (deep
+   pages) wins; standard pages fall back to genericApplicationsFor()'s category-level
+   template (2026-09-12) — every SKU now shows this section, not just the 6 deep pages. */
 function renderProductApplications(p) {
   const section = document.getElementById('detail-applications-section');
   if (!section) return;
   const list = document.getElementById('pd-applications');
-  if (!Array.isArray(p.applications) || !p.applications.length) {
+  const isSpecific = Array.isArray(p.applications) && p.applications.length;
+  const apps = isSpecific ? p.applications : (typeof genericApplicationsFor === 'function' ? genericApplicationsFor(p) : []);
+  if (!apps.length) {
     section.style.display = 'none';
     return;
   }
   const intro = document.getElementById('pd-app-intro');
   if (intro) {
-    intro.textContent = (p.brand + ' ' + p.model) + ' is typically used in the following applications:';
+    intro.textContent = isSpecific
+      ? (p.brand + ' ' + p.model) + ' is typically used in the following applications:'
+      : (typeof CATEGORIES !== 'undefined' ? CATEGORIES[p.cat] : p.cat) + ' like this one are typically used in the following applications:';
   }
-  list.innerHTML = p.applications.map(a =>
+  list.innerHTML = apps.map(a =>
     '<div class="pd-app-card">' +
       '<div class="pd-app-icon" aria-hidden="true">' + (a.icon || '●') + '</div>' +
       '<div class="pd-app-title">' + _escFaq(a.title || '') + '</div>' +
@@ -251,27 +257,42 @@ function renderProductApplications(p) {
   section.style.display = '';
 }
 
-/* Stage B: Render the cross-reference / compatibility table. Shown only when p.compatibility[] is set. */
+/* Stage B: Render the cross-reference / compatibility table. Hand-written p.compatibility[]
+   (deep pages) shows a real table; standard pages (2026-09-12) show this section too, but
+   with an inquiry CTA instead of a table — never a fabricated "part X replaces part Y" claim,
+   since that's a specific, checkable technical statement, unlike the generic FAQ/applications
+   fallbacks (see js/faq-templates.js header comment for why compatibility is treated
+   differently). */
 function renderProductCompatibility(p) {
   const section = document.getElementById('detail-compat-section');
   if (!section) return;
   const tbl = document.getElementById('pd-compat-table');
-  if (!Array.isArray(p.compatibility) || !p.compatibility.length) {
-    section.style.display = 'none';
-    return;
-  }
+  const cta = document.getElementById('pd-compat-cta');
+  const hasReal = Array.isArray(p.compatibility) && p.compatibility.length;
   const intro = document.getElementById('pd-compat-intro');
   if (intro) {
-    intro.textContent = 'If your machine uses an older or different ' + p.brand + ' part number, the table below shows drop-in options. Send your exact part number to info@fouwell.com and we’ll confirm compatibility before shipment.';
+    intro.textContent = hasReal
+      ? 'If your machine uses an older or different ' + p.brand + ' part number, the table below shows drop-in options. Send your exact part number to info@fouwell.com and we’ll confirm compatibility before shipment.'
+      : 'If your machine uses an older or different ' + p.brand + ' part number, we can confirm compatibility for you directly — we don’t have a pre-built cross-reference table for this exact model yet.';
   }
-  tbl.innerHTML =
-    '<thead><tr><th>Original Part Number</th><th>Compatibility Note</th></tr></thead>' +
-    '<tbody>' +
-      p.compatibility.map(c =>
-        '<tr><td><code class="pd-compat-code">' + _escFaq(c.from || '') + '</code></td>' +
-        '<td>' + _escFaq(c.note || '') + '</td></tr>'
-      ).join('') +
-    '</tbody>';
+  if (hasReal) {
+    tbl.innerHTML =
+      '<thead><tr><th>Original Part Number</th><th>Compatibility Note</th></tr></thead>' +
+      '<tbody>' +
+        p.compatibility.map(c =>
+          '<tr><td><code class="pd-compat-code">' + _escFaq(c.from || '') + '</code></td>' +
+          '<td>' + _escFaq(c.note || '') + '</td></tr>'
+        ).join('') +
+      '</tbody>';
+    if (tbl) tbl.style.display = '';
+    if (cta) cta.style.display = 'none';
+  } else {
+    if (tbl) tbl.style.display = 'none';
+    if (cta) {
+      cta.innerHTML = '<a class="btn btn-primary" href="/contact/?model=' + encodeURIComponent(p.model) + '#inquiry">Send Your Part Number →</a>';
+      cta.style.display = '';
+    }
+  }
   section.style.display = '';
 }
 

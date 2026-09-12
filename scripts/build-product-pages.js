@@ -24,7 +24,7 @@ const {
 } = require('./lib/site-data');
 
 const {
-  PRODUCTS, BRANDS, CATEGORIES, PRODUCT_VIDEOS, genericFaqFor,
+  PRODUCTS, BRANDS, CATEGORIES, PRODUCT_VIDEOS, genericFaqFor, genericApplicationsFor,
   pickProductReviews, pickReviewCount, buildProductAggregateRating, SELLER_AGGREGATE_RATING,
   SHIPPING_DETAILS, RETURN_POLICY, DATA_LAST_UPDATED
 } = loadGlobals('js/data.js', 'js/videos.js', 'js/faq-templates.js', 'js/review-pool.js', 'js/company-policies.js');
@@ -63,9 +63,19 @@ function buildReviewsHtml(reviews) {
   ).join('\n        ');
 }
 
+/* Hand-written p.applications[] (deep pages) wins; standard pages fall back to the generic
+   category-level template — same rule as faqFor(), kept in sync with js/main.js's
+   renderProductApplications(). */
+function applicationsFor(p) {
+  return (Array.isArray(p.applications) && p.applications.length) ? p.applications : genericApplicationsFor(p);
+}
+function isSpecificApplications(p) {
+  return Array.isArray(p.applications) && p.applications.length > 0;
+}
+
 /* ---- port of renderProductApplications() in js/main.js — static version ---- */
 function buildApplicationsHtml(p) {
-  return p.applications.map(a =>
+  return applicationsFor(p).map(a =>
     '<div class="pd-app-card">' +
       '<div class="pd-app-icon" aria-hidden="true">' + (a.icon || '●') + '</div>' +
       '<div class="pd-app-title">' + escHtml(a.title || '') + '</div>' +
@@ -83,6 +93,12 @@ function buildCompatibilityHtml(p) {
         '<td>' + escHtml(c.note || '') + '</td></tr>'
       ).join('') +
     '</tbody>';
+}
+/* Standard pages (no p.compatibility[]) get an inquiry CTA instead of a fabricated table —
+   see js/faq-templates.js header comment for why compatibility is treated differently from
+   FAQ/applications. */
+function buildCompatibilityCtaHtml(p) {
+  return '<a class="btn btn-primary" href="/contact/?model=' + encodeURIComponent(p.model) + '#inquiry">Send Your Part Number →</a>';
 }
 
 /* ---- port of injectProductSchema() in js/main.js — keep in sync ---- */
@@ -259,41 +275,48 @@ function renderPage(p) {
     '<div class="faq-list" id="pd-faq-list"></div>',
     '<div class="faq-list" id="pd-faq-list">\n        ' + buildFaqHtml(p) + '\n      </div>'
   );
-  // Static "Typical Applications" — deep pages only (p.applications[] hand-written);
-  // standard pages keep the section hidden exactly as before (no fabricated content).
-  if (Array.isArray(p.applications) && p.applications.length) {
+  // Static "Typical Applications" — hand-written for deep pages, generic category-level
+  // template for standard pages (2026-09-12) — every SKU now shows this section.
+  {
+    const specific = isSpecificApplications(p);
     html = html
-      .replace(
-        '<section class="section alt" id="detail-applications-section" style="display:none;">',
-        '<section class="section alt" id="detail-applications-section">'
-      )
       .replace(
         '<p id="pd-app-intro" style="text-align:left; margin:0 auto 0; color:#5a6473; max-width:760px;">See where this part is typically used.</p>',
         '<p id="pd-app-intro" style="text-align:left; margin:0 auto 0; color:#5a6473; max-width:760px;">' +
-          escHtml(p.brand + ' ' + p.model) + ' is typically used in the following applications:</p>'
+          (specific
+            ? escHtml(p.brand + ' ' + p.model) + ' is typically used in the following applications:'
+            : escHtml(CATEGORIES[p.cat] || p.cat) + ' like this one are typically used in the following applications:') +
+          '</p>'
       )
       .replace(
         '<div class="pd-app-grid" id="pd-applications"></div>',
         '<div class="pd-app-grid" id="pd-applications">\n        ' + buildApplicationsHtml(p) + '\n      </div>'
       );
   }
-  // Static "Compatible & Replacement Part Numbers" — deep pages only (p.compatibility[]
-  // hand-written); standard pages keep the section hidden, same as before.
-  if (Array.isArray(p.compatibility) && p.compatibility.length) {
-    html = html
-      .replace(
-        '<section class="section" id="detail-compat-section" style="display:none;">',
-        '<section class="section" id="detail-compat-section">'
-      )
-      .replace(
-        '<p id="pd-compat-intro" style="text-align:left; margin:0 auto 0; color:#5a6473; max-width:760px;">If your machine uses an older or different part number, the table below shows drop-in options. Send your exact part number to info@fouwell.com and we\'ll confirm compatibility before shipment.</p>',
-        '<p id="pd-compat-intro" style="text-align:left; margin:0 auto 0; color:#5a6473; max-width:760px;">If your machine uses an older or different ' +
-          escHtml(p.brand) + ' part number, the table below shows drop-in options. Send your exact part number to info@fouwell.com and we’ll confirm compatibility before shipment.</p>'
-      )
-      .replace(
-        '<table class="pd-compat-table" id="pd-compat-table"></table>',
+  // Static "Compatible & Replacement Part Numbers" — hand-written table for deep pages;
+  // standard pages (2026-09-12) show the section with an inquiry CTA instead of a table —
+  // never a fabricated "part X replaces part Y" claim (see buildCompatibilityCtaHtml above).
+  {
+    const hasReal = Array.isArray(p.compatibility) && p.compatibility.length;
+    html = html.replace(
+      '<p id="pd-compat-intro" style="text-align:left; margin:0 auto 0; color:#5a6473; max-width:760px;">If your machine uses an older or different part number, the table below shows drop-in options. Send your exact part number to info@fouwell.com and we\'ll confirm compatibility before shipment.</p>',
+      '<p id="pd-compat-intro" style="text-align:left; margin:0 auto 0; color:#5a6473; max-width:760px;">' +
+        (hasReal
+          ? 'If your machine uses an older or different ' + escHtml(p.brand) + ' part number, the table below shows drop-in options. Send your exact part number to info@fouwell.com and we’ll confirm compatibility before shipment.'
+          : 'If your machine uses an older or different ' + escHtml(p.brand) + ' part number, we can confirm compatibility for you directly — we don’t have a pre-built cross-reference table for this exact model yet.') +
+        '</p>'
+    );
+    if (hasReal) {
+      html = html.replace(
+        '<table class="pd-compat-table" id="pd-compat-table" style="display:none;"></table>',
         '<table class="pd-compat-table" id="pd-compat-table">' + buildCompatibilityHtml(p) + '</table>'
       );
+    } else {
+      html = html.replace(
+        '<div class="pd-compat-cta" id="pd-compat-cta" style="display:none;"></div>',
+        '<div class="pd-compat-cta" id="pd-compat-cta">' + buildCompatibilityCtaHtml(p) + '</div>'
+      );
+    }
   }
   return html;
 }
