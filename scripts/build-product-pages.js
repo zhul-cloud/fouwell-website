@@ -23,8 +23,11 @@ const {
   ROOT, loadGlobals, productSlug, productUrl, categoryUrl, brandUrl, STATUS_AVAIL, escHtml
 } = require('./lib/site-data');
 
-const { PRODUCTS, BRANDS, CATEGORIES, PRODUCT_VIDEOS, genericFaqFor, pickProductReviews, buildProductAggregateRating, SELLER_AGGREGATE_RATING } =
-  loadGlobals('js/data.js', 'js/videos.js', 'js/faq-templates.js', 'js/review-pool.js');
+const {
+  PRODUCTS, BRANDS, CATEGORIES, PRODUCT_VIDEOS, genericFaqFor,
+  pickProductReviews, buildProductAggregateRating, SELLER_AGGREGATE_RATING,
+  SHIPPING_DETAILS, RETURN_POLICY, DATA_LAST_UPDATED
+} = loadGlobals('js/data.js', 'js/videos.js', 'js/faq-templates.js', 'js/review-pool.js', 'js/company-policies.js');
 
 /* Hand-written p.faq[] (deep pages) wins; standard pages fall back to the generic,
    category-aware FAQ template — same rule as renderProductFAQ()/injectProductSchema()
@@ -96,7 +99,10 @@ function buildSchemas(p) {
         seller: Object.assign(
           { '@type': 'Organization', name: 'Fuzhou Fouwell Technology Co., Ltd.' },
           { aggregateRating: { '@type': 'AggregateRating', ...SELLER_AGGREGATE_RATING } }
-        )
+        ),
+        shippingDetails: SHIPPING_DETAILS,
+        hasMerchantReturnPolicy: RETURN_POLICY,
+        validFrom: DATA_LAST_UPDATED
       },
       (typeof p.sell_price === 'number') ? { price: p.sell_price, priceCurrency: p.sell_price_currency || 'USD' } : {}
     )

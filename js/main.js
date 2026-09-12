@@ -109,7 +109,16 @@ function injectProductSchema(p) {
         seller: Object.assign(
           { '@type': 'Organization', name: 'Fuzhou Fouwell Technology Co., Ltd.' },
           (typeof SELLER_AGGREGATE_RATING !== 'undefined') ? { aggregateRating: { '@type': 'AggregateRating', ...SELLER_AGGREGATE_RATING } } : {}
-        )
+        ),
+        // Company-wide shipping/return policy — see js/company-policies.js for sourcing
+        // notes and the 2026-09-12 decision record (standard small-parcel rate; heavy/
+        // oversized items are freight-quoted separately, not covered by this flat rate).
+        ...(typeof SHIPPING_DETAILS !== 'undefined' ? { shippingDetails: SHIPPING_DETAILS } : {}),
+        ...(typeof RETURN_POLICY !== 'undefined' ? { hasMerchantReturnPolicy: RETURN_POLICY } : {}),
+        // validFrom = fixed DATA_LAST_UPDATED constant (js/company-policies.js), NOT
+        // today's date computed at load time — a per-visit "today" would misrepresent
+        // freshness on every single page view.
+        ...(typeof DATA_LAST_UPDATED !== 'undefined' ? { validFrom: DATA_LAST_UPDATED } : {})
       },
       // price/priceCurrency only present when p.sell_price is set — see
       // schema/products-schema.md "AI价格解析" for how it's populated (internal
