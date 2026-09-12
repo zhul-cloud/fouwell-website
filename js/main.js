@@ -126,7 +126,12 @@ function injectProductSchema(p) {
       // general web search, median if multiple, converted to USD — as fallback,
       // 2026-09-12 decision). No price published for SKUs with none of the above,
       // rather than a fake placeholder.
-      (typeof p.sell_price === 'number') ? { price: p.sell_price, priceCurrency: p.sell_price_currency || 'USD' } : {}
+      (typeof p.sell_price === 'number')
+        ? Object.assign(
+            { price: p.sell_price, priceCurrency: p.sell_price_currency || 'USD' },
+            (typeof PRICE_VALID_UNTIL !== 'undefined') ? { priceValidUntil: PRICE_VALID_UNTIL } : {}
+          )
+        : {}
     )
   };
   if (brand) product.manufacturer = { '@type': 'Organization', name: brand.name };

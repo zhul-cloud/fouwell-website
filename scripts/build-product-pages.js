@@ -26,7 +26,7 @@ const {
 const {
   PRODUCTS, BRANDS, CATEGORIES, PRODUCT_VIDEOS, genericFaqFor, genericApplicationsFor,
   pickProductReviews, pickReviewCount, buildProductAggregateRating, SELLER_AGGREGATE_RATING,
-  SHIPPING_DETAILS, RETURN_POLICY, DATA_LAST_UPDATED
+  SHIPPING_DETAILS, RETURN_POLICY, DATA_LAST_UPDATED, PRICE_VALID_UNTIL
 } = loadGlobals('js/data.js', 'js/videos.js', 'js/faq-templates.js', 'js/review-pool.js', 'js/company-policies.js');
 
 /* Hand-written p.faq[] (deep pages) wins; standard pages fall back to the generic,
@@ -137,7 +137,9 @@ function buildSchemas(p) {
         hasMerchantReturnPolicy: RETURN_POLICY,
         validFrom: DATA_LAST_UPDATED
       },
-      (typeof p.sell_price === 'number') ? { price: p.sell_price, priceCurrency: p.sell_price_currency || 'USD' } : {}
+      (typeof p.sell_price === 'number')
+        ? { price: p.sell_price, priceCurrency: p.sell_price_currency || 'USD', priceValidUntil: PRICE_VALID_UNTIL }
+        : {}
     )
   };
   if (brand) product.manufacturer = { '@type': 'Organization', name: brand.name };
