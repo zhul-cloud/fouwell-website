@@ -21,6 +21,12 @@ function productSlug(p) {
 }
 function productUrl(p) { return '/products/' + productSlug(p) + '/'; }
 
+/* Category hub (/products/<cat>/) and brand hub (/brands/<brand-slug>/) URLs — real,
+   crawlable pages added 2026-09-12 (see scripts/build-hub-pages.js) replacing the old
+   ?cat= query-filter-only / JS-chip-only approach with a real internal-link hierarchy. */
+function categoryUrl(catKey) { return '/products/' + catKey + '/'; }
+function brandUrl(brandName) { return '/brands/' + _slugPiece(brandName) + '/'; }
+
 /* Build a slug → product lookup map. Called once after data.js has loaded. */
 function buildProductSlugIndex() {
   PRODUCT_BY_SLUG = {};
@@ -109,7 +115,7 @@ function injectProductSchema(p) {
     breadcrumb.itemListElement.push({
       '@type': 'ListItem', position: 3,
       name: CATEGORIES[p.cat],
-      item: 'https://fouwell.com/products/?cat=' + p.cat
+      item: 'https://fouwell.com' + categoryUrl(p.cat)
     });
   }
   breadcrumb.itemListElement.push({
@@ -276,10 +282,20 @@ function brandTile(b) {
   );
 }
 
+/* CATEGORIES_HOME (10 broad marketing categories on the home page) is a wider aspirational
+   taxonomy than CATEGORIES (the 6 real values products are actually tagged with) — only some
+   ids have a clean real-category hub to link to; the rest fall back to the full catalog
+   instead of a "?cat=" filter that would have matched zero products. */
+const CATEGORIES_HOME_TO_REAL_CAT = {
+  drives: 'drives', plc: 'controllers', hmi: 'hmi', sensors: 'sensors', motors: 'servo'
+};
+
 /* Render a category card with number, icon style, title, items, desc, and a real product photo. */
 function categoryCard(c) {
+  const realCat = CATEGORIES_HOME_TO_REAL_CAT[c.id];
+  const href = realCat ? '/products/' + realCat + '/' : '/products/';
   return (
-    '<a class="cat-card" href="/products/?cat=' + c.id + '">' +
+    '<a class="cat-card" href="' + href + '">' +
       '<div class="cat-num">' + c.no + '</div>' +
       '<h3>' + c.title + '</h3>' +
       '<div class="cat-items">' + c.items + '</div>' +
@@ -318,11 +334,16 @@ function renderProductDetail(p) {
   // ---- breadcrumb / title ----
   document.getElementById('breadcrumb').innerHTML =
     '<a href="/">Home</a> / <a href="/products/">Products</a> / ' +
-    (p.cat ? '<a href="/products/?cat=' + p.cat + '">' + esc(CATEGORIES[p.cat]) + '</a> / ' : '') +
+    (p.cat ? '<a href="' + categoryUrl(p.cat) + '">' + esc(CATEGORIES[p.cat]) + '</a> / ' : '') +
     '<span>' + esc(p.model) + '</span>';
   document.title = p.brand + ' ' + p.model + ' | Fouwell Industrial Automation';
   document.getElementById('page-title').textContent = p.brand + ' ' + p.model;
   document.getElementById('page-sub').textContent = p.spec;
+  const crosslinks = document.getElementById('pd-crosslinks');
+  if (crosslinks) {
+    crosslinks.innerHTML = 'Browse more: <a href="' + categoryUrl(p.cat) + '">' + esc(CATEGORIES[p.cat]) +
+      '</a> · <a href="' + brandUrl(p.brand) + '">' + esc(p.brand) + ' parts</a>';
+  }
 
   // ---- meta description (per-product, was previously a single generic string for all pages) ----
   const availPhrase = p.status === 'discont' ? 'Replaced by a current equivalent'
@@ -387,16 +408,17 @@ function renderProductDetail(p) {
 
   // ---- brand row ----
   const brandRow = document.getElementById('pd-brand-row');
+  const brandHref = brandUrl(p.brand);
   if (brand && brand.logo) {
     brandRow.innerHTML =
-      '<img class="pd-brand-logo" src="' + brand.logo + '" alt="' + esc(brand.name) + '">' +
-      '<span class="pd-brand-name">' + esc(brand.name) + '</span>' +
+      '<a href="' + brandHref + '"><img class="pd-brand-logo" src="' + brand.logo + '" alt="' + esc(brand.name) + '"></a>' +
+      '<a class="pd-brand-name" href="' + brandHref + '">' + esc(brand.name) + '</a>' +
       '<span class="pd-brand-country">' + esc(brand.country) + '</span>';
     brandRow.querySelector('img').onerror = function () {
-      this.outerHTML = '<span class="pd-brand-text">' + esc(brand.name) + '</span>';
+      this.parentNode.outerHTML = '<a class="pd-brand-text" href="' + brandHref + '">' + esc(brand.name) + '</a>';
     };
   } else {
-    brandRow.innerHTML = '<span class="pd-brand-text">' + esc(p.brand) + '</span>';
+    brandRow.innerHTML = '<a class="pd-brand-text" href="' + brandHref + '">' + esc(p.brand) + '</a>';
   }
 
   // ---- series / model / badges / spec ----
@@ -404,7 +426,7 @@ function renderProductDetail(p) {
   document.getElementById('pd-model').textContent = p.model;
   document.getElementById('pd-badges').innerHTML =
     '<span class="pill ' + st.cls + '">' + st.label + '</span>' +
-    '<span class="pill cat">' + esc(CATEGORIES[p.cat]) + '</span>' +
+    '<a class="pill cat" href="' + categoryUrl(p.cat) + '">' + esc(CATEGORIES[p.cat]) + '</a>' +
     (brand ? '<span class="pill brand">' + esc(brand.country) + '</span>' : '');
   document.getElementById('pd-spec').textContent = p.spec;
 
@@ -566,6 +588,31 @@ document.addEventListener('DOMContentLoaded', function () {
     if (params.get('brand')) { state.brand = params.get('brand'); brandSel.value = state.brand; }
     if (params.get('cat')) { state.cat = params.get('cat'); catSel.value = state.cat; }
     if (params.get('q')) { state.q = params.get('q'); searchInput.value = state.q; }
+
+    // ---- duplicate/low-value URL control: a filtered ?cat=/?brand=/?q= view now
+    // duplicates a real hub page (or is a search-fragment with no canonical target of its
+    // own), so keep it out of the index and point crawlers at the real page instead of
+    // letting Google choose between two near-identical URLs on its own. ----
+    if (params.get('cat') || params.get('brand') || params.get('q') || params.get('status')) {
+      const robotsMeta = document.createElement('meta');
+      robotsMeta.name = 'robots';
+      robotsMeta.content = 'noindex,follow';
+      document.head.appendChild(robotsMeta);
+
+      let canonicalHref = 'https://fouwell.com/products/';
+      if (params.get('cat') && !params.get('brand') && !params.get('q') && !params.get('status')) {
+        canonicalHref = 'https://fouwell.com' + categoryUrl(params.get('cat'));
+      } else if (params.get('brand') && !params.get('cat') && !params.get('q') && !params.get('status')) {
+        canonicalHref = 'https://fouwell.com' + brandUrl(params.get('brand'));
+      }
+      let canonical = document.querySelector('link[rel="canonical"]');
+      if (!canonical) {
+        canonical = document.createElement('link');
+        canonical.setAttribute('rel', 'canonical');
+        document.head.appendChild(canonical);
+      }
+      canonical.setAttribute('href', canonicalHref);
+    }
 
     render();
   }

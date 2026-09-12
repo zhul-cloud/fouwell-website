@@ -208,6 +208,9 @@ a:hover { color: var(--red); }
   padding: 18px 10px 12px;
   text-align: center;
   transition: all 0.15s ease;
+  display: block;
+  text-decoration: none;
+  color: inherit;
 }
 .brand-tile:hover { border-color: var(--blue); box-shadow: var(--shadow); transform: translateY(-3px); }
 .brand-tile .brand-logo {
@@ -423,7 +426,10 @@ a:hover { color: var(--red); }
   font-weight: 700;
   padding: 3px 10px;
   border-radius: 20px;
+  text-decoration: none;
+  display: inline-block;
 }
+a.pill.cat:hover { text-decoration: underline; }
 .pill.instock { background: #e6f6ec; color: #1c7c3d; }
 .pill.legacy { background: #fff4e2; color: #a36a00; }
 .pill.discont { background: #fdeaea; color: var(--red); }
@@ -489,6 +495,8 @@ a:hover { color: var(--red); }
   border-radius: 20px;
   cursor: pointer;
   transition: all 0.12s ease;
+  text-decoration: none;
+  display: inline-block;
 }
 .chip:hover { border-color: var(--blue); color: var(--blue); }
 .chip.active { background: var(--blue); border-color: var(--blue); color: #fff; }
@@ -764,6 +772,8 @@ a:hover { color: var(--red); }
   font-size: 16px;
 }
 
+.pd-crosslinks { font-size: 13px; color: var(--gray-500, #6b7794); margin-top: 6px; }
+.pd-crosslinks a { color: inherit; text-decoration: underline; }
 .pd-info { position: sticky; top: 96px; }
 .pd-brand-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
 .pd-brand-logo { height: 30px; width: auto; object-fit: contain; }
@@ -774,7 +784,10 @@ a:hover { color: var(--red); }
   background: var(--gray-100);
   padding: 4px 12px;
   border-radius: 6px;
+  text-decoration: none;
 }
+.pd-brand-name, .pd-brand-text { text-decoration: none; }
+.pd-brand-name:hover, .pd-brand-text:hover { text-decoration: underline; }
 .pd-brand-name { font-weight: 700; font-size: 14px; color: var(--ink); }
 .pd-brand-country { font-size: 12.5px; color: var(--gray-500); }
 .pd-series {
