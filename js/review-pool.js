@@ -14,8 +14,13 @@
  * Loaded as a plain browser global (like faq-templates.js) and via the same Node vm sandbox
  * used by scripts/lib/site-data.js's loadGlobals() for build-product-pages.js.
  */
+/* Only 5-star quotes here, deliberately — the real distribution on that feedback page is
+   5-star 89% / 4-star 6% / 3-star 4% / 2-star 0% / 1-star 1%, so an all-5-star pool is more
+   representative of "what a review here typically looks like" than including the one 4-star
+   quote we captured would have been (that one pulled a product's computed average down to
+   4.5, misrepresenting how lopsidedly positive the real distribution actually is — removed
+   2026-09-12 after this was flagged). */
 const REAL_REVIEWS = [
-  { rating: 4, country: 'Indonesia', text: 'Very good.' },
   { rating: 5, country: 'Thailand', text: 'Good.' },
   { rating: 5, country: 'Colombia', text: "We had one issue with the main board and couldn't solve it ourselves, but the supplier sent a replacement under warranty without any hassle." },
   { rating: 5, country: 'Colombia', text: 'Original product, exactly as described.' },
