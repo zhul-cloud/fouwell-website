@@ -1,33 +1,256 @@
 /* Fouwell site scripts: featured products, catalog filter, inquiry form,
    brand wall, category grid, and product photo fallback to LinkedIn marketing images. */
 
+/* ============== SEO-friendly URL + Schema + FAQ infrastructure ============== */
+
+/* Lowercase, hyphenated, ASCII slug for a product: brand + series + model.
+   Used to build /products/<slug>/ URLs that are stable, human-readable, and
+   rank well in both Google and generative engines (ChatGPT, Perplexity, etc.). */
+function _slugPiece(s) {
+  return String(s == null ? '' : s)
+    .toLowerCase()
+    .replace(/[\s_./]+/g, '-')        // spaces / underscores / dots / slashes → hyphen
+    .replace(/[^a-z0-9-]/g, '')       // strip anything that isn't a-z, 0-9, hyphen
+    .replace(/-+/g, '-')              // collapse multiple hyphens
+    .replace(/^-|-$/g, '');           // trim leading/trailing hyphens
+}
+function productSlug(p) {
+  return [_slugPiece(p.brand), _slugPiece(p.series), _slugPiece(p.model)]
+    .filter(Boolean)
+    .join('-');
+}
+function productUrl(p) { return '/products/' + productSlug(p) + '/'; }
+
+/* Build a slug → product lookup map. Called once after data.js has loaded. */
+function buildProductSlugIndex() {
+  PRODUCT_BY_SLUG = {};
+  if (typeof PRODUCTS === 'undefined') return PRODUCT_BY_SLUG;
+  PRODUCTS.forEach(p => { PRODUCT_BY_SLUG[productSlug(p)] = p; });
+  return PRODUCT_BY_SLUG;
+}
+
+/* Resolve current URL to a product object. Supports:
+   - /products/<slug>/                              (new SEO-friendly URL)
+   - /products/?model=<model>                       (legacy query-string, kept for backward-compat) */
+function resolveProductFromURL() {
+  if (typeof PRODUCTS === 'undefined') return null;
+  const path = location.pathname;
+  const m = path.match(/^\/products\/([^/]+)\/?$/);
+  if (m) {
+    const slug = decodeURIComponent(m[1]);
+    if (typeof PRODUCT_BY_SLUG === 'undefined') buildProductSlugIndex();
+    if (PRODUCT_BY_SLUG[slug]) return PRODUCT_BY_SLUG[slug];
+    // Fallback: try to match by model substring at the end of the slug
+    const tail = slug.split('-').slice(-2).join('-');
+    return PRODUCTS.find(p => productSlug(p).endsWith(tail)) || null;
+  }
+  const model = new URLSearchParams(location.search).get('model');
+  if (model) return PRODUCTS.find(p => p.model === model) || null;
+  return null;
+}
+
+/* Map our internal status to schema.org availability. */
+const STATUS_AVAIL = {
+  instock: 'https://schema.org/InStock',
+  legacy:  'https://schema.org/LimitedAvailability',
+  discont: 'https://schema.org/Discontinued'
+};
+
+/* Inject dynamic JSON-LD (Product + BreadcrumbList + FAQPage when present) into <head>.
+   Called by renderProductDetail(). Google and AI engines read this for rich results. */
+function injectProductSchema(p) {
+  // Strip any previously injected dynamic schemas from this page
+  document.querySelectorAll('script[data-fouwell-dynamic-schema]').forEach(s => s.remove());
+
+  const esc = s => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  const url = 'https://fouwell.com' + productUrl(p);
+  const brand = (typeof BRANDS !== 'undefined') ? BRANDS.find(b => b.name === p.brand) : null;
+  const imgAbs = (() => {
+    if (p.photo) return 'https://fouwell.com/assets/products/' + p.photo;
+    if (p.linkedin) return 'https://fouwell.com/assets/linkedin/' + p.linkedin;
+    return 'https://fouwell.com/assets/logo.png';
+  })();
+
+  const product = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    '@id': url + '#product',
+    name: p.brand + ' ' + p.model,
+    sku: p.model,
+    mpn: p.model,
+    productID: p.model,
+    description: p.spec,
+    image: imgAbs,
+    brand: { '@type': 'Brand', name: p.brand },
+    category: (typeof CATEGORIES !== 'undefined' && CATEGORIES[p.cat]) || p.cat,
+    url: url,
+    offers: {
+      '@type': 'Offer',
+      url: url,
+      priceCurrency: 'USD',
+      price: '0',
+      priceValidUntil: '2027-12-31',
+      availability: STATUS_AVAIL[p.status] || 'https://schema.org/InStock',
+      itemCondition: 'https://schema.org/NewCondition',
+      seller: { '@type': 'Organization', name: 'Fuzhou Fouwell Technology Co., Ltd.' }
+    }
+  };
+  if (brand) product.manufacturer = { '@type': 'Organization', name: brand.name };
+
+  const breadcrumb = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://fouwell.com/' },
+      { '@type': 'ListItem', position: 2, name: 'Products', item: 'https://fouwell.com/products/' }
+    ]
+  };
+  if (p.cat && typeof CATEGORIES !== 'undefined') {
+    breadcrumb.itemListElement.push({
+      '@type': 'ListItem', position: 3,
+      name: CATEGORIES[p.cat],
+      item: 'https://fouwell.com/products/?cat=' + p.cat
+    });
+  }
+  breadcrumb.itemListElement.push({
+    '@type': 'ListItem', position: breadcrumb.itemListElement.length + 1,
+    name: p.model, item: url
+  });
+
+  const scripts = [product, breadcrumb];
+  if (Array.isArray(p.faq) && p.faq.length) {
+    scripts.push({
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: p.faq.map(f => ({
+        '@type': 'Question',
+        name: f.q,
+        acceptedAnswer: { '@type': 'Answer', text: f.a }
+      }))
+    });
+  }
+  scripts.forEach(obj => {
+    const s = document.createElement('script');
+    s.type = 'application/ld+json';
+    s.dataset.fouwellDynamicSchema = '1';
+    s.textContent = JSON.stringify(obj);
+    document.head.appendChild(s);
+  });
+}
+
+/* Render the FAQ block inside #pd-faq-list. Each entry is a native <details> so it
+   works without JS, supports keyboard navigation, and is crawlable by Google. */
+function renderProductFAQ(p) {
+  const list = document.getElementById('pd-faq-list');
+  if (!list) return;
+  if (!Array.isArray(p.faq) || !p.faq.length) {
+    // Hide the whole FAQ section if there are no questions
+    const section = document.getElementById('detail-faq-section');
+    if (section) section.style.display = 'none';
+    return;
+  }
+  list.innerHTML = p.faq.map((f, i) =>
+    '<details class="faq-item">' +
+      '<summary>' + _escFaq(f.q) + '<span class="faq-mark" aria-hidden="true"></span></summary>' +
+      '<div class="faq-answer"><p>' + _escFaq(f.a) + '</p></div>' +
+    '</details>'
+  ).join('');
+}
+function _escFaq(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+/* ============== End SEO/Schema/FAQ infrastructure ============== */
+
+/* Stage B: Render the detailed datasheet download CTA. Shown only when p.datasheet is set. */
+function renderProductDatasheet(p) {
+  const section = document.getElementById('detail-datasheet-section');
+  if (!section) return;
+  if (!p.datasheet) { section.style.display = 'none'; return; }
+  const link = document.getElementById('pd-datasheet-link');
+  const sub  = document.getElementById('pd-ds-sub');
+  if (link) link.href = p.datasheet;
+  if (sub && p.brand && p.model) {
+    sub.textContent = p.brand + ' ' + p.model + ' datasheet, manual collection and CAD symbols — download for engineering reference.';
+  }
+  section.style.display = '';
+}
+
+/* Stage B: Render the "Typical Applications" cards. Shown only when p.applications[] is set. */
+function renderProductApplications(p) {
+  const section = document.getElementById('detail-applications-section');
+  if (!section) return;
+  const list = document.getElementById('pd-applications');
+  if (!Array.isArray(p.applications) || !p.applications.length) {
+    section.style.display = 'none';
+    return;
+  }
+  list.innerHTML = p.applications.map(a =>
+    '<div class="pd-app-card">' +
+      '<div class="pd-app-icon" aria-hidden="true">' + (a.icon || '●') + '</div>' +
+      '<div class="pd-app-title">' + _escFaq(a.title || '') + '</div>' +
+      '<div class="pd-app-desc">'  + _escFaq(a.desc  || '') + '</div>' +
+    '</div>'
+  ).join('');
+  section.style.display = '';
+}
+
+/* Stage B: Render the cross-reference / compatibility table. Shown only when p.compatibility[] is set. */
+function renderProductCompatibility(p) {
+  const section = document.getElementById('detail-compat-section');
+  if (!section) return;
+  const tbl = document.getElementById('pd-compat-table');
+  if (!Array.isArray(p.compatibility) || !p.compatibility.length) {
+    section.style.display = 'none';
+    return;
+  }
+  tbl.innerHTML =
+    '<thead><tr><th>Original Part Number</th><th>Compatibility Note</th></tr></thead>' +
+    '<tbody>' +
+      p.compatibility.map(c =>
+        '<tr><td><code class="pd-compat-code">' + _escFaq(c.from || '') + '</code></td>' +
+        '<td>' + _escFaq(c.note || '') + '</td></tr>'
+      ).join('') +
+    '</tbody>';
+  section.style.display = '';
+}
+
+/* Cache-buster version — bump to force browsers + SiteGround Dynamic Cache
+   to discard any stale 403/404 HTML they may still hold from before the
+   /products/<slug>/ fix landed. Appended to every photo + video URL below. */
+const ASSET_V = 'v=20260911final';
+
+function _assetV(url) {
+  if (!url) return url;
+  return url + (url.indexOf('?') === -1 ? '?' : '&') + ASSET_V;
+}
+
 /* Returns an <img> tag (or fallback div) for a product.
    Priority: real product photo (assets/products/) → LinkedIn marketing image (assets/linkedin/) → noimg placeholder. */
 function productImage(p) {
   if (p.photo) {
-    return '<img src="assets/products/' + p.photo + '" alt="' + p.model + '" loading="lazy">';
+    return '<img src="/assets/products/' + p.photo + '?' + ASSET_V + '" alt="' + p.model + '" loading="lazy">';
   }
   if (p.linkedin) {
-    return '<img class="linkedin-fallback" src="assets/linkedin/' + p.linkedin + '" alt="' + p.model + ' (marketing)" loading="lazy">';
+    return '<img class="linkedin-fallback" src="/assets/linkedin/' + p.linkedin + '?' + ASSET_V + '" alt="' + p.model + ' (marketing)" loading="lazy">';
   }
   return '<div class="noimg">' + p.brand + '<br>Photo on request</div>';
 }
 
 function productCard(p) {
   const st = STATUS_LABEL[p.status] || STATUS_LABEL.instock;
+  const url = productUrl(p);
   return (
     '<article class="prod-card">' +
-      '<a class="thumb-link" href="product.html?model=' + encodeURIComponent(p.model) + '">' +
+      '<a class="thumb-link" href="' + url + '">' +
         '<div class="thumb">' + productImage(p) + '</div>' +
       '</a>' +
       '<div class="body">' +
         '<span class="cat">' + p.brand + ' · ' + CATEGORIES[p.cat] + '</span>' +
-        '<a class="model-link" href="product.html?model=' + encodeURIComponent(p.model) + '"><h3>' + p.model + '</h3></a>' +
+        '<a class="model-link" href="' + url + '"><h3>' + p.model + '</h3></a>' +
         '<div class="series">' + p.series + '</div>' +
         '<p class="desc">' + p.spec + '</p>' +
         '<div class="meta">' +
           '<span class="pill ' + st.cls + '">' + st.label + '</span>' +
-          '<a class="inq-link" href="contact.html?model=' + encodeURIComponent(p.model) + '#inquiry">Inquire →</a>' +
+          '<a class="inq-link" href="/contact/?model=' + encodeURIComponent(p.model) + '#inquiry">Inquire →</a>' +
         '</div>' +
       '</div>' +
     '</article>'
@@ -52,7 +275,7 @@ function brandTile(b) {
 /* Render a category card with number, icon style, title, items, desc, and a real product photo. */
 function categoryCard(c) {
   return (
-    '<a class="cat-card" href="products.html?cat=' + c.id + '">' +
+    '<a class="cat-card" href="/products/?cat=' + c.id + '">' +
       '<div class="cat-num">' + c.no + '</div>' +
       '<h3>' + c.title + '</h3>' +
       '<div class="cat-items">' + c.items + '</div>' +
@@ -64,15 +287,17 @@ function categoryCard(c) {
 
 /* Build the image gallery array for a product.
    Priority: full original material set (assets/products/<model>/photos + nameplate, via PRODUCT_PHOTOS)
-   → single real photo (assets/products/) → LinkedIn marketing image (assets/linkedin/). */
+   → single real photo (assets/products/) → LinkedIn marketing image (assets/linkedin/).
+   Every src is cache-busted so browsers + the SiteGround Dynamic Cache layer
+   are forced to refetch (fixes "photos/video not visible" after the /products/<slug>/ repair). */
 function productGallery(p) {
   const imgs = [];
   if (typeof PRODUCT_PHOTOS !== 'undefined' && PRODUCT_PHOTOS[p.model]) {
-    PRODUCT_PHOTOS[p.model].forEach(it => imgs.push({ src: it.src, tag: it.tag }));
+    PRODUCT_PHOTOS[p.model].forEach(it => imgs.push({ src: _assetV(it.src), tag: it.tag }));
     return imgs;
   }
-  if (p.photo) imgs.push({ src: 'assets/products/' + p.photo, tag: 'Photo' });
-  if (p.linkedin) imgs.push({ src: 'assets/linkedin/' + p.linkedin, tag: 'Marketing' });
+  if (p.photo) imgs.push({ src: _assetV('/assets/products/' + p.photo), tag: 'Photo' });
+  if (p.linkedin) imgs.push({ src: _assetV('/assets/linkedin/' + p.linkedin), tag: 'Marketing' });
   return imgs;
 }
 
@@ -80,7 +305,7 @@ function brandOf(name) {
   return (typeof BRANDS !== 'undefined') ? BRANDS.find(b => b.name === name) : null;
 }
 
-/* Render the full product detail page (product.html?model=xxx). */
+/* Render the full product detail page (product.html?model=xxx or /products/<slug>/). */
 function renderProductDetail(p) {
   const esc = s => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   const st = STATUS_LABEL[p.status] || STATUS_LABEL.instock;
@@ -88,12 +313,21 @@ function renderProductDetail(p) {
 
   // ---- breadcrumb / title ----
   document.getElementById('breadcrumb').innerHTML =
-    '<a href="index.html">Home</a> / <a href="products.html">Products</a> / ' +
-    (p.cat ? '<a href="products.html?cat=' + p.cat + '">' + esc(CATEGORIES[p.cat]) + '</a> / ' : '') +
+    '<a href="/">Home</a> / <a href="/products/">Products</a> / ' +
+    (p.cat ? '<a href="/products/?cat=' + p.cat + '">' + esc(CATEGORIES[p.cat]) + '</a> / ' : '') +
     '<span>' + esc(p.model) + '</span>';
-  document.title = p.model + ' | ' + p.brand + ' — Fouwell Industrial Automation';
+  document.title = p.brand + ' ' + p.model + ' | Fouwell Industrial Automation';
   document.getElementById('page-title').textContent = p.model;
   document.getElementById('page-sub').textContent = p.spec;
+
+  // ---- canonical link ----
+  let canonical = document.querySelector('link[rel="canonical"]');
+  if (!canonical) {
+    canonical = document.createElement('link');
+    canonical.setAttribute('rel', 'canonical');
+    document.head.appendChild(canonical);
+  }
+  canonical.setAttribute('href', 'https://fouwell.com' + productUrl(p));
 
   // ---- gallery ----
   const imgs = productGallery(p);
@@ -160,7 +394,7 @@ function renderProductDetail(p) {
   document.getElementById('pd-spec').textContent = p.spec;
 
   // ---- actions ----
-  document.getElementById('pd-quote').href = 'contact.html?model=' + encodeURIComponent(p.model) + '#inquiry';
+  document.getElementById('pd-quote').href = '/contact/?model=' + encodeURIComponent(p.model) + '#inquiry';
 
   // ---- video ----
   const videos = (typeof PRODUCT_VIDEOS !== 'undefined') ? (PRODUCT_VIDEOS[p.model] || []) : [];
@@ -169,8 +403,8 @@ function renderProductDetail(p) {
     const wrap = document.getElementById('pd-videos');
     wrap.innerHTML = videos.map(v =>
       '<div class="pd-video-card">' +
-        '<video controls preload="none" poster="' + (imgs.length ? imgs[0].src : '') + '">' +
-          '<source src="' + v.src + '" type="video/mp4">' +
+        '<video controls preload="none" poster="' + (imgs.length ? _assetV(imgs[0].src) : '') + '">' +
+          '<source src="' + _assetV(v.src) + '" type="video/mp4">' +
           'Your browser does not support the video tag.' +
         '</video>' +
         '<div class="pd-video-title">' + esc(v.title) + '</div>' +
@@ -191,6 +425,16 @@ function renderProductDetail(p) {
     ['Specification', esc(p.spec)],
     ['Product Video', videos.length ? videos.map(v => esc(v.title)).join(', ') : 'Available on request']
   ];
+  // Stage B: Append detailed specs (key/value rows from p.specs[]) when present.
+  if (Array.isArray(p.specs) && p.specs.length) {
+    p.specs.forEach(([k, v]) => {
+      // Skip keys already shown in the basic block to avoid duplication
+      const baseKeys = ['model', 'brand', 'series', 'category', 'availability', 'specification', 'product video'];
+      if (baseKeys.indexOf(String(k).toLowerCase()) === -1) {
+        rows.push([esc(k), esc(v)]);
+      }
+    });
+  }
   document.getElementById('pd-spec-table').innerHTML = rows.map(([k, v]) =>
     '<tr><th>' + k + '</th><td>' + v + '</td></tr>'
   ).join('');
@@ -205,6 +449,15 @@ function renderProductDetail(p) {
     })
     .slice(0, 8);
   document.getElementById('related-grid').innerHTML = related.map(productCard).join('');
+
+  // ---- FAQ + dynamic SEO/GEO schema (Product + BreadcrumbList + FAQPage) ----
+  renderProductFAQ(p);
+  injectProductSchema(p);
+
+  // ---- Stage B: Datasheet + Applications + Compatibility (rendered only when data is present) ----
+  renderProductDatasheet(p);
+  renderProductApplications(p);
+  renderProductCompatibility(p);
 }
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -272,7 +525,7 @@ document.addEventListener('DOMContentLoaded', function () {
       countEl.textContent = list.length + ' product' + (list.length === 1 ? '' : 's') + ' found';
       grid.innerHTML = list.length
         ? list.map(productCard).join('')
-        : '<p style="grid-column:1/-1; text-align:center; color:#6b7794; padding:40px 0;">No match — but we source far more than what\'s listed. <a href="contact.html#inquiry">Send us your part number →</a></p>';
+        : '<p style="grid-column:1/-1; text-align:center; color:#6b7794; padding:40px 0;">No match — but we source far more than what\'s listed. <a href="/contact/#inquiry">Send us your part number →</a></p>';
       chipWrap.querySelectorAll('.chip').forEach(c => c.classList.toggle('active', c.dataset.brand === state.brand));
     }
 
@@ -305,12 +558,14 @@ document.addEventListener('DOMContentLoaded', function () {
   /* ---- Product detail page ---- */
   const root = document.getElementById('detail-root');
   if (root && typeof PRODUCTS !== 'undefined') {
-    const model = new URLSearchParams(location.search).get('model');
-    const p = PRODUCTS.find(x => x.model === model);
+    // Build slug index on first need, then resolve product from URL path or query string
+    if (typeof PRODUCT_BY_SLUG === 'undefined') buildProductSlugIndex();
+    const p = resolveProductFromURL();
 
     if (!p) {
       root.style.display = 'block';
-      root.innerHTML = '<div class="container"><div class="pd-notfound"><h2>Product not found</h2><p>We could not find "' + (model || '') + '" in our online catalog — but we likely can source it. <a href="contact.html#inquiry">Send us the part number →</a></p></div></div>';
+      const asked = (location.pathname.match(/products\/([^/]+)/) || [])[1] || new URLSearchParams(location.search).get('model') || '';
+      root.innerHTML = '<div class="container"><div class="pd-notfound"><h2>Product not found</h2><p>We could not find "' + asked + '" in our online catalog — but we likely can source it. <a href="/contact/#inquiry">Send us the part number →</a></p></div></div>';
     } else {
       renderProductDetail(p);
       root.style.display = 'block';

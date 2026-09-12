@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://fouwell.com/sitemap-v2.xml

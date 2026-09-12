@@ -1,0 +1,60 @@
+# Fouwell.com · Static site SEO-friendly URL rules
+# Server: SiteGround OpenLiteSpeed (Apache-compatible)
+
+# 1. Force HTTPS (avoid duplicate content split)
+RewriteEngine On
+RewriteCond %{HTTPS} off [OR]
+RewriteCond %{HTTP_HOST} ^www\.fouwell\.com$ [NC]
+RewriteRule ^(.*)$ https://fouwell.com/$1 [R=301,L]
+
+# 2. SEO-friendly product URLs:
+#    /products/<slug>/   -->  /product.html?slug=<slug>
+#    where slug is built from brand + series + model (e.g. siemens-s7-1200-6es7212-1ae40-0xb0)
+RewriteRule ^products/([a-z0-9][a-z0-9-]*)/?$ /product.html?slug=$1 [L,QSA]
+
+# 3. /products/, /about/, /contact/ are now physical directories with index.html
+#    (e.g. public_html/products/index.html). LiteSpeed/OpenLiteSpeed's DirectoryIndex
+#    serves them directly. The previous internal rewrite to .html files caused an
+#    infinite redirect loop with rule #5 (.html -> clean-path 301), so it has been
+#    removed for /about/ and /contact/ as well.
+#    Trailing-slash form is canonical; DirectorySlash auto-redirects /about -> /about/.
+
+# 5. Legacy .html URLs — 301 to clean path form (preserves SEO equity)
+#    /about.html          --> /about/
+#    /contact.html        --> /contact/
+#    /products.html       --> /products/
+#    /index.html          --> /
+#    /product.html?model=X is NOT redirected — JS supports ?model for back-compat,
+#    and legacy querystring URLs from external links should still resolve (without 301).
+RewriteCond %{REQUEST_URI} !^/products/.*\.html$   [NC]
+RewriteRule ^index\.html$    /                    [R=301,L]
+RewriteRule ^products\.html$ /products/           [R=301,L]
+RewriteRule ^about\.html$    /about/              [R=301,L]
+RewriteRule ^contact\.html$  /contact/            [R=301,L]
+
+# 5. Let existing files (sitemap*.xml, robots.txt, css, js, assets) pass through normally
+
+# 6. Compression (helps speed ranking)
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css application/javascript application/json image/svg+xml
+</IfModule>
+
+# 7. Static asset caching
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType text/css                "access plus 1 month"
+  ExpiresByType application/javascript  "access plus 1 month"
+  ExpiresByType image/png               "access plus 1 year"
+  ExpiresByType image/jpeg              "access plus 1 year"
+  ExpiresByType image/svg+xml           "access plus 1 year"
+  ExpiresByType font/woff2              "access plus 1 year"
+</IfModule>
+
+# 8. Security headers (light)
+<IfModule mod_headers.c>
+  Header set X-Content-Type-Options "nosniff"
+  Header set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# 9. Disable directory listing
+Options -Indexes

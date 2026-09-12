@@ -1141,3 +1141,173 @@ a:hover { color: var(--red); }
   .stats-grid { grid-template-columns: 1fr; }
   .stats-section { padding: 34px 22px 26px; }
 }
+
+/* ============ FAQ (product detail) ============ */
+.faq-list {
+  max-width: 880px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.faq-item {
+  background: #fff;
+  border: 1px solid var(--gray-100, #e8eaef);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.faq-item[open] {
+  border-color: var(--blue, #185fa5);
+  box-shadow: 0 4px 18px rgba(24, 95, 165, 0.08);
+}
+.faq-item > summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 18px 22px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--gray-900, #1a2230);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.faq-item > summary::-webkit-details-marker { display: none; }
+.faq-item > summary::marker { content: ''; }
+.faq-item > summary::after {
+  content: '+';
+  font-size: 22px;
+  font-weight: 300;
+  color: var(--blue, #185fa5);
+  flex-shrink: 0;
+  width: 20px;
+  text-align: center;
+}
+.faq-item[open] > summary::after {
+  content: '-';
+}
+.faq-item .faq-answer {
+  padding: 0 22px 20px;
+  color: var(--gray-700, #4a5468);
+  font-size: 14.5px;
+  line-height: 1.65;
+}
+.faq-item .faq-answer p { margin: 0; }
+.pd-faq-cta {
+  text-align: center;
+  margin-top: 28px;
+  color: var(--gray-500, #6b7794);
+  font-size: 14px;
+}
+.pd-faq-cta a { color: var(--blue, #185fa5); font-weight: 600; }
+
+/* ============== Stage B: Datasheet / Applications / Compatibility ============== */
+
+/* Datasheet CTA bar — full-width strip with PDF icon, copy and download button. */
+.pd-datasheet-bar {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  padding: 22px 26px;
+  background: linear-gradient(135deg, #f0f5fb 0%, #e6eef9 100%);
+  border: 1px solid var(--gray-200, #dfe5ee);
+  border-left: 4px solid var(--blue, #185fa5);
+  border-radius: 10px;
+}
+.pd-ds-icon {
+  flex: 0 0 60px;
+  width: 60px; height: 60px;
+  display: flex; align-items: center; justify-content: center;
+  background: #fff;
+  color: var(--blue, #185fa5);
+  border: 2px solid var(--blue, #185fa5);
+  border-radius: 8px;
+  font-weight: 800;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+}
+.pd-ds-body { flex: 1; min-width: 0; }
+.pd-ds-title { font-weight: 700; font-size: 16px; color: var(--ink, #0e1f3a); margin-bottom: 4px; }
+.pd-ds-sub   { font-size: 13.5px; color: var(--gray-700, #4a5468); line-height: 1.5; }
+
+/* Applications — grid of icon-cards, 4 across on desktop. */
+.pd-app-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 18px;
+}
+.pd-app-card {
+  background: #fff;
+  border: 1px solid var(--gray-200, #dfe5ee);
+  border-radius: 10px;
+  padding: 22px 20px;
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+.pd-app-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(20, 50, 90, 0.08);
+  border-color: var(--blue, #185fa5);
+}
+.pd-app-icon {
+  font-size: 28px;
+  width: 44px; height: 44px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--gray-100, #f1f4f9);
+  border-radius: 10px;
+  margin-bottom: 12px;
+}
+.pd-app-title {
+  font-weight: 700;
+  font-size: 15.5px;
+  color: var(--ink, #0e1f3a);
+  margin-bottom: 6px;
+}
+.pd-app-desc {
+  font-size: 13.5px;
+  color: var(--gray-700, #4a5468);
+  line-height: 1.6;
+}
+
+/* Compatibility / cross-reference — clean table with mono part numbers. */
+.pd-compat-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border: 1px solid var(--gray-200, #dfe5ee);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.pd-compat-table th,
+.pd-compat-table td {
+  padding: 14px 18px;
+  text-align: left;
+  font-size: 14px;
+  border-bottom: 1px solid var(--gray-100, #f1f4f9);
+  vertical-align: top;
+}
+.pd-compat-table th {
+  background: var(--gray-100, #f1f4f9);
+  font-weight: 700;
+  color: var(--ink, #0e1f3a);
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.pd-compat-table tr:last-child td { border-bottom: none; }
+.pd-compat-table tr:hover td { background: #fafcfe; }
+.pd-compat-code {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 13.5px;
+  background: var(--gray-100, #f1f4f9);
+  padding: 3px 8px;
+  border-radius: 4px;
+  color: var(--blue-deep, #0a3e75);
+  border: 1px solid var(--gray-200, #dfe5ee);
+}
+
+/* Responsive collapse for the new sections on small screens. */
+@media (max-width: 720px) {
+  .pd-datasheet-bar { flex-direction: column; align-items: flex-start; gap: 14px; }
+  .pd-compat-table th, .pd-compat-table td { padding: 12px 12px; font-size: 13px; }
+}
