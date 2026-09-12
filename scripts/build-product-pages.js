@@ -184,6 +184,16 @@ function renderPage(p) {
       '<a href="' + categoryUrl(p.cat) + '">' + escHtml(CATEGORIES[p.cat]) + '</a> · ' +
       '<a href="' + brandUrl(p.brand) + '">' + escHtml(p.brand) + ' parts</a></p>'
   );
+  // Static reference-price line — only when p.sell_price is set, so the visible page always
+  // matches what the JSON-LD Offer.price claims (Google requires markup to reflect visible
+  // content; price-only-in-JSON-LD-nowhere-on-page was exactly the gap found 2026-09-12).
+  if (typeof p.sell_price === 'number') {
+    html = html.replace(
+      '<p class="pd-price-ref" id="pd-price-ref" style="display:none;"></p>',
+      '<p class="pd-price-ref" id="pd-price-ref">Reference price: <strong>~$' + Math.round(p.sell_price) + '</strong>' +
+        '<span class="pd-price-note">(market reference — contact us for a confirmed quote)</span></p>'
+    );
+  }
   // Static FAQ — hand-written for deep pages, generic category template otherwise (see
   // faqFor()/genericFaqFor() above) — baked into the HTML so it's crawler-visible even
   // without JS, not just present in the FAQPage JSON-LD.

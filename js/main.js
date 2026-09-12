@@ -451,6 +451,21 @@ function renderProductDetail(p) {
     (brand ? '<span class="pill brand">' + esc(brand.country) + '</span>' : '');
   document.getElementById('pd-spec').textContent = p.spec;
 
+  // ---- reference price (only when p.sell_price is set — see schema/products-schema.md
+  // "AI价格解析": internal price preferred, external eBay/web reference as fallback.
+  // Labeled explicitly as a reference, not a firm quote, since it may come from a
+  // third-party listing rather than Fouwell's own pricing. ----
+  const priceRef = document.getElementById('pd-price-ref');
+  if (priceRef) {
+    if (typeof p.sell_price === 'number') {
+      priceRef.innerHTML = 'Reference price: <strong>~$' + Math.round(p.sell_price) + '</strong>' +
+        '<span class="pd-price-note">(market reference — contact us for a confirmed quote)</span>';
+      priceRef.style.display = '';
+    } else {
+      priceRef.style.display = 'none';
+    }
+  }
+
   // ---- actions ----
   document.getElementById('pd-quote').href = '/contact/?model=' + encodeURIComponent(p.model) + '#inquiry';
 
