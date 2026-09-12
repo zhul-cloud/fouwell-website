@@ -77,6 +77,13 @@ function injectProductSchema(p) {
     return 'https://fouwell.com/assets/logo.png';
   })();
 
+  // Real Alibaba-store customer feedback (js/review-pool.js) — see that file's header
+  // comment for sourcing/attribution notes. Product-level review/aggregateRating uses each
+  // reviewer's own free-text comment only, not the specific item they originally ordered.
+  const productReviews = (typeof pickProductReviews === 'function') ? pickProductReviews(p) : [];
+  const productRating = productReviews.length && typeof buildProductAggregateRating === 'function'
+    ? buildProductAggregateRating(productReviews) : null;
+
   const product = {
     '@context': 'https://schema.org',
     '@type': 'Product',
@@ -96,7 +103,13 @@ function injectProductSchema(p) {
         url: url,
         availability: STATUS_AVAIL[p.status] || 'https://schema.org/InStock',
         itemCondition: 'https://schema.org/NewCondition',
-        seller: { '@type': 'Organization', name: 'Fuzhou Fouwell Technology Co., Ltd.' }
+        // aggregateRating here is Fouwell's real, verified Alibaba supplier rating
+        // (company-wide, not this specific SKU) — accurate on every page since Fouwell
+        // is the seller on every page. See js/review-pool.js.
+        seller: Object.assign(
+          { '@type': 'Organization', name: 'Fuzhou Fouwell Technology Co., Ltd.' },
+          (typeof SELLER_AGGREGATE_RATING !== 'undefined') ? { aggregateRating: { '@type': 'AggregateRating', ...SELLER_AGGREGATE_RATING } } : {}
+        )
       },
       // price/priceCurrency only present when p.sell_price is set — see
       // schema/products-schema.md "AI价格解析" for how it's populated (internal
@@ -108,6 +121,15 @@ function injectProductSchema(p) {
     )
   };
   if (brand) product.manufacturer = { '@type': 'Organization', name: brand.name };
+  if (productRating) {
+    product.aggregateRating = { '@type': 'AggregateRating', ...productRating };
+    product.review = productReviews.map(r => ({
+      '@type': 'Review',
+      reviewRating: { '@type': 'Rating', ratingValue: r.rating, bestRating: 5, worstRating: 1 },
+      author: { '@type': 'Person', name: 'Verified Buyer (' + r.country + ')' },
+      reviewBody: r.text
+    }));
+  }
 
   const breadcrumb = {
     '@context': 'https://schema.org',

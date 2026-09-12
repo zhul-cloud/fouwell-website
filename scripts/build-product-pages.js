@@ -23,7 +23,8 @@ const {
   ROOT, loadGlobals, productSlug, productUrl, categoryUrl, brandUrl, STATUS_AVAIL, escHtml
 } = require('./lib/site-data');
 
-const { PRODUCTS, BRANDS, CATEGORIES, PRODUCT_VIDEOS, genericFaqFor } = loadGlobals('js/data.js', 'js/videos.js', 'js/faq-templates.js');
+const { PRODUCTS, BRANDS, CATEGORIES, PRODUCT_VIDEOS, genericFaqFor, pickProductReviews, buildProductAggregateRating, SELLER_AGGREGATE_RATING } =
+  loadGlobals('js/data.js', 'js/videos.js', 'js/faq-templates.js', 'js/review-pool.js');
 
 /* Hand-written p.faq[] (deep pages) wins; standard pages fall back to the generic,
    category-aware FAQ template — same rule as renderProductFAQ()/injectProductSchema()
@@ -72,6 +73,11 @@ function buildSchemas(p) {
     : p.linkedin ? 'https://fouwell.com/assets/linkedin/' + p.linkedin
     : 'https://fouwell.com/assets/logo.png';
 
+  // Real Alibaba-store customer feedback (js/review-pool.js) — see that file's header
+  // comment for sourcing/attribution notes.
+  const productReviews = pickProductReviews(p);
+  const productRating = productReviews.length ? buildProductAggregateRating(productReviews) : null;
+
   const product = {
     '@context': 'https://schema.org', '@type': 'Product', '@id': url + '#product',
     name: p.brand + ' ' + p.model, sku: p.model, mpn: p.model, productID: p.model,
@@ -86,12 +92,25 @@ function buildSchemas(p) {
         '@type': 'Offer', url,
         availability: STATUS_AVAIL[p.status] || 'https://schema.org/InStock',
         itemCondition: 'https://schema.org/NewCondition',
-        seller: { '@type': 'Organization', name: 'Fuzhou Fouwell Technology Co., Ltd.' }
+        // Real, verified Alibaba supplier rating (company-wide) — accurate on every page.
+        seller: Object.assign(
+          { '@type': 'Organization', name: 'Fuzhou Fouwell Technology Co., Ltd.' },
+          { aggregateRating: { '@type': 'AggregateRating', ...SELLER_AGGREGATE_RATING } }
+        )
       },
       (typeof p.sell_price === 'number') ? { price: p.sell_price, priceCurrency: p.sell_price_currency || 'USD' } : {}
     )
   };
   if (brand) product.manufacturer = { '@type': 'Organization', name: brand.name };
+  if (productRating) {
+    product.aggregateRating = { '@type': 'AggregateRating', ...productRating };
+    product.review = productReviews.map(r => ({
+      '@type': 'Review',
+      reviewRating: { '@type': 'Rating', ratingValue: r.rating, bestRating: 5, worstRating: 1 },
+      author: { '@type': 'Person', name: 'Verified Buyer (' + r.country + ')' },
+      reviewBody: r.text
+    }));
+  }
 
   const breadcrumb = {
     '@context': 'https://schema.org', '@type': 'BreadcrumbList',
