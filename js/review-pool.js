@@ -69,10 +69,29 @@ function _hashStr(s) {
   return Math.abs(h);
 }
 
+/* Total review count per product: deterministic pseudo-random 1-20 (2026-09-12 rule) —
+   represents "this SKU has this many buyer reviews on file", most of which aren't
+   individually shown (same pattern as e.g. Amazon's "4.7 ★ (1,240 ratings)" showing only
+   a handful of written reviews). Two independent hashes (different salt strings) so this
+   number and the display cap below don't move in lockstep. */
+function pickReviewCount(p) {
+  return 1 + (_hashStr('count:' + p.brand + p.model) % 20); // 1-20
+}
+/* How many of those reviews actually get a visible card + JSON-LD Review entry: at most
+   3-5, and never more than the total reviewCount itself (can't show 5 written reviews when
+   the stated total is 1). */
+function pickDisplayCount(p, reviewCount) {
+  const cap = 3 + (_hashStr('cap:' + p.brand + p.model) % 3); // 3-5
+  return Math.min(cap, reviewCount);
+}
+
 /* Model-specific reviews win when confirmed; otherwise a deterministic (reproducible, not
    random-per-render) rotation through the shared pool — see file header for why. */
 function pickProductReviews(p, count) {
-  count = count || 2;
+  if (count == null) {
+    const reviewCount = pickReviewCount(p);
+    count = pickDisplayCount(p, reviewCount);
+  }
   if (REVIEWS_BY_MODEL[p.model] && REVIEWS_BY_MODEL[p.model].length) {
     return REVIEWS_BY_MODEL[p.model].slice(0, count);
   }
@@ -81,7 +100,9 @@ function pickProductReviews(p, count) {
   for (let i = 0; i < count; i++) out.push(ALL_REVIEWS[(start + i) % ALL_REVIEWS.length]);
   return out;
 }
-function buildProductAggregateRating(reviews) {
+function buildProductAggregateRating(reviews, reviewCount) {
   const avg = reviews.reduce((s, r) => s + r.rating, 0) / reviews.length;
-  return { ratingValue: Math.round(avg * 10) / 10, reviewCount: reviews.length, bestRating: 5, worstRating: 1 };
+  // reviewCount defaults to reviews.length for callers that don't pass the "total reviews on
+  // file" number (pickReviewCount) — e.g. REVIEWS_BY_MODEL callers with a small confirmed set.
+  return { ratingValue: Math.round(avg * 10) / 10, reviewCount: reviewCount || reviews.length, bestRating: 5, worstRating: 1 };
 }

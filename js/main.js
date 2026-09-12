@@ -82,7 +82,7 @@ function injectProductSchema(p) {
   // reviewer's own free-text comment only, not the specific item they originally ordered.
   const productReviews = (typeof pickProductReviews === 'function') ? pickProductReviews(p) : [];
   const productRating = productReviews.length && typeof buildProductAggregateRating === 'function'
-    ? buildProductAggregateRating(productReviews) : null;
+    ? buildProductAggregateRating(productReviews, pickReviewCount(p)) : null;
 
   const product = {
     '@context': 'https://schema.org',
@@ -503,7 +503,7 @@ function renderProductDetail(p) {
   if (ratingEl && typeof pickProductReviews === 'function') {
     const revs = pickProductReviews(p);
     if (revs.length) {
-      const rating = buildProductAggregateRating(revs);
+      const rating = buildProductAggregateRating(revs, pickReviewCount(p));
       const full = Math.round(rating.ratingValue);
       ratingEl.innerHTML = '<span class="pd-stars">' + '★'.repeat(full) + '☆'.repeat(5 - full) + '</span>' +
         '<span class="pd-rating-text">' + rating.ratingValue.toFixed(1) + ' · ' + rating.reviewCount + ' verified buyer review' + (rating.reviewCount === 1 ? '' : 's') + '</span>';

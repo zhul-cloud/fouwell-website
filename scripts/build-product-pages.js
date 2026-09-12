@@ -25,7 +25,7 @@ const {
 
 const {
   PRODUCTS, BRANDS, CATEGORIES, PRODUCT_VIDEOS, genericFaqFor,
-  pickProductReviews, buildProductAggregateRating, SELLER_AGGREGATE_RATING,
+  pickProductReviews, pickReviewCount, buildProductAggregateRating, SELLER_AGGREGATE_RATING,
   SHIPPING_DETAILS, RETURN_POLICY, DATA_LAST_UPDATED
 } = loadGlobals('js/data.js', 'js/videos.js', 'js/faq-templates.js', 'js/review-pool.js', 'js/company-policies.js');
 
@@ -96,7 +96,7 @@ function buildSchemas(p) {
   // Real Alibaba-store customer feedback (js/review-pool.js) — see that file's header
   // comment for sourcing/attribution notes.
   const productReviews = pickProductReviews(p);
-  const productRating = productReviews.length ? buildProductAggregateRating(productReviews) : null;
+  const productRating = productReviews.length ? buildProductAggregateRating(productReviews, pickReviewCount(p)) : null;
 
   const product = {
     '@context': 'https://schema.org', '@type': 'Product', '@id': url + '#product',
@@ -241,7 +241,7 @@ function renderPage(p) {
   {
     const revs = pickProductReviews(p);
     if (revs.length) {
-      const rating = buildProductAggregateRating(revs);
+      const rating = buildProductAggregateRating(revs, pickReviewCount(p));
       html = html.replace(
         '<div class="pd-rating" id="pd-rating" style="display:none;"></div>',
         '<div class="pd-rating" id="pd-rating">' + buildRatingHtml(rating) + '</div>'
