@@ -821,7 +821,6 @@ a.pill.cat:hover { text-decoration: underline; }
   margin-bottom: 18px;
 }
 .pd-price-ref strong { color: var(--ink); font-size: 17px; }
-.pd-price-ref .pd-price-note { color: var(--gray-500); font-size: 12.5px; display: block; margin-top: 2px; }
 .pd-rating { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; font-size: 13.5px; }
 .pd-rating .pd-stars { color: #f5a623; font-size: 15px; letter-spacing: 1px; }
 .pd-rating .pd-rating-text { color: var(--gray-500); }

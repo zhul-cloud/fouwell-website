@@ -519,15 +519,16 @@ function renderProductDetail(p) {
     genuineBadge.innerHTML = '<span class="pt">✓</span> Compatibility verified, quality-checked before shipping';
   }
 
-  // ---- reference price (only when p.sell_price is set — see schema/products-schema.md
-  // "AI价格解析": internal price preferred, external eBay/web reference as fallback.
-  // Labeled explicitly as a reference, not a firm quote, since it may come from a
-  // third-party listing rather than Fouwell's own pricing. ----
+  // ---- price (only when p.sell_price is set — see schema/products-schema.md "AI价格解析":
+  // internal price / real procurement-quote price preferred, external eBay/web reference as
+  // fallback only when neither exists. 2026-09-13: dropped the "Reference price ... contact
+  // us for a confirmed quote" hedge copy per user request — every sell_price now has a real
+  // sourced price_source (internal / procurement_quote_min / ebay_ref / web_ref), none of
+  // them fabricated, so it's shown as a plain price line, not caveated as approximate. ----
   const priceRef = document.getElementById('pd-price-ref');
   if (priceRef) {
     if (typeof p.sell_price === 'number') {
-      priceRef.innerHTML = 'Reference price: <strong>~$' + Math.round(p.sell_price) + '</strong>' +
-        '<span class="pd-price-note">(market reference — contact us for a confirmed quote)</span>';
+      priceRef.innerHTML = 'Price: <strong>$' + p.sell_price.toFixed(2) + '</strong>';
       priceRef.style.display = '';
     } else {
       priceRef.style.display = 'none';
