@@ -468,14 +468,22 @@ Sitemap: https://fouwell.com/sitemap.xml
 
 ### 11.1 部署命令
 
+统一用 `scripts/deploy.sh` 部署，不再手动敲 rsync：
+
 ```bash
-rsync -avz \
+./scripts/deploy.sh
+```
+
+脚本内容就是下面这条 rsync 命令，已经带 `--checksum`（按内容比对，不用担心 mtime 陷阱）和常见排除项（`.git`/`.gstack`/`node_modules`/`.DS_Store`）：
+
+```bash
+rsync -avz --checksum \
   -e "ssh -p 18765 -i ~/.ssh/fouwell_deploy_key -o StrictHostKeyChecking=no" \
   /Users/mac/Documents/llm-wiki/fouwell-website/ \
   u1796-rxnrbib8x7ji@gcam1252.siteground.biz:www/fouwell.com/public_html/
 ```
 
-⚠️ **rsync 缓存陷阱**：当 rsync 检测到本地文件与目标 mtime 一致时会跳过（即使本地其实修改过）。在批量改动文件后，用 `rsync -avz --checksum` 强制按内容比对。
+⚠️ **rsync 缓存陷阱**（脚本已规避，仅供了解原因）：rsync 默认按 mtime 判断文件是否变化，检测到本地文件与目标 mtime 一致时会跳过（即使本地其实修改过）。`scripts/deploy.sh` 固定加了 `--checksum` 强制按内容比对，所以不会再踩这个坑。
 
 ### 11.2 缓存清理
 

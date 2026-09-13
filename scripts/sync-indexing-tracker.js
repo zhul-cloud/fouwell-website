@@ -40,7 +40,10 @@ const xml = fs.readFileSync(SITEMAP, 'utf8');
 const sitemapUrls = [...xml.matchAll(/<loc>(.*?)<\/loc>/g)].map(m => m[1]);
 
 let tracker = fs.readFileSync(TRACKER, 'utf8');
-const existingUrls = new Set([...tracker.matchAll(/\| (https:\/\/fouwell\.com\S*?) \|/g)].map(m => m[1]));
+// Tolerant of Obsidian's auto-formatted column padding (extra spaces before the next "|"),
+// not just the plain "| url |" form — same class of bug as the separator-row regex above,
+// found 2026-09-13 when it silently duplicated rows for URLs already in the table.
+const existingUrls = new Set([...tracker.matchAll(/\|\s*(https:\/\/fouwell\.com\S*?)\s*\|/g)].map(m => m[1]));
 
 const today = new Date().toISOString().slice(0, 10);
 const newRows = sitemapUrls
