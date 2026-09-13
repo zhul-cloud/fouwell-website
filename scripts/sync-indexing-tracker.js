@@ -45,20 +45,26 @@ let tracker = fs.readFileSync(TRACKER, 'utf8');
 // found 2026-09-13 when it silently duplicated rows for URLs already in the table.
 const existingUrls = new Set([...tracker.matchAll(/\|\s*(https:\/\/fouwell\.com\S*?)\s*\|/g)].map(m => m[1]));
 
-const today = new Date().toISOString().slice(0, 10);
+const now = new Date();
+const pad = n => String(n).padStart(2, '0');
+const createdAt = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
+const today = createdAt.slice(0, 10);
+// Column order: URL | 类型 | 创建时间 | 上线日期 | 提交状态 | 提交日期 | 收录确认日期 | 备注
 const newRows = sitemapUrls
   .filter(u => !existingUrls.has(u))
-  .map(u => `| ${u} | ${classify(u)} | ${today} | 未提交 |  |  |  |`);
+  .map(u => `| ${u} | ${classify(u)} | ${createdAt} | ${today} | 未提交 |  |  |  |`);
 
 if (!newRows.length) {
   console.log('No new URLs — tracker already covers everything in sitemap-v2.xml.');
   process.exit(0);
 }
 
-// Append at the end of the table's data rows. Anchor on the markdown separator row
-// (e.g. "|---|---|...|") rather than "last line starting with '|'" — the separator row
-// itself starts with "|-", not "| ", so a naive scan finds the *header* as the last match
-// when the table is still empty and inserts new rows above the separator, corrupting it.
+// Insert right below the header separator row (i.e. as the new first data row), not at the
+// end — the table is kept sorted newest-first by 创建时间, and every new run's rows should
+// land above all older ones. Anchor on the markdown separator row (e.g. "|---|---|...|")
+// rather than "last line starting with '|'" — the separator row itself starts with "|-",
+// not "| ", so a naive scan finds the *header* as the last match when the table is still
+// empty and inserts new rows above the separator, corrupting it.
 const lines = tracker.split('\n');
 // Match a full separator row regardless of column count or Obsidian's auto-formatted
 // spacing (e.g. "| ----- | ----- | ... |" as well as the plain "|---|---|" form) — each
@@ -72,9 +78,7 @@ if (sepIndex === -1) {
   console.error('Could not find the table header separator row ("|---|...|") in ' + TRACKER + ' — insert rows manually.');
   process.exit(1);
 }
-let insertAt = sepIndex;
-for (let i = sepIndex + 1; i < lines.length && lines[i].startsWith('|'); i++) insertAt = i;
-lines.splice(insertAt + 1, 0, ...newRows);
+lines.splice(sepIndex + 1, 0, ...newRows);
 fs.writeFileSync(TRACKER, lines.join('\n'), 'utf8');
-console.log('Appended ' + newRows.length + ' new row(s) to ' + path.relative(ROOT, TRACKER) + ':');
+console.log('Inserted ' + newRows.length + ' new row(s) at the top of ' + path.relative(ROOT, TRACKER) + ':');
 newRows.forEach(r => console.log('  ' + r));
