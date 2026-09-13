@@ -10,6 +10,7 @@ const PRODUCT_VIDEOS = {
   "5GN-20-K": [{"src": "/assets/videos/5GN-20-K.mp4", "title": "Not Rare Parts"}],
   "61059113": [{"src": "/assets/videos/61059113.mp4", "title": "Two Boards Later"}],
   "6EP3437-8SB00-0AY0": [{"src": "/assets/videos/6EP3437-8SB00-0AY0.mp4", "title": "Is 40A Enough"}],
+  "6ES7193-6BP00-0DA0": [{"src": "/assets/videos/6ES7193-6BP00-0DA0.mp4", "title": "All Six Counted"}],
   "6SL3120-2TE21-0AA4": [{"src": "/assets/videos/6SL3120-2TE21-0AA4.mp4", "title": "From the Box to the Interface"}],
   "AC3216": [{"src": "/assets/videos/AC3216.mp4", "title": "Wired Into the AS-i Bus"}],
   "AS228P-A": [{"src": "/assets/videos/AS228P-A.mp4", "title": "Three Ports Zero Add Ons"}],
