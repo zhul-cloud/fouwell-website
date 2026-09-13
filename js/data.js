@@ -383,6 +383,9 @@ const PRODUCTS = [
   // ---- generate-data-entry.js additions (2026-09-13) ----
   { brand: "OMRON", model: "E6C2-CWZ6C 2500P/R", series: "E6C2-C", cat: "sensors", spec: "Incremental rotary encoder, 50mm body, 2500 pulses/revolution, NPN open-collector output, DC5-24V", status: "instock", photo: null, linkedin: null, sell_price: 46.97, sell_price_currency: "USD", price_source: "procurement_quote_min" }, // generate-data-entry.js <- wiki/marketing/OMRON/Encoder/E6C2-CWZ6C-2500P_R/营销素材包/04-独立站内容包/E6C2-CWZ6C-2500P_R.md
 
+  // ---- generate-data-entry.js additions (2026-09-13) ----
+  { brand: "OMRON", model: "R88M-K1K530H-S2", series: "G5", cat: "servo", spec: "G5 series AC servo motor, 1.5kW, 200V, 3000rpm, incremental encoder, keyed shaft", status: "instock", photo: null, linkedin: null, sell_price: 187.85, sell_price_currency: "USD", price_source: "procurement_quote_min" }, // generate-data-entry.js <- wiki/marketing/OMRON/Servo/R88M-K1K530H-S2/营销素材包/04-独立站内容包/R88M-K1K530H-S2.md
+
 ];
 
 /* ---- Brand wall — 35+ brands we supply
