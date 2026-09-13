@@ -429,8 +429,11 @@ function renderProductDetail(p) {
     : 'In stock, ships in 24h';
   const metaDesc = document.querySelector('meta[name="description"]');
   if (metaDesc) {
+    // "Genuine" is a factual OEM-authenticity claim — skip it for disclosed compatible/
+    // non-OEM brands (see NON_GENUINE_BRANDS in js/data.js).
+    const qualifier = (typeof NON_GENUINE_BRANDS !== 'undefined' && NON_GENUINE_BRANDS.has(p.brand)) ? '' : 'Genuine ';
     metaDesc.setAttribute('content',
-      'Genuine ' + p.brand + ' ' + p.model + ' — ' + p.spec + '. ' +
+      qualifier + p.brand + ' ' + p.model + ' — ' + p.spec + '. ' +
       availPhrase + '. Get a fast quote from Fouwell, verified industrial automation parts supplier.');
   }
 
@@ -507,6 +510,14 @@ function renderProductDetail(p) {
     '<a class="pill cat" href="' + categoryUrl(p.cat) + '">' + esc(CATEGORIES[p.cat]) + '</a>' +
     (brand ? '<span class="pill brand">' + esc(brand.country) + '</span>' : '');
   document.getElementById('pd-spec').textContent = p.spec;
+
+  // "100% genuine" is a factual OEM-authenticity claim — false for disclosed compatible/
+  // non-OEM brands (see NON_GENUINE_BRANDS in js/data.js). Swap the trust-list bullet instead
+  // of just hiding it, since compatibility/quality-check is still a real, honest claim.
+  const genuineBadge = document.getElementById('pd-genuine-badge');
+  if (genuineBadge && typeof NON_GENUINE_BRANDS !== 'undefined' && NON_GENUINE_BRANDS.has(p.brand)) {
+    genuineBadge.innerHTML = '<span class="pt">✓</span> Compatibility verified, quality-checked before shipping';
+  }
 
   // ---- reference price (only when p.sell_price is set — see schema/products-schema.md
   // "AI价格解析": internal price preferred, external eBay/web reference as fallback.

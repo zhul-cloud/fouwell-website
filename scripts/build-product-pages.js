@@ -24,7 +24,7 @@ const {
 } = require('./lib/site-data');
 
 const {
-  PRODUCTS, BRANDS, CATEGORIES, PRODUCT_VIDEOS, genericFaqFor, genericApplicationsFor,
+  PRODUCTS, BRANDS, CATEGORIES, NON_GENUINE_BRANDS, PRODUCT_VIDEOS, genericFaqFor, genericApplicationsFor,
   pickProductReviews, pickReviewCount, buildProductAggregateRating, SELLER_AGGREGATE_RATING,
   SHIPPING_DETAILS, RETURN_POLICY, DATA_LAST_UPDATED, PRICE_VALID_UNTIL
 } = loadGlobals('js/data.js', 'js/videos.js', 'js/faq-templates.js', 'js/review-pool.js', 'js/company-policies.js');
@@ -186,7 +186,10 @@ function buildMetaDescription(p) {
   const availPhrase = p.status === 'discont' ? 'Replaced by a current equivalent'
     : p.status === 'legacy' ? 'Legacy line, still sourceable'
     : 'In stock, ships in 24h';
-  return 'Genuine ' + p.brand + ' ' + p.model + ' — ' + p.spec + '. ' +
+  // "Genuine" is a factual OEM-authenticity claim — never true for disclosed
+  // compatible/non-OEM brands (see NON_GENUINE_BRANDS in js/data.js's comment header).
+  const qualifier = NON_GENUINE_BRANDS.has(p.brand) ? '' : 'Genuine ';
+  return qualifier + p.brand + ' ' + p.model + ' — ' + p.spec + '. ' +
     availPhrase + '. Get a fast quote from Fouwell, verified industrial automation parts supplier.';
 }
 
@@ -252,6 +255,15 @@ function renderPage(p) {
       '<p class="pd-price-ref" id="pd-price-ref" style="display:none;"></p>',
       '<p class="pd-price-ref" id="pd-price-ref">Reference price: <strong>~$' + Math.round(p.sell_price) + '</strong>' +
         '<span class="pd-price-note">(market reference — contact us for a confirmed quote)</span></p>'
+    );
+  }
+  // Static "100% genuine" trust bullet — false for disclosed compatible/non-OEM brands
+  // (see NON_GENUINE_BRANDS in js/data.js), so crawlers and non-JS clients must see the
+  // corrected claim baked in too, not just after js/main.js hydrates.
+  if (NON_GENUINE_BRANDS.has(p.brand)) {
+    html = html.replace(
+      '<li id="pd-genuine-badge"><span class="pt">✓</span> 100% genuine — official brand channels</li>',
+      '<li id="pd-genuine-badge"><span class="pt">✓</span> Compatibility verified, quality-checked before shipping</li>'
     );
   }
   // Static star rating + customer feedback cards — real Alibaba buyer feedback (js/review-pool.js),

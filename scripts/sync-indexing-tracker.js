@@ -57,7 +57,14 @@ if (!newRows.length) {
 // itself starts with "|-", not "| ", so a naive scan finds the *header* as the last match
 // when the table is still empty and inserts new rows above the separator, corrupting it.
 const lines = tracker.split('\n');
-const sepIndex = lines.findIndex(l => /^\|[\s:-]+\|\s*$/.test(l));
+// Match a full separator row regardless of column count or Obsidian's auto-formatted
+// spacing (e.g. "| ----- | ----- | ... |" as well as the plain "|---|---|" form) — each
+// cell between pipes must contain only dashes, colons, and whitespace.
+const sepIndex = lines.findIndex(l => {
+  if (!/^\|.*\|\s*$/.test(l)) return false;
+  const cells = l.trim().slice(1, -1).split('|');
+  return cells.length > 0 && cells.every(c => /^[\s:-]+$/.test(c));
+});
 if (sepIndex === -1) {
   console.error('Could not find the table header separator row ("|---|...|") in ' + TRACKER + ' — insert rows manually.');
   process.exit(1);
