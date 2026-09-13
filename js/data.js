@@ -381,7 +381,7 @@ const PRODUCTS = [
   { brand: "ifm", model: "AC3216", series: "SmartLine", cat: "sensors", spec: "The ifm AC3216 is a SmartLine AS-Interface I/O module with 4 analog current inputs (4-20mA each), IP20, supporting 2/3/4-wire sensor connections", status: "instock", photo: "AC3216.jpg", linkedin: null, sell_price: 707.41, sell_price_currency: "USD", price_source: "ebay_ref" }, // generate-data-entry.js <- wiki/marketing/ifm/ASiModule/AC3216/营销素材包/04-独立站内容包/AC3216.md
 
   // ---- generate-data-entry.js additions (2026-09-13) ----
-  { brand: "OMRON", model: "E6C2-CWZ6C 2500P/R", series: "E6C2-C", cat: "sensors", spec: "Incremental rotary encoder, 50mm body, 2500 pulses/revolution, NPN open-collector output, DC5-24V", status: "instock", photo: null, linkedin: null }, // generate-data-entry.js <- wiki/marketing/OMRON/Encoder/E6C2-CWZ6C-2500P_R/营销素材包/04-独立站内容包/E6C2-CWZ6C-2500P_R.md
+  { brand: "OMRON", model: "E6C2-CWZ6C 2500P/R", series: "E6C2-C", cat: "sensors", spec: "Incremental rotary encoder, 50mm body, 2500 pulses/revolution, NPN open-collector output, DC5-24V", status: "instock", photo: null, linkedin: null, sell_price: 46.97, sell_price_currency: "USD", price_source: "procurement_quote_min" }, // generate-data-entry.js <- wiki/marketing/OMRON/Encoder/E6C2-CWZ6C-2500P_R/营销素材包/04-独立站内容包/E6C2-CWZ6C-2500P_R.md
 
 ];
 
