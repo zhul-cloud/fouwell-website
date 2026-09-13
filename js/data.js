@@ -392,6 +392,11 @@ const PRODUCTS = [
   // ---- generate-data-entry.js additions (2026-09-13) ----
   { brand: "OMRON", model: "CJ1W-NC413", series: "CJ1", cat: "controllers", spec: "CJ series position control unit, 4-axis pulse output (open collector), compatible with CJ1/CJ2 series PLC", status: "instock", photo: null, linkedin: null, sell_price: 313.11, sell_price_currency: "USD", price_source: "procurement_quote_min" }, // generate-data-entry.js <- wiki/marketing/OMRON/PositioningModule/CJ1W-NC413/营销素材包/04-独立站内容包/CJ1W-NC413.md
 
+  // ---- generate-data-entry.js additions (2026-09-13) ----
+  { brand: "Mitsubishi", model: "GS2107-WTBD-N", series: "GOT2000", cat: "hmi", spec: "GOT2000 series 7\" wide TFT touch panel, WVGA (800x480), DC24V, Ethernet port", status: "instock", photo: null, linkedin: null, sell_price: 145.6, sell_price_currency: "USD", price_source: "procurement_quote_min" }, // generate-data-entry.js <- wiki/marketing/Mitsubishi/HMI/GS2107-WTBD-N/营销素材包/04-独立站内容包/GS2107-WTBD-N.md
+  { brand: "Mitsubishi", model: "A2USCPU-S1", series: "MELSEC-AnS", cat: "controllers", spec: "MELSEC-AnS series CPU module, 1024-point control scale, 14k-step program capacity. Discontinued — legacy stock sourced by Fouwell", status: "discontinued", photo: null, linkedin: null, sell_price: 64.35, sell_price_currency: "USD", price_source: "procurement_quote_min" }, // generate-data-entry.js <- wiki/marketing/Mitsubishi/PLC/A2USCPU-S1/营销素材包/04-独立站内容包/A2USCPU-S1.md
+  { brand: "OMRON", model: "CP2E-N60DT-D", series: "CP2E-N", cat: "controllers", spec: "CP2E-N series programmable controller, 36 digital inputs, 24 transistor (NPN) outputs, dual Ethernet ports", status: "instock", photo: null, linkedin: null, sell_price: 201.93, sell_price_currency: "USD", price_source: "procurement_quote_min" }, // generate-data-entry.js <- wiki/marketing/OMRON/PLC/CP2E-N60DT-D/营销素材包/04-独立站内容包/CP2E-N60DT-D.md
+
 ];
 
 /* ---- Brand wall — 35+ brands we supply
