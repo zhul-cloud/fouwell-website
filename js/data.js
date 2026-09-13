@@ -389,6 +389,9 @@ const PRODUCTS = [
   // ---- generate-data-entry.js additions (2026-09-13) ----
   { brand: "Siemens", model: "6ES7193-6BP00-0DA0", series: "SIMATIC ET200SP", cat: "controllers", spec: "SIMATIC ET200SP BaseUnit, type BU15-P16+A0+2D, 24V DC/10A supply, FM/ATEX/IECEx certified for hazardous locations, made in Germany", status: "instock", photo: null, linkedin: null, sell_price: 44.99, sell_price_currency: "USD", price_source: "ebay_ref" }, // generate-data-entry.js <- wiki/marketing/Siemens/BaseUnit/6ES7193-6BP00-0DA0/营销素材包/04-独立站内容包/6ES7193-6BP00-0DA0.md
 
+  // ---- generate-data-entry.js additions (2026-09-13) ----
+  { brand: "OMRON", model: "CJ1W-NC413", series: "CJ1", cat: "controllers", spec: "CJ series position control unit, 4-axis pulse output (open collector), compatible with CJ1/CJ2 series PLC", status: "instock", photo: null, linkedin: null, sell_price: 313.11, sell_price_currency: "USD", price_source: "procurement_quote_min" }, // generate-data-entry.js <- wiki/marketing/OMRON/PositioningModule/CJ1W-NC413/营销素材包/04-独立站内容包/CJ1W-NC413.md
+
 ];
 
 /* ---- Brand wall — 35+ brands we supply
