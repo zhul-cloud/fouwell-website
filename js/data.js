@@ -406,6 +406,11 @@ const PRODUCTS = [
   { brand: "Honeywell", model: "SZR-LY4-N1-AC220V", series: "SZR-LY", cat: "controllers", spec: "Interposing relay, 4PDT (4NO/4NC), 10A, 220VAC coil, LED indicator", status: "instock", photo: null, linkedin: null, sell_price: 18.79, sell_price_currency: "USD", price_source: "procurement_quote_min" }, // generate-data-entry.js <- wiki/marketing/Honeywell/Relay/SZR-LY4-N1-AC220V/营销素材包/04-独立站内容包/SZR-LY4-N1-AC220V.md
   { brand: "QUEEN", model: "MD-15WAG-SCS13-M16", series: "MD", cat: "spares", spec: "Solenoid valve, SCS13 stainless steel body, PT 1/2 port, DC24V, normally closed", status: "instock", photo: null, linkedin: null, sell_price: 29.75, sell_price_currency: "USD", price_source: "procurement_quote_min" }, // generate-data-entry.js <- wiki/marketing/QUEEN/SolenoidValve/MD-15WAG-SCS13-M16/营销素材包/04-独立站内容包/MD-15WAG-SCS13-M16.md
 
+  // ---- generate-data-entry.js additions (2026-09-14) ----
+  { brand: "Siemens", model: "6ES7131-6BH01-0BA0", series: "SIMATIC ET200SP", cat: "controllers", spec: "SIMATIC ET200SP digital input module, 16x24VDC, FM/ATEX/IECEx certified for hazardous locations, made in Germany", status: "instock", photo: null, linkedin: null, sell_price: 73.41, sell_price_currency: "USD", price_source: "ebay_ref" }, // generate-data-entry.js <- wiki/marketing/Siemens/IOModule/6ES7131-6BH01-0BA0/营销素材包/04-独立站内容包/6ES7131-6BH01-0BA0.md
+  { brand: "Siemens", model: "3UF7020-1AU01-0", series: "SIMOCODE pro S", cat: "controllers", spec: "SIMOCODE pro S motor protection basic unit, AC110-240V, PROFIBUS DP, 2×NO auxiliary contacts, made in Germany", status: "instock", photo: null, linkedin: null, sell_price: 259.73, sell_price_currency: "USD", price_source: "ebay_ref" }, // generate-data-entry.js <- wiki/marketing/Siemens/MotorProtection/3UF7020-1AU01-0/营销素材包/04-独立站内容包/3UF7020-1AU01-0.md
+  { brand: "Siemens", model: "6ES7222-1HH32-0XB0", series: "SIMATIC S7-1200 SM1222", cat: "controllers", spec: "SIMATIC S7-1200 SM1222 digital output module, 16x relay, 30VDC/250VAC 2A/pt", status: "instock", photo: null, linkedin: null, sell_price: 105.81, sell_price_currency: "USD", price_source: "ebay_ref" }, // generate-data-entry.js <- wiki/marketing/Siemens/PLC/6ES7222-1HH32-0XB0/营销素材包/04-独立站内容包/6ES7222-1HH32-0XB0.md
+
 ];
 
 /* ---- Brand wall — 35+ brands we supply
