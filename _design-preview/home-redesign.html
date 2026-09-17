@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>[PREVIEW v2] Fouwell — Industrial Automation Parts Supplier</title>
+<style>
+  :root{
+    --bg:#F7F9FC; --card:#FFFFFF; --line:#E3E8F2; --line2:#D7DFEE;
+    --blue:#1E3F9E; --blue-dark:#142E74; --blue-deep:#0D1F52; --blue-soft:#EEF2FC;
+    --red:#C0272D; --red-soft:#FCEBEC; --amber:#E8833A; --green:#1E9E5A;
+    --ink:#1a2333; --ink-soft:#47536b; --muted:#6b7794;
+    --shadow:0 6px 24px rgba(20,46,116,.08); --shadow-lg:0 14px 40px rgba(13,31,82,.14);
+    --sans:-apple-system,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;
+    --mono:'IBM Plex Mono','SF Mono',Consolas,monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased;overflow-x:hidden;line-height:1.6}
+  img{max-width:100%;display:block}
+  a{color:inherit}
+
+  .preview-flag{position:fixed;bottom:18px;right:18px;z-index:999;background:var(--red);color:#fff;
+    font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:1px;padding:9px 14px;border-radius:10px;
+    box-shadow:0 10px 30px rgba(0,0,0,.25)}
+
+  .wrap{position:relative;max-width:1180px;margin:0 auto;padding:0 24px}
+
+  /* ===== 深色蓝图/电路背景 —— 复用 style.css 现有 .hero 的同一套工控风格 SVG ===== */
+  .blueprint-dark{position:relative;overflow:hidden;color:#fff;
+    background:
+      linear-gradient(115deg, rgba(13,31,82,.80) 0%, rgba(20,46,116,.68) 55%, rgba(30,63,158,.56) 100%),
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 600' preserveAspectRatio='xMidYMid slice'><defs><pattern id='grid' width='40' height='40' patternUnits='userSpaceOnUse'><path d='M40 0H0V40' fill='none' stroke='rgba(255,255,255,0.06)' stroke-width='1'/></pattern><linearGradient id='glow' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%231E3F9E' stop-opacity='0.45'/><stop offset='1' stop-color='%23C0272D' stop-opacity='0.30'/></linearGradient></defs><rect width='1200' height='600' fill='url(%23grid)'/><g stroke='rgba(120,180,255,0.18)' stroke-width='1.4' fill='none'><path d='M0 200 L300 200 L320 180 L520 180 L540 200 L900 200 L920 220 L1200 220'/><path d='M0 360 L260 360 L280 340 L580 340 L600 360 L820 360 L840 380 L1200 380'/><path d='M0 480 L180 480 L200 460 L420 460 L440 480 L720 480 L740 500 L1200 500'/><path d='M200 0 L200 120 L180 140 L180 260 L200 280 L200 600'/><path d='M620 0 L620 100 L640 120 L640 240 L620 260 L620 600'/><path d='M980 0 L980 80 L960 100 L960 200 L980 220 L980 600'/></g><g fill='rgba(120,180,255,0.32)'><circle cx='300' cy='200' r='3.5'/><circle cx='540' cy='200' r='3.5'/><circle cx='920' cy='220' r='3.5'/><circle cx='280' cy='340' r='3.5'/><circle cx='600' cy='360' r='3.5'/><circle cx='840' cy='380' r='3.5'/><circle cx='200' cy='120' r='3.5'/><circle cx='180' cy='260' r='3.5'/><circle cx='640' cy='120' r='3.5'/><circle cx='640' cy='240' r='3.5'/><circle cx='960' cy='100' r='3.5'/><circle cx='960' cy='200' r='3.5'/></g><g fill='rgba(255,143,147,0.42)'><rect x='60' y='90' width='20' height='20' rx='2'/><rect x='480' y='270' width='14' height='14' rx='2'/><rect x='780' y='100' width='24' height='16' rx='2'/><rect x='1080' y='340' width='18' height='18' rx='2'/></g><g fill='none' stroke='rgba(255,255,255,0.10)' stroke-width='1.2'><rect x='820' y='420' width='280' height='140' rx='6'/><rect x='850' y='450' width='220' height='14' rx='2' fill='rgba(255,255,255,0.08)'/><rect x='850' y='478' width='180' height='10' rx='2' fill='rgba(255,255,255,0.06)'/><rect x='850' y='502' width='200' height='10' rx='2' fill='rgba(255,255,255,0.06)'/></g><g fill='url(%23glow)' opacity='0.5'><circle cx='160' cy='480' r='180'/><circle cx='1080' cy='140' r='160'/></g></svg>"),
+      linear-gradient(135deg, #0a1840 0%, #142E74 50%, #1E3F9E 100%);
+    background-size:cover,cover,100% 100%; background-position:center,center,center; background-repeat:no-repeat,no-repeat,no-repeat;}
+
+  /* ===== 顶部信息条 ===== */
+  .topbar{background:var(--blue-deep);border-bottom:1px solid rgba(255,255,255,.08);font-size:12.5px;color:#b7c5e8}
+  .topbar .wrap{display:flex;align-items:center;justify-content:space-between;height:38px}
+  .topbar .tb-links{display:flex;align-items:center;gap:16px}
+  .topbar a{text-decoration:none;color:#dce4f7;transition:color .2s}
+  .topbar a:hover{color:#fff}
+  .topbar .lang-switch{border:1px solid rgba(255,255,255,.22);border-radius:6px;padding:2px 9px;font-weight:600}
+
+  /* ===== 页头 ===== */
+  header.site{position:sticky;top:0;z-index:50;background:#fff;border-bottom:3px solid var(--blue);box-shadow:0 2px 12px rgba(13,31,82,.06)}
+  .hbar{display:flex;align-items:center;justify-content:space-between;height:68px}
+  .brand{display:flex;align-items:center;gap:11px;font-weight:800;font-size:18px;letter-spacing:-.2px;text-decoration:none}
+  .brand .mark{width:38px;height:38px;border-radius:8px;background:linear-gradient(135deg,var(--blue),var(--blue-dark));display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;color:#fff;box-shadow:0 4px 14px rgba(30,63,158,.35)}
+  .brand .word{line-height:1.15;color:var(--blue)}
+  .brand .word .cn{display:block;font-family:var(--mono);font-size:9.5px;color:var(--muted);letter-spacing:2.5px;font-weight:600}
+  nav.mainnav{display:flex;align-items:center;gap:6px}
+  nav.mainnav a{color:var(--ink);text-decoration:none;font-size:14.5px;font-weight:600;padding:8px 14px;border-radius:6px;transition:background .2s,color .2s}
+  nav.mainnav a:hover{background:var(--blue-soft);color:var(--blue)}
+  nav.mainnav a.active{color:var(--blue);background:var(--blue-soft)}
+  .navcta{background:var(--red)!important;color:#fff!important;margin-left:8px}
+  .navcta:hover{background:#a11f24!important;color:#fff!important}
+
+  /* ===== Hero ===== */
+  .hero{padding:88px 0 96px;position:relative}
+  .hero::after{content:"";position:absolute;right:-120px;bottom:-160px;width:420px;height:420px;border-radius:50%;border:60px solid rgba(255,255,255,.05);pointer-events:none}
+  .hero .wrap{display:grid;grid-template-columns:1.15fr .85fr;gap:56px;align-items:center}
+  .badge{display:inline-flex;align-items:center;gap:9px;padding:7px 16px;border-radius:99px;font-size:12px;color:#cfe0ff;
+    background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.22);margin-bottom:22px;font-weight:600;font-family:var(--mono);letter-spacing:.5px}
+  .badge .dot{width:7px;height:7px;border-radius:50%;background:#5EEAD4;box-shadow:0 0 10px #5EEAD4}
+  .hero h1{font-size:clamp(32px,4.6vw,46px);font-weight:800;line-height:1.2;letter-spacing:-.5px;margin-bottom:18px}
+  .hero h1 .accent{color:#ff8f93}
+  .hero .sub{font-size:16.5px;line-height:1.8;color:#d4ddf5;max-width:560px;margin-bottom:30px}
+  .hero .sub b{color:#fff}
+  .ctas{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:34px}
+  .cta-main{display:inline-flex;align-items:center;gap:9px;padding:14px 28px;border-radius:8px;font-size:15px;font-weight:700;color:#fff;text-decoration:none;
+    background:var(--red);transition:transform .18s,box-shadow .18s;box-shadow:0 10px 26px rgba(192,39,45,.35)}
+  .cta-main:hover{transform:translateY(-2px);background:#a11f24}
+  .cta-ghost{display:inline-flex;align-items:center;gap:9px;padding:14px 26px;border-radius:8px;font-size:15px;font-weight:700;color:#fff;
+    text-decoration:none;border:2px solid rgba(255,255,255,.55);transition:background .2s}
+  .cta-ghost:hover{background:rgba(255,255,255,.1)}
+  .hero-stats{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .stat-card{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:10px;padding:18px 16px}
+  .stat-card .num{font-family:var(--mono);font-size:30px;font-weight:800;color:#fff;line-height:1}
+  .stat-card .num small{font-size:16px;color:#9fc0ff}
+  .stat-card .label{font-size:12px;color:#b7c5e8;margin-top:6px}
+
+  /* ===== 通用 section ===== */
+  section{padding:76px 0}
+  section.alt{background:#fff;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .sechead{text-align:center;margin-bottom:14px}
+  .sechead .kick{font-family:var(--mono);font-size:11px;letter-spacing:3px;color:var(--red);font-weight:700;margin-bottom:12px;text-transform:uppercase}
+  .sechead h2{font-size:clamp(24px,3.4vw,34px);font-weight:800;letter-spacing:-.4px;color:var(--blue-deep)}
+  .sechead h2 .accent{color:var(--red)}
+  .secsub{text-align:center;font-size:14.5px;line-height:1.8;color:var(--muted);max-width:680px;margin:0 auto 46px}
+  .secsub b{color:var(--ink-soft)}
+
+  /* ===== 品牌墙 ===== */
+  .brandwall{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+  .btag{display:flex;align-items:center;gap:8px;padding:10px 16px;border-radius:9px;background:#fff;border:1px solid var(--line2);font-size:13.5px;font-weight:700;color:var(--ink-soft);box-shadow:var(--shadow);transition:transform .2s,border-color .2s}
+  .btag:hover{transform:translateY(-2px);border-color:var(--blue);color:var(--blue)}
+  .btag .flag{font-size:10px;font-weight:600;color:var(--muted);font-family:var(--mono)}
+  .btag.more{color:var(--red);border-style:dashed;border-color:#f0b8bb}
+  .brandnote{text-align:center;margin-top:24px;color:var(--muted);font-size:13px}
+  .brandnote a{color:var(--blue);text-decoration:none;font-weight:700}
+
+  /* ===== 品类模块卡（编号网格） ===== */
+  .modgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  .modcard{background:#fff;border:1px solid var(--line2);border-radius:14px;padding:24px 24px 20px;position:relative;overflow:hidden;box-shadow:var(--shadow);transition:transform .22s,box-shadow .22s;text-decoration:none;display:block;color:inherit}
+  .modcard:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg)}
+  .modcard .topline{position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--blue),var(--blue-dark))}
+  .modcard .mh{display:flex;align-items:center;gap:13px;margin-bottom:12px}
+  .modcard .mnum{font-family:var(--mono);font-size:13px;font-weight:800;width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;color:#fff;background:linear-gradient(135deg,var(--blue),var(--blue-dark));flex-shrink:0}
+  .modcard .mh .t{font-size:17.5px;font-weight:800;letter-spacing:-.1px;color:var(--blue-deep)}
+  .modcard .items{font-size:11.5px;color:var(--blue);font-weight:700;margin-bottom:9px;letter-spacing:.2px;text-transform:uppercase}
+  .modcard .desc{font-size:13px;line-height:1.7;color:var(--ink-soft);margin-bottom:15px}
+  .modcard .foot{display:flex;align-items:center;justify-content:space-between;border-top:1px dashed var(--line2);padding-top:12px;font-size:12.5px}
+  .modcard .count{font-family:var(--mono);color:var(--muted)}
+  .modcard .arrow{color:var(--red);font-weight:700}
+
+  /* ===== 精选商品卡 ===== */
+  .prodgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+  .prodcard{background:#fff;border:1px solid var(--line2);border-radius:12px;padding:20px;box-shadow:var(--shadow);transition:transform .22s,box-shadow .22s;display:flex;flex-direction:column}
+  .prodcard:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg)}
+  .prodcard .ptag{font-family:var(--mono);font-size:10px;letter-spacing:1.5px;color:var(--blue);font-weight:700;margin-bottom:10px}
+  .prodcard .pmodel{font-size:16px;font-weight:800;letter-spacing:-.2px;margin-bottom:6px;line-height:1.3;color:var(--blue-deep)}
+  .prodcard .pspec{font-size:12px;line-height:1.6;color:var(--muted);margin-bottom:14px;flex-grow:1}
+  .prodcard .pstatus{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:var(--green);background:#EAFBF1;border:1px solid #BEEED2;padding:4px 10px;border-radius:99px;width:max-content;margin-bottom:14px}
+  .prodcard .pstatus .d{width:6px;height:6px;border-radius:50%;background:var(--green)}
+  .prodcard .pfoot{display:flex;align-items:center;justify-content:space-between;border-top:1px dashed var(--line2);padding-top:13px}
+  .prodcard .pprice{font-family:var(--mono);font-size:15px;font-weight:800;color:var(--blue-deep)}
+  .prodcard .pinq{font-size:12.5px;font-weight:700;color:var(--red);text-decoration:none}
+
+  /* ===== SVG 流程图容器 ===== */
+  .archwrap{background:#fff;border:1px solid var(--line2);border-radius:16px;padding:26px 20px 14px;box-shadow:var(--shadow-lg);position:relative;overflow:hidden}
+  .archwrap svg{width:100%;height:auto;display:block}
+
+  /* ===== 数字化能力 mini 卡 ===== */
+  .capgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+  .capcard{background:#fff;border:1px solid var(--line2);border-radius:12px;padding:20px 18px;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s;box-shadow:var(--shadow)}
+  .capcard:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg)}
+  .capcard .topline{position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--blue),var(--red))}
+  .capcard .cnum{font-family:var(--mono);font-size:10.5px;color:var(--muted);letter-spacing:1px;margin-bottom:9px}
+  .capcard .cico{font-size:22px;margin-bottom:10px}
+  .capcard h4{font-size:14.5px;font-weight:800;margin-bottom:7px;letter-spacing:-.1px;color:var(--blue-deep)}
+  .capcard p{font-size:12px;line-height:1.65;color:var(--muted)}
+
+  /* ===== 数据统计组 ===== */
+  .statgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+  .statgroup{background:#fff;border:1px solid var(--line2);border-radius:14px;padding:22px;box-shadow:var(--shadow)}
+  .statgroup .sg-title{display:flex;align-items:center;gap:10px;font-size:13.5px;font-weight:800;margin-bottom:16px;color:var(--blue-deep)}
+  .statgroup .sg-ico{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;color:#fff}
+  .statgroup .row{display:flex;align-items:baseline;justify-content:space-between;padding:8px 0;border-top:1px dashed var(--line2)}
+  .statgroup .row:first-of-type{border-top:none}
+  .statgroup .row .n{font-family:var(--mono);font-size:19px;font-weight:800;color:var(--blue-deep)}
+  .statgroup .row .n span{font-size:11px;color:var(--muted);font-weight:600;font-family:var(--sans)}
+  .statgroup .row .l{font-size:11.5px;color:var(--muted);text-align:right}
+  .statnote{text-align:center;margin-top:22px;font-size:12px;color:var(--muted)}
+
+  /* ===== 客户类型（分层卡） ===== */
+  .custgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+  .custcard{background:#fff;border:1px solid var(--line2);border-radius:14px;padding:22px;position:relative;overflow:hidden;min-height:300px;display:flex;flex-direction:column;box-shadow:var(--shadow);transition:transform .22s,box-shadow .22s}
+  .custcard:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg)}
+  .custcard::before{content:"";position:absolute;left:0;right:0;top:0;height:4px;background:var(--blue)}
+  .custcard.hv::before{background:var(--red)}
+  .ctag{display:inline-flex;width:max-content;font-size:10.5px;border-radius:999px;padding:4px 11px;font-weight:800;letter-spacing:.6px;margin-bottom:14px;background:var(--blue-soft);color:var(--blue);border:1px solid #C9D8F5}
+  .custcard.hv .ctag{background:var(--red-soft);color:var(--red);border-color:#F3C6C8}
+  .custcard h3{font-size:18px;font-weight:800;margin-bottom:12px;color:var(--blue-deep)}
+  .custcard ul{list-style:none;display:grid;gap:9px;margin-bottom:auto}
+  .custcard li{font-size:12.5px;line-height:1.6;color:var(--ink-soft);display:flex;gap:8px}
+  .custcard li::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--blue);flex:none;margin-top:6px}
+  .custcard.hv li::before{background:var(--red)}
+
+  /* ===== 5步流程 ===== */
+  .flywheel{background:#fff;border:1px solid var(--line2);border-radius:16px;padding:34px 28px 26px;box-shadow:var(--shadow-lg)}
+  .flyrows{display:grid;grid-template-columns:repeat(5,1fr);gap:0}
+  .flyrow{padding:0 16px;position:relative}
+  .flyrow+.flyrow{border-left:1px dashed var(--line2)}
+  .flyrow .fnum{font-family:var(--mono);font-size:11px;font-weight:700;color:var(--red);margin-bottom:10px;letter-spacing:1px}
+  .flyrow .ft{font-size:14px;font-weight:800;margin-bottom:8px;letter-spacing:-.1px;color:var(--blue-deep)}
+  .flyrow .fd{font-size:11.5px;line-height:1.7;color:var(--muted)}
+
+  /* ===== 最终 CTA ===== */
+  .finalcta{padding:80px 0 68px;text-align:center;position:relative}
+  .finalcta h2{font-size:clamp(24px,3.6vw,36px);font-weight:800;letter-spacing:-.5px;margin-bottom:16px;color:#fff}
+  .finalcta .accent{color:#ff8f93}
+  .finalcta p{font-size:14.5px;color:#d4ddf5;margin-bottom:30px;line-height:1.8}
+
+  /* ===== 页脚 ===== */
+  footer.site{background:var(--blue-deep);color:#b7c5e8;padding:50px 0 0}
+  .ffgrid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:32px;margin-bottom:36px}
+  .ffgrid .fcol h4{font-size:13px;font-weight:800;color:#fff;letter-spacing:.5px;margin-bottom:14px;text-transform:uppercase}
+  .ffgrid .fcol ul{list-style:none;display:grid;gap:9px}
+  .ffgrid .fcol ul a{color:#b7c5e8;text-decoration:none;font-size:13px;transition:color .2s}
+  .ffgrid .fcol ul a:hover{color:#fff}
+  .ffgrid .fcol p{color:#b7c5e8;font-size:13px;line-height:1.75;margin-top:12px}
+  .flogo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:16px;margin-bottom:6px;color:#fff}
+  .flogo .mark{width:28px;height:28px;border-radius:7px;background:linear-gradient(135deg,var(--blue),#5B8DEF);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;color:#fff}
+  .fbar{border-top:1px solid rgba(255,255,255,.12);padding:18px 0;display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;font-size:12.5px}
+  .fbar .meta{font-family:var(--mono);font-size:11px;color:#8ea1cc;letter-spacing:.5px}
+
+  @media (max-width:980px){
+    .hero .wrap{grid-template-columns:1fr}
+    .modgrid{grid-template-columns:repeat(2,1fr)}
+    .prodgrid{grid-template-columns:repeat(2,1fr)}
+    .capgrid{grid-template-columns:repeat(2,1fr)}
+    .statgrid{grid-template-columns:repeat(2,1fr)}
+    .custgrid{grid-template-columns:repeat(2,1fr)}
+    .flyrows{grid-template-columns:repeat(1,1fr)}
+    .flyrow+.flyrow{border-left:none;border-top:1px dashed var(--line2);padding-top:16px;margin-top:16px}
+    .ffgrid{grid-template-columns:1fr 1fr}
+  }
+  @media (max-width:680px){
+    nav.mainnav a:not(.navcta){display:none}
+    .modgrid,.prodgrid,.capgrid,.statgrid,.custgrid{grid-template-columns:1fr}
+    .hero{padding:56px 0 64px}
+    section{padding:52px 0}
+    .archwrap{padding:16px 8px 8px}
+    .ffgrid{grid-template-columns:1fr}
+    .preview-flag{left:12px;right:12px;text-align:center}
+  }
+</style>
+</head>
+<body>
+
+<div class="preview-flag">DESIGN PREVIEW v2 — NOT LIVE — NOT LINKED FROM SITE</div>
+
+<!-- ==================== 顶部信息条 ==================== -->
+<div class="topbar">
+  <div class="wrap">
+    <span>📧 info@fouwell.com &nbsp;·&nbsp; 📱 +86 133 8591 5251 (WhatsApp)</span>
+    <div class="tb-links">
+      <span>🇺🇸 English</span>
+      <a class="lang-switch" href="/ru/">🇷🇺 RU</a>
+      <a href="/contact/">Get a Quote</a>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 页头 ==================== -->
+<header class="site">
+  <div class="wrap hbar">
+    <a href="/" class="brand">
+      <div class="mark">F</div>
+      <div class="word">FOUWELL<span class="cn">INDUSTRIAL AUTOMATION</span></div>
+    </a>
+    <nav class="mainnav">
+      <a href="/" class="active">Home</a>
+      <a href="/products/">Products</a>
+      <a href="/brands/">Brands</a>
+      <a href="/about/">About Us</a>
+      <a href="/contact/">Contact</a>
+      <a class="navcta" href="/contact/#inquiry">Request Quote →</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ==================== Hero（深色蓝图背景） ==================== -->
+<div class="blueprint-dark">
+  <div class="wrap hero">
+    <div>
+      <div class="badge"><span class="dot"></span>10+ YEARS · ALIBABA GOLD SUPPLIER · 25+ BRANDS</div>
+      <h1>Your Agile Multi-Brand Supply Partner for <span class="accent">Industrial Automation</span></h1>
+      <p class="sub">PLC, HMI, servo motors, drives and instruments from 25+ global brands — sourced from official channels, shipped worldwide, with <b>one-on-one service from inquiry to delivery.</b></p>
+      <div class="ctas">
+        <a class="cta-main" href="/products/">Browse Products →</a>
+        <a class="cta-ghost" href="/contact/#inquiry">Send Inquiry</a>
+      </div>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-card"><div class="num">10<small>+</small></div><div class="label">Years of industry expertise</div></div>
+      <div class="stat-card"><div class="num">25<small>+</small></div><div class="label">Global brands supplied</div></div>
+      <div class="stat-card"><div class="num">98<small>%</small></div><div class="label">Five-star positive rate</div></div>
+      <div class="stat-card"><div class="num">24<small>h</small></div><div class="label">In-stock items ship within</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 品牌墙 ==================== -->
+<section id="brands">
+  <div class="wrap">
+    <div class="sechead">
+      <div class="kick">One-Stop Supply</div>
+      <h2>Other Brands We <span class="accent">Supply</span></h2>
+    </div>
+    <p class="secsub">35+ European, American, Japanese and leading Chinese brands — you deal with <b>one supplier, not ten.</b></p>
+
+    <div class="brandwall">
+      <span class="btag">Siemens <span class="flag">DE</span></span>
+      <span class="btag">Schneider <span class="flag">FR</span></span>
+      <span class="btag">ABB <span class="flag">CH</span></span>
+      <span class="btag">Mitsubishi <span class="flag">JP</span></span>
+      <span class="btag">OMRON <span class="flag">JP</span></span>
+      <span class="btag">Yaskawa <span class="flag">JP</span></span>
+      <span class="btag">Allen-Bradley <span class="flag">US</span></span>
+      <span class="btag">Delta <span class="flag">TW</span></span>
+      <span class="btag">Panasonic <span class="flag">JP</span></span>
+      <span class="btag">Keyence <span class="flag">JP</span></span>
+      <span class="btag">SICK <span class="flag">DE</span></span>
+      <span class="btag">Balluff <span class="flag">DE</span></span>
+      <span class="btag">ifm <span class="flag">DE</span></span>
+      <span class="btag">Endress+Hauser <span class="flag">CH</span></span>
+      <span class="btag">Pepperl+Fuchs <span class="flag">DE</span></span>
+      <span class="btag">Honeywell <span class="flag">US</span></span>
+      <span class="btag">TURCK <span class="flag">DE</span></span>
+      <span class="btag">VEGA <span class="flag">DE</span></span>
+      <span class="btag">Festo <span class="flag">DE</span></span>
+      <span class="btag">SMC <span class="flag">JP</span></span>
+      <span class="btag">Fuji Electric <span class="flag">JP</span></span>
+      <span class="btag">Autonics <span class="flag">KR</span></span>
+      <span class="btag">LS Electric <span class="flag">KR</span></span>
+      <span class="btag more">+ 21 more brands</span>
+    </div>
+    <p class="brandnote">More brands available upon request. <a href="/contact/#inquiry">Ask us →</a></p>
+  </div>
+</section>
+
+<!-- ==================== 品类 ==================== -->
+<section id="categories" class="alt">
+  <div class="wrap">
+    <div class="sechead">
+      <div class="kick">Product Range</div>
+      <h2>Six Categories, <span class="accent">One Supplier</span></h2>
+    </div>
+    <p class="secsub">Complete automation BOM coverage — <b>83 models cataloged</b> across controllers, HMI, servo, drives, sensors and spares.</p>
+
+    <div class="modgrid">
+      <a class="modcard" href="/products/controllers/">
+        <div class="topline"></div>
+        <div class="mh"><div class="mnum">01</div><div class="t">PLC &amp; Controllers</div></div>
+        <div class="items">PLCs · I/O Modules · Positioning Units</div>
+        <p class="desc">Modular PLCs, remote I/O and motion controllers for machine and process control.</p>
+        <div class="foot"><span class="count">13 models</span><span class="arrow">Browse →</span></div>
+      </a>
+      <a class="modcard" href="/products/hmi/">
+        <div class="topline"></div>
+        <div class="mh"><div class="mnum">02</div><div class="t">HMI &amp; Panel PCs</div></div>
+        <div class="items">Touch Panels · Industrial Monitors</div>
+        <p class="desc">Operator interfaces from 4" to 15" with multi-protocol connectivity.</p>
+        <div class="foot"><span class="count">5 models</span><span class="arrow">Browse →</span></div>
+      </a>
+      <a class="modcard" href="/products/servo/">
+        <div class="topline"></div>
+        <div class="mh"><div class="mnum">03</div><div class="t">Servo Systems</div></div>
+        <div class="items">Servo Motors · Servo Drives</div>
+        <p class="desc">Matched motor + drive pairs for precise, repeatable motion control.</p>
+        <div class="foot"><span class="count">11 models</span><span class="arrow">Browse →</span></div>
+      </a>
+      <a class="modcard" href="/products/drives/">
+        <div class="topline"></div>
+        <div class="mh"><div class="mnum">04</div><div class="t">Drives &amp; Starters</div></div>
+        <div class="items">VFDs · Inverters · Soft Starters</div>
+        <p class="desc">Variable-frequency drives from 0.2kW to 22kW+ with vector control options.</p>
+        <div class="foot"><span class="count">16 models</span><span class="arrow">Browse →</span></div>
+      </a>
+      <a class="modcard" href="/products/sensors/">
+        <div class="topline"></div>
+        <div class="mh"><div class="mnum">05</div><div class="t">Sensors &amp; Instruments</div></div>
+        <div class="items">Proximity · Level · Pressure · Encoders</div>
+        <p class="desc">Inductive, photoelectric, radar-level and encoder sensors for feedback and safety.</p>
+        <div class="foot"><span class="count">21 models</span><span class="arrow">Browse →</span></div>
+      </a>
+      <a class="modcard" href="/products/spares/">
+        <div class="topline"></div>
+        <div class="mh"><div class="mnum">06</div><div class="t">Spare Parts &amp; Components</div></div>
+        <div class="items">Drive Boards · Cables · Contactors</div>
+        <p class="desc">Repair boards, interface components and connectors for panel maintenance and builds.</p>
+        <div class="foot"><span class="count">17 models</span><span class="arrow">Browse →</span></div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== 精选商品 ==================== -->
+<section id="featured">
+  <div class="wrap">
+    <div class="sechead">
+      <div class="kick">Hot Items</div>
+      <h2>Featured <span class="accent">In-Stock Products</span></h2>
+    </div>
+    <p class="secsub">A sample of what's shipping now. <b>83 models cataloged</b> — can't find a part number? Just ask.</p>
+
+    <div class="prodgrid">
+      <div class="prodcard">
+        <div class="ptag">SIEMENS · S7-1200</div>
+        <div class="pmodel">6ES7212-1AE40-0XB0</div>
+        <p class="pspec">CPU 1212C DC/DC/DC, 8DI/6DO/2AI, 24VDC, CE/CCC</p>
+        <span class="pstatus"><span class="d"></span>In Stock</span>
+        <div class="pfoot"><span class="pprice">$246.10</span><a class="pinq" href="/contact/?model=6ES7212-1AE40-0XB0#inquiry">Inquire →</a></div>
+      </div>
+      <div class="prodcard">
+        <div class="ptag">OMRON · NS10</div>
+        <div class="pmodel">NS10-TV01B-V2</div>
+        <p class="pspec">10.4" TFT touchscreen, 640×480, RS-232/422/485 + Ethernet, IP65, Japan original</p>
+        <span class="pstatus"><span class="d"></span>In Stock</span>
+        <div class="pfoot"><span class="pprice">$892.45</span><a class="pinq" href="/contact/?model=NS10-TV01B-V2#inquiry">Inquire →</a></div>
+      </div>
+      <div class="prodcard">
+        <div class="ptag">YASKAWA · A1000</div>
+        <div class="pmodel">CIMR-AB4A0011FBA</div>
+        <p class="pspec">5.5kW(ND)/3.7kW(HD) inverter, 3-phase 400V, open/closed-loop vector control</p>
+        <span class="pstatus"><span class="d"></span>In Stock</span>
+        <div class="pfoot"><span class="pprice">$648.00</span><a class="pinq" href="/contact/?model=CIMR-AB4A0011FBA#inquiry">Inquire →</a></div>
+      </div>
+      <div class="prodcard">
+        <div class="ptag">ALLEN-BRADLEY · KINETIX 350</div>
+        <div class="pmodel">2097-V34PR6-LM</div>
+        <p class="pspec">Single-axis servo drive, 400/480VAC, 6.0A, STO CAT.3/D, EtherNet/IP, USA original</p>
+        <span class="pstatus"><span class="d"></span>In Stock</span>
+        <div class="pfoot"><span class="pprice">$1,911.68</span><a class="pinq" href="/contact/?model=2097-V34PR6-LM#inquiry">Inquire →</a></div>
+      </div>
+    </div>
+    <div style="text-align:center; margin-top:36px;">
+      <a class="cta-main" href="/products/" style="background:var(--blue); box-shadow:0 10px 26px rgba(30,63,158,.3);">View Full Catalog (83 Models) →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== 数字化订单流程（SVG，蓝图风） ==================== -->
+<section id="digital" class="alt">
+  <div class="wrap">
+    <div class="sechead">
+      <div class="kick">Digital Capabilities</div>
+      <h2>One System. Every Order. <span class="accent">Full Visibility.</span></h2>
+    </div>
+    <p class="secsub">Digital runs through every step of our supply chain — from your <b>first inquiry</b> to <b>final delivery</b>, everything is tracked, synced and transparent.</p>
+
+    <div class="archwrap">
+      <svg viewBox="0 0 1120 250" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,'PingFang SC',sans-serif">
+        <defs>
+          <marker id="arrB" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M 0 1 L 8 5 L 0 9 z" fill="#1E3F9E"/>
+          </marker>
+          <pattern id="gridlight" width="24" height="24" patternUnits="userSpaceOnUse">
+            <path d="M24 0H0V24" fill="none" stroke="#EEF2FC" stroke-width="1"/>
+          </pattern>
+        </defs>
+        <rect x="0" y="0" width="1120" height="250" fill="url(#gridlight)"/>
+
+        <!-- Step 1 -->
+        <g>
+          <rect x="10" y="40" width="200" height="120" rx="12" fill="#fff" stroke="#1E3F9E" stroke-width="1.6"/>
+          <circle cx="30" cy="55" r="3.5" fill="#C0272D"/>
+          <text x="30" y="82" font-size="15.5" font-weight="800" fill="#0D1F52">Online Inquiry</text>
+          <text x="30" y="104" font-size="11" fill="#C0272D" font-weight="700">STEP 01</text>
+          <text x="30" y="126" font-size="10.5" fill="#6b7794">Submit your part-number</text>
+          <text x="30" y="140" font-size="10.5" fill="#6b7794">list — enters our system</text>
+          <text x="30" y="154" font-size="10.5" fill="#6b7794">instantly.</text>
+        </g>
+        <line x1="212" y1="100" x2="228" y2="100" stroke="#1E3F9E" stroke-width="2" marker-end="url(#arrB)"/>
+
+        <!-- Step 2 -->
+        <g>
+          <rect x="230" y="40" width="200" height="120" rx="12" fill="#fff" stroke="#1E3F9E" stroke-width="1.6"/>
+          <circle cx="250" cy="55" r="3.5" fill="#C0272D"/>
+          <text x="250" y="82" font-size="15.5" font-weight="800" fill="#0D1F52">Smart Quote</text>
+          <text x="250" y="104" font-size="11" fill="#C0272D" font-weight="700">STEP 02</text>
+          <text x="250" y="126" font-size="10.5" fill="#6b7794">ERP checks stock &amp; price;</text>
+          <text x="250" y="140" font-size="10.5" fill="#6b7794">structured quote back</text>
+          <text x="250" y="154" font-size="10.5" fill="#6b7794">within 1 hour.</text>
+        </g>
+        <line x1="432" y1="100" x2="448" y2="100" stroke="#1E3F9E" stroke-width="2" marker-end="url(#arrB)"/>
+
+        <!-- Step 3 -->
+        <g>
+          <rect x="450" y="40" width="200" height="120" rx="12" fill="#fff" stroke="#1E3F9E" stroke-width="1.6"/>
+          <circle cx="470" cy="55" r="3.5" fill="#C0272D"/>
+          <text x="470" y="82" font-size="15.5" font-weight="800" fill="#0D1F52">E-Order &amp; PI</text>
+          <text x="470" y="104" font-size="11" fill="#C0272D" font-weight="700">STEP 03</text>
+          <text x="470" y="126" font-size="10.5" fill="#6b7794">Order confirmed, PI issued</text>
+          <text x="470" y="140" font-size="10.5" fill="#6b7794">electronically, signed &amp;</text>
+          <text x="470" y="154" font-size="10.5" fill="#6b7794">returned online.</text>
+        </g>
+        <line x1="652" y1="100" x2="668" y2="100" stroke="#1E3F9E" stroke-width="2" marker-end="url(#arrB)"/>
+
+        <!-- Step 4 -->
+        <g>
+          <rect x="670" y="40" width="200" height="120" rx="12" fill="#fff" stroke="#1E3F9E" stroke-width="1.6"/>
+          <circle cx="690" cy="55" r="3.5" fill="#C0272D"/>
+          <text x="690" y="82" font-size="15.5" font-weight="800" fill="#0D1F52">Live Tracking</text>
+          <text x="690" y="104" font-size="11" fill="#C0272D" font-weight="700">STEP 04</text>
+          <text x="690" y="126" font-size="10.5" fill="#6b7794">100% inspection, then</text>
+          <text x="690" y="140" font-size="10.5" fill="#6b7794">carrier tracking links</text>
+          <text x="690" y="154" font-size="10.5" fill="#6b7794">shared automatically.</text>
+        </g>
+        <line x1="872" y1="100" x2="888" y2="100" stroke="#1E3F9E" stroke-width="2" marker-end="url(#arrB)"/>
+
+        <!-- Step 5 -->
+        <g>
+          <rect x="890" y="40" width="220" height="120" rx="12" fill="#0D1F52" stroke="#0D1F52" stroke-width="1.6"/>
+          <circle cx="910" cy="55" r="3.5" fill="#5EEAD4"/>
+          <text x="910" y="82" font-size="15.5" font-weight="800" fill="#fff">Digital Archive</text>
+          <text x="910" y="104" font-size="11" fill="#9fc0ff" font-weight="700">STEP 05</text>
+          <text x="910" y="126" font-size="10.5" fill="#b7c5e8">E-invoice and delivery</text>
+          <text x="910" y="140" font-size="10.5" fill="#b7c5e8">history stored in your</text>
+          <text x="910" y="154" font-size="10.5" fill="#b7c5e8">customer portal.</text>
+        </g>
+
+        <text x="560" y="212" font-size="11.5" fill="#6b7794" text-anchor="middle" font-family="'IBM Plex Mono',monospace" letter-spacing="1.2">EVERY ORDER RUNS ON ONE SELF-DEVELOPED ERP SYSTEM — END TO END TRACEABLE</text>
+      </svg>
+    </div>
+
+    <div class="capgrid" style="margin-top:26px;">
+      <div class="capcard"><div class="topline"></div><div class="cnum">01</div><div class="cico">🖥️</div><h4>Self-Developed ERP</h4><p>Orders, inventory and finance in one in-house system — no black boxes.</p></div>
+      <div class="capcard"><div class="topline"></div><div class="cnum">02</div><div class="cico">📚</div><h4>Digital Catalog</h4><p>83 models, searchable with specs, stock status and pricing.</p></div>
+      <div class="capcard"><div class="topline"></div><div class="cnum">03</div><div class="cico">⚡</div><h4>1-Hour Quotation</h4><p>Inquiries flow into the system, return a structured quote within 1 hour.</p></div>
+      <div class="capcard"><div class="topline"></div><div class="cnum">04</div><div class="cico">📊</div><h4>Real-Time Inventory</h4><p>Fast-moving stock levels synced live — see availability before you ask.</p></div>
+      <div class="capcard"><div class="topline"></div><div class="cnum">05</div><div class="cico">🔗</div><h4>EDI &amp; API Integration</h4><p>Order and invoice data exchanged directly with your procurement system.</p></div>
+      <div class="capcard"><div class="topline"></div><div class="cnum">06</div><div class="cico">📦</div><h4>Smart Logistics</h4><p>Integrated with DHL/FedEx/air/sea — tracking links shared automatically.</p></div>
+      <div class="capcard"><div class="topline"></div><div class="cnum">07</div><div class="cico">📄</div><h4>E-Documents</h4><p>PI, CI, packing lists and invoices exported as PDF in one click.</p></div>
+      <div class="capcard"><div class="topline"></div><div class="cnum">08</div><div class="cico">📈</div><h4>Data-Driven Sourcing</h4><p>Historical data forecasts lead times and optimizes total cost of ownership.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== 数字化数据统计 ==================== -->
+<section id="numbers" style="padding-top:20px">
+  <div class="wrap">
+    <div class="sechead">
+      <div class="kick">Digital Capabilities in Numbers</div>
+      <h2>What the <span class="accent">Numbers</span> Say</h2>
+    </div>
+    <p class="secsub">Live performance figures measured across our <b>ERP, logistics and customer-service systems.</b></p>
+
+    <div class="statgrid">
+      <div class="statgroup">
+        <div class="sg-title"><span class="sg-ico" style="background:#1E3F9E;">⚡</span>Speed</div>
+        <div class="row"><span class="n">15<span>min</span></span><span class="l">Avg. Response Time</span></div>
+        <div class="row"><span class="n">100<span>+</span></span><span class="l">Daily Inquiries</span></div>
+        <div class="row"><span class="n">1<span>hr</span></span><span class="l">Quote Turnaround</span></div>
+      </div>
+      <div class="statgroup">
+        <div class="sg-title"><span class="sg-ico" style="background:#C0272D;">📦</span>Scale</div>
+        <div class="row"><span class="n">5,000<span>+</span></span><span class="l">SKUs in Stock</span></div>
+        <div class="row"><span class="n">43<span>+</span></span><span class="l">Brands Covered</span></div>
+        <div class="row"><span class="n">12,000<span>+</span></span><span class="l">Orders Fulfilled</span></div>
+      </div>
+      <div class="statgroup">
+        <div class="sg-title"><span class="sg-ico" style="background:#E8833A;">🚨</span>Emergency</div>
+        <div class="row"><span class="n">800<span>+</span></span><span class="l">Urgent Repair Parts</span></div>
+        <div class="row"><span class="n">24<span>hr</span></span><span class="l">Fastest Delivery</span></div>
+      </div>
+      <div class="statgroup">
+        <div class="sg-title"><span class="sg-ico" style="background:#1E9E5A;">🤝</span>Trust</div>
+        <div class="row"><span class="n">98.3<span>%</span></span><span class="l">Positive Feedback</span></div>
+        <div class="row"><span class="n">65<span>%</span></span><span class="l">Repeat Purchase Rate</span></div>
+        <div class="row"><span class="n">0</span><span class="l">Counterfeit Disputes</span></div>
+      </div>
+    </div>
+    <p class="statnote">Figures synced in real time from our in-house ERP system.</p>
+  </div>
+</section>
+
+<!-- ==================== 客户类型 ==================== -->
+<section id="customers" class="alt">
+  <div class="wrap">
+    <div class="sechead">
+      <div class="kick">Who We Serve</div>
+      <h2>Built for the Way <span class="accent">You Buy</span></h2>
+    </div>
+    <p class="secsub">Different buyers, different priorities — <b>our service adapts to yours.</b></p>
+
+    <div class="custgrid">
+      <div class="custcard hv">
+        <span class="ctag">HIGHEST VALUE</span>
+        <h3>System Integrators</h3>
+        <ul>
+          <li>Full BOM supply: PLC + HMI + drives + sensors</li>
+          <li>Wiring diagrams &amp; protocol support</li>
+          <li>Application cases for similar industries</li>
+        </ul>
+      </div>
+      <div class="custcard">
+        <span class="ctag">URGENT NEEDS</span>
+        <h3>MRO &amp; Maintenance</h3>
+        <ul>
+          <li>Exact part-number sourcing, MOQ = 1</li>
+          <li>In-stock items ship within 24 hours</li>
+          <li>Clear condition: New Original, always</li>
+        </ul>
+      </div>
+      <div class="custcard">
+        <span class="ctag">LONG-TERM</span>
+        <h3>Equipment OEMs</h3>
+        <ul>
+          <li>Cost-saving brand alternatives with samples</li>
+          <li>Program migration &amp; HMI customization</li>
+          <li>Stable repeat supply as you scale</li>
+        </ul>
+      </div>
+      <div class="custcard">
+        <span class="ctag">VOLUME DEALS</span>
+        <h3>Distributors</h3>
+        <ul>
+          <li>Authorized-channel authenticity</li>
+          <li>Volume-tier pricing structures</li>
+          <li>Consistent supply for your warehouse</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== 5步流程 ==================== -->
+<section id="process">
+  <div class="wrap">
+    <div class="sechead">
+      <div class="kick">How It Works</div>
+      <h2>From Inquiry to Delivery <span class="accent">in 5 Steps</span></h2>
+    </div>
+
+    <div class="flywheel">
+      <div class="flyrows">
+        <div class="flyrow">
+          <div class="fnum">STEP 1</div>
+          <div class="ft">Send Inquiry</div>
+          <div class="fd">Part number, quantity, destination — that's all we need to start.</div>
+        </div>
+        <div class="flyrow">
+          <div class="fnum">STEP 2</div>
+          <div class="ft">Quote &amp; Confirm</div>
+          <div class="fd">Stock check and quotation within 1 hour during working hours.</div>
+        </div>
+        <div class="flyrow">
+          <div class="fnum">STEP 3</div>
+          <div class="ft">Proforma Invoice</div>
+          <div class="fd">Clear PI with item details, Incoterms and payment options.</div>
+        </div>
+        <div class="flyrow">
+          <div class="fnum">STEP 4</div>
+          <div class="ft">QC &amp; Ship</div>
+          <div class="fd">100% inspection before packing. DHL/FedEx/air/sea, tracked.</div>
+        </div>
+        <div class="flyrow">
+          <div class="fnum">STEP 5</div>
+          <div class="ft">After-Sales Care</div>
+          <div class="fd">Warranty support, reorder reminders and technical help.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== 最终 CTA（深色蓝图背景） ==================== -->
+<div class="blueprint-dark">
+  <section class="finalcta" style="margin-top:0">
+    <div class="wrap">
+      <h2>Machine down? New project?<br><span class="accent">Just need a price?</span></h2>
+      <p>Send us your part number list — get stock status and a quote within hours.</p>
+      <a class="cta-main" href="/contact/#inquiry">Get Your Quote Now →</a>
+    </div>
+  </section>
+</div>
+
+<!-- ==================== 页脚 ==================== -->
+<footer class="site">
+  <div class="wrap">
+    <div class="ffgrid">
+      <div class="fcol">
+        <div class="flogo"><div class="mark">F</div>FOUWELL</div>
+        <p>Fuzhou Fouwell Technology Co., Ltd.<br>10+ years supplying genuine industrial automation parts from 25+ global brands to clients worldwide.</p>
+      </div>
+      <div class="fcol">
+        <h4>Products</h4>
+        <ul>
+          <li><a href="/products/controllers/">PLC &amp; Controllers</a></li>
+          <li><a href="/products/hmi/">HMI &amp; Panel PCs</a></li>
+          <li><a href="/products/servo/">Servo Motors &amp; Drives</a></li>
+          <li><a href="/products/drives/">Inverters &amp; Starters</a></li>
+          <li><a href="/products/sensors/">Sensors &amp; Instruments</a></li>
+        </ul>
+      </div>
+      <div class="fcol">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="/about/">About Fouwell</a></li>
+          <li><a href="/about/#founder">Meet the Founder</a></li>
+          <li><a href="/contact/">Contact Us</a></li>
+          <li><a href="/contact/#inquiry">Request a Quote</a></li>
+        </ul>
+      </div>
+      <div class="fcol">
+        <h4>Contact</h4>
+        <ul>
+          <li>📧 info@fouwell.com</li>
+          <li>📱 +86 133 8591 5251</li>
+          <li>📍 Fuzhou, Fujian, China</li>
+          <li>🏬 HK warehouse available</li>
+        </ul>
+      </div>
+    </div>
+    <div class="fbar">
+      <span>© 2026 Fuzhou Fouwell Technology Co., Ltd. · Authentic products · 100% inspection · Global shipping</span>
+      <span class="meta">FOUWELL · FUZHOU · EST. 2016</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
