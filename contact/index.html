@@ -103,19 +103,19 @@
             <div class="form-grid">
               <div class="form-field">
                 <label for="if-name">Your Name <span class="req">*</span></label>
-                <input id="if-name" type="text" required placeholder="e.g. John Miller">
+                <input id="if-name" name="Name" type="text" required placeholder="e.g. John Miller">
               </div>
               <div class="form-field">
                 <label for="if-email">Email <span class="req">*</span></label>
-                <input id="if-email" type="email" required placeholder="you@company.com">
+                <input id="if-email" name="Email" type="email" required placeholder="you@company.com">
               </div>
               <div class="form-field">
                 <label for="if-country">Country / Region</label>
-                <input id="if-country" type="text" placeholder="e.g. Germany, Vietnam, Brazil…">
+                <input id="if-country" name="Country" type="text" placeholder="e.g. Germany, Vietnam, Brazil…">
               </div>
               <div class="form-field">
                 <label for="if-type">I am a…</label>
-                <select id="if-type">
+                <select id="if-type" name="I am a">
                   <option>System Integrator</option>
                   <option>MRO / Maintenance Buyer</option>
                   <option>Equipment Manufacturer (OEM)</option>
@@ -125,13 +125,23 @@
               </div>
               <div class="form-field full">
                 <label for="if-parts">Part Numbers &amp; Quantity <span class="req">*</span></label>
-                <textarea id="if-parts" required placeholder="One per line, e.g.&#10;6ES7212-1AE40-0XB0 × 2&#10;CIMR-AB4A0011FBA × 1"></textarea>
+                <textarea id="if-parts" name="Part Numbers / Quantity" required placeholder="One per line, e.g.&#10;6ES7212-1AE40-0XB0 × 2&#10;CIMR-AB4A0011FBA × 1"></textarea>
               </div>
               <div class="form-field full">
                 <label for="if-message">Message</label>
-                <textarea id="if-message" placeholder="Application, target price, required delivery date, Incoterms…"></textarea>
+                <textarea id="if-message" name="Message" placeholder="Application, target price, required delivery date, Incoterms…"></textarea>
+              </div>
+              <div class="form-field full">
+                <label for="if-files">Attach Photos or an Excel/CSV Part List (optional)</label>
+                <input id="if-files" name="attachment" type="file" multiple accept=".xlsx,.xls,.csv,.pdf,.jpg,.jpeg,.png,.webp">
+                <p class="form-hint" id="if-files-hint">Nameplate photos or a BOM/part-list spreadsheet help us quote faster — 10MB combined limit. Attaching a file switches this form to a standard page submission (a confirmation page instead of the inline message below).</p>
               </div>
             </div>
+            <input type="hidden" name="_subject" id="if-hidden-subject">
+            <input type="hidden" name="_replyto" id="if-hidden-replyto">
+            <input type="hidden" name="_template" value="table">
+            <input type="hidden" name="_captcha" value="false">
+            <input type="hidden" name="_next" value="https://fouwell.com/contact/thank-you/">
             <div style="margin-top:20px;">
               <button type="submit" class="btn btn-primary">Send Inquiry →</button>
             </div>

@@ -1049,7 +1049,6 @@ document.addEventListener('DOMContentLoaded', function () {
       if (input) input.value = pre + ' — ';
     }
     form.addEventListener('submit', function (e) {
-      e.preventDefault();
       const name = document.getElementById('if-name').value;
       const email = document.getElementById('if-email').value;
       const country = document.getElementById('if-country').value;
@@ -1057,6 +1056,37 @@ document.addEventListener('DOMContentLoaded', function () {
       const parts = document.getElementById('if-parts').value;
       const msg = document.getElementById('if-message').value;
       const subject = 'Inquiry from ' + name + (parts ? ' — ' + parts.split('\n')[0].slice(0, 40) : '');
+
+      const isRu = window.FOUWELL_LANG === 'ru';
+
+      /* File-upload path (2026-09-18): FormSubmit's AJAX/JSON endpoint does not support
+         attachments (confirmed against their documentation) — only a classic native
+         multipart/form-data POST does. So when the visitor has attached a file, we let the
+         form submit natively (no preventDefault) instead of intercepting it, after filling
+         in the two hidden fields (_subject/_replyto) that depend on the other field values.
+         This trades the inline no-reload success message for this case only — a plain
+         text-only inquiry below is unaffected and keeps the existing AJAX flow. */
+      const filesInput = document.getElementById('if-files');
+      const hasFiles = filesInput && filesInput.files && filesInput.files.length > 0;
+      if (hasFiles) {
+        let totalBytes = 0;
+        for (let i = 0; i < filesInput.files.length; i++) totalBytes += filesInput.files[i].size;
+        if (totalBytes > 10 * 1024 * 1024) {
+          e.preventDefault();
+          alert(isRu
+            ? 'Общий размер вложений превышает 10MB (ограничение сервиса отправки форм). Уменьшите файлы или отправьте их отдельным письмом на info@fouwell.com.'
+            : 'Combined attachment size is over the 10MB limit (a hard limit on the form-relay service). Please reduce the file size(s), or email them separately to info@fouwell.com.');
+          return;
+        }
+        document.getElementById('if-hidden-subject').value = subject;
+        document.getElementById('if-hidden-replyto').value = email;
+        form.action = 'https://formsubmit.co/info@fouwell.com';
+        form.method = 'POST';
+        form.enctype = 'multipart/form-data';
+        return; // let the browser submit natively — do not preventDefault
+      }
+
+      e.preventDefault();
       const body =
         'Name: ' + name + '\n' +
         'Email: ' + email + '\n' +
@@ -1068,7 +1098,6 @@ document.addEventListener('DOMContentLoaded', function () {
       // The relay/mailto payload above stays in English regardless of page language — it's
       // an internal notification to Fouwell's own inbox, not visitor-facing copy. Only the
       // 3 strings the visitor actually reads get localized (2026-09-14, /ru/ launch).
-      const isRu = window.FOUWELL_LANG === 'ru';
       const t = isRu
         ? {
             sending: 'Отправка…',

@@ -67,3 +67,7 @@ RewriteRule ^contact\.html$  /contact/            [R=301,L]
 
 # 9. Disable directory listing
 Options -Indexes
+
+# 10. Custom 404 — turns a broken/missing URL into an RFQ entry point instead of a dead
+#     end (see 404.html: "send us the part number" quick-search, prefills /contact/?model=).
+ErrorDocument 404 /404.html

@@ -103,19 +103,19 @@
             <div class="form-grid">
               <div class="form-field">
                 <label for="if-name">Ваше имя <span class="req">*</span></label>
-                <input id="if-name" type="text" required placeholder="напр. Иван Петров">
+                <input id="if-name" name="Name" type="text" required placeholder="напр. Иван Петров">
               </div>
               <div class="form-field">
                 <label for="if-email">Email <span class="req">*</span></label>
-                <input id="if-email" type="email" required placeholder="you@company.com">
+                <input id="if-email" name="Email" type="email" required placeholder="you@company.com">
               </div>
               <div class="form-field">
                 <label for="if-country">Страна / регион</label>
-                <input id="if-country" type="text" placeholder="напр. Россия, Казахстан, Беларусь…">
+                <input id="if-country" name="Country" type="text" placeholder="напр. Россия, Казахстан, Беларусь…">
               </div>
               <div class="form-field">
                 <label for="if-type">Я являюсь…</label>
-                <select id="if-type">
+                <select id="if-type" name="I am a">
                   <option>Системным интегратором</option>
                   <option>Закупщиком MRO / обслуживания</option>
                   <option>Производителем оборудования (OEM)</option>
@@ -125,13 +125,23 @@
               </div>
               <div class="form-field full">
                 <label for="if-parts">Артикулы и количество <span class="req">*</span></label>
-                <textarea id="if-parts" required placeholder="По одному в строке, напр.&#10;6ES7212-1AE40-0XB0 × 2&#10;CIMR-AB4A0011FBA × 1"></textarea>
+                <textarea id="if-parts" name="Part Numbers / Quantity" required placeholder="По одному в строке, напр.&#10;6ES7212-1AE40-0XB0 × 2&#10;CIMR-AB4A0011FBA × 1"></textarea>
               </div>
               <div class="form-field full">
                 <label for="if-message">Сообщение</label>
-                <textarea id="if-message" placeholder="Применение, целевая цена, требуемая дата поставки, условия Incoterms…"></textarea>
+                <textarea id="if-message" name="Message" placeholder="Применение, целевая цена, требуемая дата поставки, условия Incoterms…"></textarea>
+              </div>
+              <div class="form-field full">
+                <label for="if-files">Прикрепить фото или Excel/CSV список деталей (необязательно)</label>
+                <input id="if-files" name="attachment" type="file" multiple accept=".xlsx,.xls,.csv,.pdf,.jpg,.jpeg,.png,.webp">
+                <p class="form-hint" id="if-files-hint">Фото шильдика или таблица со списком деталей помогут нам быстрее подготовить расчёт — общий лимит 10MB. При прикреплении файла форма отправляется как обычная страница (страница подтверждения вместо сообщения ниже).</p>
               </div>
             </div>
+            <input type="hidden" name="_subject" id="if-hidden-subject">
+            <input type="hidden" name="_replyto" id="if-hidden-replyto">
+            <input type="hidden" name="_template" value="table">
+            <input type="hidden" name="_captcha" value="false">
+            <input type="hidden" name="_next" value="https://fouwell.com/ru/contact/thank-you/">
             <div style="margin-top:20px;">
               <button type="submit" class="btn btn-primary">Отправить запрос →</button>
             </div>

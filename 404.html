@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Page Not Found — But We Can Still Source Your Part | Fouwell</title>
+  <meta name="description" content="This page doesn't exist, but if you were looking for an industrial automation part number, send it to Fouwell and we'll confirm availability and price.">
+  <meta name="robots" content="noindex,follow">
+  <link rel="icon" type="image/png" href="/assets/logo-square.png">
+  <link rel="stylesheet" href="/css/style.css?v=20260917190833">
+</head>
+<body>
+
+  <div class="topbar">
+    <div class="container">
+      <span>📧 info@fouwell.com &nbsp;·&nbsp; 📱 +86 133 8591 5251 (WhatsApp)</span>
+      <div class="topbar-links">
+        <span>🇺🇸 English</span>
+        <a href="/contact/#inquiry">Get a Quote</a>
+      </div>
+    </div>
+  </div>
+
+  <header class="site-header">
+    <div class="container">
+      <a href="/" class="brand-lockup">
+        <img src="/assets/logo.png" alt="Fouwell logo">
+        <span class="brand-text">
+          <span class="en">FOUWELL</span><br>
+          <span class="cn">INDUSTRIAL AUTOMATION</span>
+        </span>
+      </a>
+      <button class="nav-toggle" onclick="document.querySelector('.main-nav').classList.toggle('open')">☰</button>
+      <nav class="main-nav">
+        <a href="/">Home</a>
+        <a href="/products/">Products</a>
+        <a href="/brands/">Brands</a>
+        <a href="/about/">About Us</a>
+        <a href="/contact/">Contact</a>
+        <a href="/contact/#inquiry" class="nav-cta">Request Quote</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="page-hero">
+    <div class="container">
+      <div class="breadcrumb"><a href="/">Home</a> / Page Not Found</div>
+      <h1>We couldn't find that page — but we can probably still find your part</h1>
+      <p>The link you followed is broken, or the page has moved. If you were looking for a specific industrial automation part number, don't start over — send it to us directly below and our sourcing team will confirm availability and price within one business day.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="inquiry-form" id="pn-quick-search" style="max-width:640px; margin:0 auto;">
+        <h2>Send Us the Part Number</h2>
+        <p class="sub">Exact model code, old or new — we'll check current availability and reply with a quote.</p>
+        <form id="pn-search-form">
+          <div class="form-field full" style="margin-bottom:16px;">
+            <label for="pn-search-input">Part Number</label>
+            <input id="pn-search-input" type="text" placeholder="e.g. 6ES7212-1AE40-0XB0" autocomplete="off">
+          </div>
+          <button type="submit" class="btn btn-primary">Send to Fouwell →</button>
+        </form>
+        <p class="form-note">This takes you to our contact form with the part number pre-filled — nothing is submitted from this page itself.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section alt">
+    <div class="container">
+      <div class="section-head">
+        <div class="eyebrow">Or Keep Browsing</div>
+        <h2>A Few Other Places to Start</h2>
+      </div>
+      <div class="process">
+        <div class="step"><h4><a href="/products/">Browse Products</a></h4><p>All in-stock PLCs, HMIs, servo systems, drives and sensors by category.</p></div>
+        <div class="step"><h4><a href="/brands/">Browse Brands</a></h4><p>Siemens, ABB, Yaskawa, Mitsubishi, OMRON and 20+ more.</p></div>
+        <div class="step"><h4><a href="/contact/">Contact Us</a></h4><p>Full inquiry form — part list, quantities, destination, and file uploads for photos or a BOM spreadsheet.</p></div>
+        <div class="step"><h4><a href="/">Home</a></h4><p>Back to the Fouwell homepage.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-main">
+        <div>
+          <img class="footer-logo" src="/assets/logo.png" alt="Fouwell">
+          <p>Fuzhou Fouwell Technology Co., Ltd.<br>10+ years supplying genuine industrial automation parts from 25+ global brands to clients worldwide.</p>
+        </div>
+        <div>
+          <h4>Products</h4>
+          <ul>
+            <li><a href="/products/controllers/">PLC &amp; Controllers</a></li>
+            <li><a href="/products/hmi/">HMI &amp; Panel PCs</a></li>
+            <li><a href="/products/servo/">Servo Systems</a></li>
+            <li><a href="/products/drives/">Inverters &amp; Starters</a></li>
+            <li><a href="/products/sensors/">Sensors &amp; Instruments</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Company</h4>
+          <ul>
+            <li><a href="/about/">About Fouwell</a></li>
+            <li><a href="/about/#founder">Meet the Founder</a></li>
+            <li><a href="/contact/">Contact Us</a></li>
+            <li><a href="/contact/#inquiry">Request a Quote</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Contact</h4>
+          <ul>
+            <li>📧 info@fouwell.com</li>
+            <li>📱 +86 133 8591 5251</li>
+            <li>📍 Fuzhou, Fujian, China</li>
+            <li>🏬 HK warehouse available</li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="container">
+          <span>© 2026 Fuzhou Fouwell Technology Co., Ltd. All rights reserved.</span>
+          <span>Authentic products · 100% inspection · Global shipping</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('pn-search-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var v = document.getElementById('pn-search-input').value.trim();
+      location.href = v ? '/contact/?model=' + encodeURIComponent(v) + '#inquiry' : '/contact/#inquiry';
+    });
+  </script>
+</body>
+</html>
