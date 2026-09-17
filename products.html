@@ -3,134 +3,24 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Product Catalog | Fouwell — PLC, HMI, Servo, Drives &amp; Sensors</title>
-  <meta name="description" content="Browse Fouwell's catalog of 50+ in-stock industrial automation models from Siemens, Schneider, Mitsubishi, OMRON, Yaskawa, ABB, Delta and more. Filter by brand and category, inquire online.">
-  <link rel="icon" type="image/png" href="/assets/logo-square.png">
-  <link rel="stylesheet" href="/css/style.css?v=20260914111518">
+  <title>Redirecting… | Fouwell</title>
+  <!-- This file is an orphan left over from the 2026-09-12 directory-structure redesign
+       (see wiki/analyses/福唯独立站SEO-GEO解决方案.md) — /products/index.html is the real,
+       linked-from-nav catalog page now. Nothing in the site links here anymore.
+       .htaccess already has a `RewriteRule ^products\.html$ /products/ [R=301,L]` rule,
+       but 2026-09-14 testing found NONE of the .htaccess redirect rules are actually firing
+       in production (curl -I on /products.html, /index.html, /about.html all return 200,
+       not 301 — even with a cache-busting query string). The server responds `server: nginx`,
+       and nginx does not read .htaccess (that's an Apache/LiteSpeed-only mechanism) — so
+       whatever is actually fronting fouwell.com right now is not applying these rules,
+       making the whole .htaccess file dead configuration until that's sorted out at the
+       hosting/proxy level (outside what a file deploy can fix). This page redirects itself
+       client-side instead, which works regardless of that unresolved server-side question. -->
+  <link rel="canonical" href="https://fouwell.com/products/">
+  <meta http-equiv="refresh" content="0; url=/products/">
+  <script>location.replace('/products/');</script>
 </head>
 <body>
-
-  <div class="topbar">
-    <div class="container">
-      <span>📧 info@fouwell.com &nbsp;·&nbsp; 📱 +86 133 8591 5251 (WhatsApp)</span>
-      <div class="topbar-links">
-        <span>🇺🇸 English</span>
-        <a href="/contact/">Get a Quote</a>
-      </div>
-    </div>
-  </div>
-
-  <header class="site-header">
-    <div class="container">
-      <a href="/" class="brand-lockup">
-        <img src="/assets/logo.png" alt="Fouwell logo">
-        <span class="brand-text">
-          <span class="en">FOUWELL</span><br>
-          <span class="cn">INDUSTRIAL AUTOMATION</span>
-        </span>
-      </a>
-      <button class="nav-toggle" onclick="document.querySelector('.main-nav').classList.toggle('open')">☰</button>
-      <nav class="main-nav">
-        <a href="/">Home</a>
-        <a href="/products/" class="active">Products</a>
-        <a href="/brands/">Brands</a>
-        <a href="/about/">About Us</a>
-        <a href="/contact/">Contact</a>
-        <a href="/contact/#inquiry" class="nav-cta">Request Quote</a>
-      </nav>
-    </div>
-  </header>
-
-  <section class="page-hero">
-    <div class="container">
-      <div class="breadcrumb"><a href="/">Home</a> / Products</div>
-      <h1>Product Catalog</h1>
-      <p>50+ cataloged models from 25+ brands — all from official authorized channels. This is a sample of our active catalog: if you don't see your part number, send it to us. Chances are we can source it.</p>
-    </div>
-  </section>
-
-  <section class="section">
-    <div class="container">
-      <div class="filter-bar">
-        <div class="row">
-          <select id="f-brand">
-            <option value="">All Brands</option>
-          </select>
-          <select id="f-cat">
-            <option value="">All Categories</option>
-          </select>
-          <select id="f-status">
-            <option value="">All Availability</option>
-            <option value="instock">In Stock</option>
-            <option value="legacy">Legacy Line</option>
-            <option value="discont">Replaced (New Version Available)</option>
-          </select>
-          <input type="search" id="f-search" placeholder="Search part number, e.g. 6ES7, FR-A840, Sigma-7…">
-        </div>
-        <div class="chips" id="brand-chips"></div>
-      </div>
-
-      <div class="result-count" id="result-count"></div>
-      <div class="feat-grid" id="catalog-grid"><!-- rendered by JS --></div>
-
-      <div style="margin-top: 44px;">
-        <div class="cta-band">
-          <div>
-            <h2>Can't find your part number?</h2>
-            <p>We source from 25+ brand channels, including discontinued and hard-to-find components. Send your list — we'll confirm stock and pricing the same day.</p>
-          </div>
-          <a href="/contact/#inquiry" class="btn btn-primary">Send Part List</a>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <footer class="site-footer">
-    <div class="container">
-      <div class="footer-main">
-        <div>
-          <img class="footer-logo" src="/assets/logo.png" alt="Fouwell">
-          <p>Fuzhou Fouwell Technology Co., Ltd.<br>10+ years supplying genuine industrial automation parts from 25+ global brands to clients worldwide.</p>
-        </div>
-        <div>
-          <h4>Products</h4>
-          <ul>
-            <li><a href="/products/controllers/">PLC &amp; Controllers</a></li>
-            <li><a href="/products/hmi/">HMI &amp; Panel PCs</a></li>
-            <li><a href="/products/servo/">Servo Systems</a></li>
-            <li><a href="/products/drives/">Inverters &amp; Starters</a></li>
-            <li><a href="/products/sensors/">Sensors &amp; Instruments</a></li>
-          </ul>
-        </div>
-        <div>
-          <h4>Company</h4>
-          <ul>
-            <li><a href="/about/">About Fouwell</a></li>
-            <li><a href="/about/#founder">Meet the Founder</a></li>
-            <li><a href="/contact/">Contact Us</a></li>
-            <li><a href="/contact/#inquiry">Request a Quote</a></li>
-          </ul>
-        </div>
-        <div>
-          <h4>Contact</h4>
-          <ul>
-            <li>📧 info@fouwell.com</li>
-            <li>📱 +86 133 8591 5251</li>
-            <li>📍 Fuzhou, Fujian, China</li>
-            <li>🏬 HK warehouse available</li>
-          </ul>
-        </div>
-      </div>
-      <div class="footer-bottom">
-        <div class="container">
-          <span>© 2026 Fuzhou Fouwell Technology Co., Ltd. All rights reserved.</span>
-          <span>Authentic products · 100% inspection · Global shipping</span>
-        </div>
-      </div>
-    </div>
-  </footer>
-
-  <script src="/js/data.js?v=20260914111518"></script>
-  <script src="/js/main.js?v=20260914111518"></script>
+  <p>This page has moved. Redirecting to <a href="/products/">our product catalog</a>…</p>
 </body>
 </html>
