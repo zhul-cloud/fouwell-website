@@ -49,10 +49,14 @@ const PRODUCTS = [
         desc: "High-speed counting via 4 onboard HSC inputs (up to 100 kHz) — direct connection to encoders without extra counters." }
     ],
     compatibility: [
-      { from: "6ES7212-1AE30-0XB0", note: "Direct predecessor — same firmware, same pin-out, drop-in replacement." },
-      { from: "6ES7212-1AE31-0XB0", note: "Earlier firmware revision — also compatible, same I/O count." },
-      { from: "6ES7212-1BE40-0XB0", note: "Different firmware signature — check project; can be migrated via TIA Portal." },
-      { from: "6ES7212-1HE40-0XB0", note: "AC/DC/RLY variant — same CPU, only PSU/relay outputs differ. Verify output type before swap." }
+      // type field added 2026-09-17: relationship_type classification (see PartNumber字段级
+      // Schema提案.md) applied to these existing, already-verified notes — classifying, not
+      // inventing new claims. "same_series"/"cross_reference" unused here since all 4 rows are
+      // genuine replacement/compatible candidates, not just same-family cross-references.
+      { from: "6ES7212-1AE30-0XB0", type: "direct", note: "Direct predecessor — same firmware, same pin-out, drop-in replacement." },
+      { from: "6ES7212-1AE31-0XB0", type: "compatible", note: "Earlier firmware revision — also compatible, same I/O count." },
+      { from: "6ES7212-1BE40-0XB0", type: "functional", note: "Different firmware signature — check project; can be migrated via TIA Portal." },
+      { from: "6ES7212-1HE40-0XB0", type: "functional", note: "AC/DC/RLY variant — same CPU, only PSU/relay outputs differ. Verify output type before swap." }
     ],
     faq: [
       { q: "What does the order code 6ES7212-1AE40-0XB0 mean?",
@@ -233,7 +237,43 @@ const PRODUCTS = [
     ]
   },
   { brand: "Yaskawa", model: "SGM7J-08A6A6C", series: "Sigma-7", cat: "servo", spec: "750W servo motor, 200V, 24-bit absolute encoder, with brake, IP67", status: "instock", photo: null, linkedin: "SGM7J-08A6A6C.png", sell_price: 368.79, sell_price_currency: "USD", price_source: "ebay_ref" },
-  { brand: "Yaskawa", model: "SGMAH-04ADA-TF13", series: "Sigma-II", cat: "servo", spec: "400W servo motor, 200V, 2.6A, 1.27N·m, 3000r/min, Japan original legacy spare", status: "legacy", photo: "SGMAH-04ADA-TF13.jpg", linkedin: "SGMAH-04ADA-TF13.png", sell_price: 1005.27, sell_price_currency: "USD", price_source: "ebay_ref" },
+  { brand: "Yaskawa", model: "SGMAH-04ADA-TF13", series: "Sigma-II", cat: "servo", spec: "400W servo motor, 200V, 2.6A, 1.27N·m, 3000r/min, Japan original legacy spare", status: "legacy", photo: "SGMAH-04ADA-TF13.jpg", linkedin: "SGMAH-04ADA-TF13.png", sell_price: 1005.27, sell_price_currency: "USD", price_source: "ebay_ref",
+    /* ---- 2026-09-17: same Tier C -> Tier B enrichment as 6EP3437-8SB00-0AY0, second example
+       covering a different brand/category (Yaskawa servo vs Siemens power supply) and a
+       different lifecycle status (legacy). No specific successor model number is claimed —
+       Sigma-II has no single confirmed 1:1 replacement on file, and inventing one would be
+       exactly the "AI invented replacement" case the field schema's AI Permission Level rules
+       forbid (see wiki/seo-geo/PartNumber字段级Schema提案.md §79). ---- */
+    specs: [
+      ["Series", "Sigma-II (Yaskawa)"],
+      ["Rated output", "400 W"],
+      ["Rated voltage", "200 V"],
+      ["Rated current", "2.6 A"],
+      ["Rated torque", "1.27 N·m"],
+      ["Rated speed", "3000 r/min"],
+      ["Origin", "Japan (original)"]
+    ],
+    applications: [
+      { icon: "🛠️", title: "Legacy machine tool / CNC axis maintenance",
+        desc: "Sigma-II was Yaskawa's standard servo generation on machine tools and pick-and-place equipment built through the 2000s–early 2010s — this keeps an existing axis running without a drive/motor redesign." },
+      { icon: "📦", title: "Packaging & converting machinery",
+        desc: "Small/mid-torque indexing and web-handling axes on packaging lines built around Sigma-II hardware." },
+      { icon: "🤖", title: "Assembly line retrofits",
+        desc: "Direct swap for a failed Sigma-II axis in an existing line, avoiding a full drive/motor/cable re-engineering job." }
+    ],
+    faq: [
+      { q: "Is the SGMAH-04ADA-TF13 still in regular production?",
+        a: "No — this is a Sigma-II legacy line, no longer in regular Yaskawa production. Fouwell sources it through existing stock and our supplier network; lead time is typically longer than an in-stock item, so confirm current availability before you commit a repair schedule to it." },
+      { q: "What Yaskawa drive does this motor pair with?",
+        a: "Sigma-II motors like the SGMAH series are designed to pair with Sigma-II generation drives (SGDM/SGDH series). Confirm your exact drive model and cable/connector configuration with us before ordering — Sigma-II motor/drive/cable combinations are model-specific." },
+      { q: "Is there a current-generation replacement if I can't find a Sigma-II unit?",
+        a: "Yaskawa's current servo generation is Sigma-7, but there is no single confirmed drop-in replacement for the SGMAH-04ADA-TF13 on file — flange size, shaft, brake and connector configuration all need to match. Send us your full nameplate details and we'll check current options rather than guess at a cross-reference." },
+      { q: "Does this include the encoder cable and connector?",
+        a: "Motor only unless otherwise agreed — confirm what you need (cable, connector, brake wiring) when you request a quote so we can quote the full set correctly." },
+      { q: "Is this genuine Yaskawa, and how is it shipped?",
+        a: "Yes, sourced as original Japan-made Yaskawa stock. Ships within 24 hours if in stock, otherwise per the lead time confirmed at quote, via DHL/FedEx/UPS with full insurance and original packaging." }
+    ]
+  },
 
   // ---- Allen-Bradley ----
   { brand: "Allen-Bradley", model: "2097-V34PR6-LM", series: "Kinetix 350", cat: "servo", spec: "Single-axis servo drive, 400/480VAC, 6.0A, STO CAT.3/D, EtherNet/IP, USA original", status: "instock", photo: "2097-V34PR6-LM.jpg", linkedin: "2097-V34PR6-LM.png", sell_price: 1911.68, sell_price_currency: "USD", price_source: "ebay_ref" },
@@ -375,7 +415,40 @@ const PRODUCTS = [
   { brand: "Panasonic", model: "MSM15205C", series: "MINAS", cat: "servo", spec: "MINAS-series AC servo motor, 1.5kW, 3-phase 200V, 3000rpm rated speed, 4.77Nm rated torque", status: "instock", photo: "MSM15205C.jpg", linkedin: null }, // generate-data-entry.js <- wiki/marketing/Panasonic/Servo/MSM15205C/营销素材包/04-独立站内容包/MSM15205C.md
   { brand: "Schneider", model: "LC1D32M7", series: "TeSys D", cat: "spares", spec: "The Schneider LC1D32M7 is a TeSys D series AC contactor rated 32A continuous current, 220V coil, with 1NO+1NC auxiliary contacts", status: "instock", photo: "LC1D32M7.jpg", linkedin: null, sell_price: 90.93, sell_price_currency: "USD", price_source: "ebay_ref" }, // generate-data-entry.js <- wiki/marketing/Schneider/Contactor/LC1D32M7/营销素材包/04-独立站内容包/LC1D32M7.md
   { brand: "Siemens", model: "6SL3120-2TE21-0AA4", series: "SINAMICS S120", cat: "drives", spec: "The Siemens 6SL3120-2TE21-0AA4 is a SINAMICS S120 Double Motor Module with two independent 9A outputs at 3AC 400V, fed from a common DC600V bus, with 4x DRIVE-CLiQ interfaces", status: "instock", photo: "6SL3120-2TE21-0AA4.jpg", linkedin: null, sell_price: 628.06, sell_price_currency: "USD", price_source: "ebay_ref" }, // generate-data-entry.js <- wiki/marketing/Siemens/MotorModule/6SL3120-2TE21-0AA4/营销素材包/04-独立站内容包/6SL3120-2TE21-0AA4.md
-  { brand: "Siemens", model: "6EP3437-8SB00-0AY0", series: "SITOP PSU8200", cat: "spares", spec: "The Siemens 6EP3437-8SB00-0AY0 is a SITOP PSU8200 series switched-mode power supply, 3AC 400-500V input, DC24V/40A output, adjustable 24-28V", status: "instock", photo: "6EP3437-8SB00-0AY0.jpg", linkedin: null, sell_price: 314.69, sell_price_currency: "USD", price_source: "ebay_ref" }, // generate-data-entry.js <- wiki/marketing/Siemens/PowerSupply/6EP3437-8SB00-0AY0/营销素材包/04-独立站内容包/6EP3437-8SB00-0AY0.md
+  { brand: "Siemens", model: "6EP3437-8SB00-0AY0", series: "SITOP PSU8200", cat: "spares", spec: "The Siemens 6EP3437-8SB00-0AY0 is a SITOP PSU8200 series switched-mode power supply, 3AC 400-500V input, DC24V/40A output, adjustable 24-28V", status: "instock", photo: "6EP3437-8SB00-0AY0.jpg", linkedin: null, sell_price: 314.69, sell_price_currency: "USD", price_source: "ebay_ref",
+    /* ---- 2026-09-17: enriched from Tier C (structured page) to Tier B, demo of PartNumber实体化架构提案/产品页技术规范提案/字段级Schema提案 content architecture applied to a real thin SKU. All fields below are restructured from the existing spec text or general, verifiable SITOP PSU8200-family engineering knowledge — no fabricated per-unit claims (no datasheet added: Fouwell does not have a verified original-Siemens datasheet file for this exact order code on file, so the section stays hidden rather than showing a placeholder). ---- */
+    specs: [
+      ["Order code (MLFB)", "6EP3437-8SB00-0AY0"],
+      ["Product line", "SITOP PSU8200"],
+      ["Input", "3 AC 400–500 V"],
+      ["Output voltage", "24–28 V DC, adjustable"],
+      ["Output current", "40 A"],
+      ["Mounting", "DIN rail (TS 35)"],
+      ["Redundancy", "Supports parallel/redundant operation with other PSU8200 units (Siemens SITOP redundancy module required)"]
+    ],
+    applications: [
+      { icon: "🏭", title: "Control cabinet 24V backbone",
+        desc: "Primary 24V DC supply for PLC, HMI, sensor and actuator loads in a machine or panel build — the standard role for a SITOP-class supply." },
+      { icon: "💧", title: "Process & utility control",
+        desc: "Stable 24V rail for PID loops, instrumentation and remote I/O in water/utility and process control panels." },
+      { icon: "🔁", title: "Redundant/critical-load setups",
+        desc: "PSU8200 units are designed to run in parallel for N+1 redundancy — used where a single power supply failure can't be allowed to stop the line." }
+    ],
+    faq: [
+      { q: "What does the order code 6EP3437-8SB00-0AY0 tell me about this unit?",
+        a: "It identifies this as a Siemens SITOP PSU8200 series switched-mode power supply with 3AC 400–500V input and 24V/40A DC output, adjustable 24–28V. Fouwell sources it through official Siemens channels with full traceability." },
+      { q: "Can I run this directly from a 400V or 500V 3-phase supply without a transformer?",
+        a: "Yes — the rated input range (3AC 400–500V) covers both directly; no step-down transformer is needed within that band." },
+      { q: "Can I adjust the output voltage, and by how much?",
+        a: "Yes, the output is adjustable from 24V up to 28V DC — useful for compensating cable voltage drop on long DC runs to remote I/O or actuators." },
+      { q: "Can multiple PSU8200 units be paralleled for redundancy?",
+        a: "The PSU8200 series is designed to support parallel operation for redundant/N+1 setups. Confirm the exact redundancy module/wiring for your configuration with our engineers when you request a quote." },
+      { q: "Is this in stock, and is it genuine Siemens?",
+        a: "Yes — this is an in-stock, genuine Siemens unit, 100% inspected before shipping, and ships within 24 hours via DHL/FedEx/UPS." },
+      { q: "Do you have the official Siemens datasheet on file for this exact order code?",
+        a: "We don't currently have a verified original-Siemens datasheet on file for 6EP3437-8SB00-0AY0 specifically — send a request and we'll source the correct document from Siemens before shipment rather than send you a generic SITOP PSU8200 sheet that may not match this exact variant." }
+    ]
+  }, // generate-data-entry.js <- wiki/marketing/Siemens/PowerSupply/6EP3437-8SB00-0AY0/营销素材包/04-独立站内容包/6EP3437-8SB00-0AY0.md
   { brand: "Telemecanique", model: "XS512BLPAL5", series: "XS5", cat: "sensors", spec: "The Telemecanique XS512BLPAL5 is an inductive proximity switch with 2mm sensing distance, PNP NO 3-wire output, 12-48VDC", status: "instock", photo: "XS512BLPAL5.jpg", linkedin: null }, // generate-data-entry.js <- wiki/marketing/Telemecanique/ProximitySwitch/XS512BLPAL5/营销素材包/04-独立站内容包/XS512BLPAL5.md
   { brand: "Yaskawa", model: "SGMGV-13DDA6H", series: "Sigma-V", cat: "servo", spec: "The Yaskawa SGMGV-13DDA6H is a Sigma-V series AC servo motor rated 1.3kW, 400V, 1500rpm rated speed, 8.34Nm rated torque, with incremental encoder", status: "instock", photo: "SGMGV-13DDA6H.jpg", linkedin: null, sell_price: 3735.45, sell_price_currency: "USD", price_source: "web_ref" }, // generate-data-entry.js <- wiki/marketing/Yaskawa/Servo/SGMGV-13DDA6H/营销素材包/04-独立站内容包/SGMGV-13DDA6H.md
   { brand: "ifm", model: "AC3216", series: "SmartLine", cat: "sensors", spec: "The ifm AC3216 is a SmartLine AS-Interface I/O module with 4 analog current inputs (4-20mA each), IP20, supporting 2/3/4-wire sensor connections", status: "instock", photo: "AC3216.jpg", linkedin: null, sell_price: 707.41, sell_price_currency: "USD", price_source: "ebay_ref" }, // generate-data-entry.js <- wiki/marketing/ifm/ASiModule/AC3216/营销素材包/04-独立站内容包/AC3216.md
@@ -403,13 +476,27 @@ const PRODUCTS = [
   { brand: "ABB", model: "SIF2-B28N-V 0,2-PO", series: "SIF2", cat: "sensors", spec: "Inductive proximity sensor, 2mm sensing distance, square PBT housing. Sourcing note: original part status disputed (see FAQ)", status: "instock", photo: null, linkedin: null, sell_price: 125.24, sell_price_currency: "USD", price_source: "procurement_quote_min" }, // generate-data-entry.js <- wiki/marketing/ABB/ProximitySensor/SIF2-B28N-V_0,2-PO/营销素材包/04-独立站内容包/SIF2-B28N-V_0,2-PO.md
   { brand: "ASA-Schalttechnik", model: "SM 10 T17S", series: "SM 10", cat: "sensors", spec: "Limit switch, 250VAC 10A, IP65, order no. 8032 0629", status: "instock", photo: null, linkedin: null, sell_price: 81.41, sell_price_currency: "USD", price_source: "procurement_quote_min" }, // generate-data-entry.js <- wiki/marketing/ASA-Schalttechnik/LimitSwitch/SM_10_T17S/营销素材包/04-独立站内容包/SM_10_T17S.md
   { brand: "AlifTech", model: "AG-39DF", series: "AG-39", cat: "sensors", spec: "Magnetic switch, 2-wire electronic, normally open, T-slot mount", status: "instock", photo: null, linkedin: null, sell_price: 5.48, sell_price_currency: "USD", price_source: "procurement_quote_min" }, // generate-data-entry.js <- wiki/marketing/AlifTech/MagneticSwitch/AG-39DF/营销素材包/04-独立站内容包/AG-39DF.md
-  { brand: "Honeywell", model: "SZR-LY4-N1-AC220V", series: "SZR-LY", cat: "controllers", spec: "Interposing relay, 4PDT (4NO/4NC), 10A, 220VAC coil, LED indicator", status: "instock", photo: null, linkedin: null, sell_price: 18.79, sell_price_currency: "USD", price_source: "procurement_quote_min" }, // generate-data-entry.js <- wiki/marketing/Honeywell/Relay/SZR-LY4-N1-AC220V/营销素材包/04-独立站内容包/SZR-LY4-N1-AC220V.md
+  { brand: "Honeywell", model: "SZR-LY4-N1-AC220V", series: "SZR-LY", cat: "spares", spec: "Interposing relay, 4PDT (4NO/4NC), 10A, 220VAC coil, LED indicator", status: "instock", photo: null, linkedin: null, sell_price: 18.79, sell_price_currency: "USD", price_source: "procurement_quote_min" }, // generate-data-entry.js <- wiki/marketing/Honeywell/Relay/SZR-LY4-N1-AC220V/营销素材包/04-独立站内容包/SZR-LY4-N1-AC220V.md
   { brand: "QUEEN", model: "MD-15WAG-SCS13-M16", series: "MD", cat: "spares", spec: "Solenoid valve, SCS13 stainless steel body, PT 1/2 port, DC24V, normally closed", status: "instock", photo: null, linkedin: null, sell_price: 29.75, sell_price_currency: "USD", price_source: "procurement_quote_min" }, // generate-data-entry.js <- wiki/marketing/QUEEN/SolenoidValve/MD-15WAG-SCS13-M16/营销素材包/04-独立站内容包/MD-15WAG-SCS13-M16.md
 
   // ---- generate-data-entry.js additions (2026-09-14) ----
   { brand: "Siemens", model: "6ES7131-6BH01-0BA0", series: "SIMATIC ET200SP", cat: "controllers", spec: "SIMATIC ET200SP digital input module, 16x24VDC, FM/ATEX/IECEx certified for hazardous locations, made in Germany", status: "instock", photo: null, linkedin: null, sell_price: 73.41, sell_price_currency: "USD", price_source: "ebay_ref" }, // generate-data-entry.js <- wiki/marketing/Siemens/IOModule/6ES7131-6BH01-0BA0/营销素材包/04-独立站内容包/6ES7131-6BH01-0BA0.md
   { brand: "Siemens", model: "3UF7020-1AU01-0", series: "SIMOCODE pro S", cat: "controllers", spec: "SIMOCODE pro S motor protection basic unit, AC110-240V, PROFIBUS DP, 2×NO auxiliary contacts, made in Germany", status: "instock", photo: null, linkedin: null, sell_price: 259.73, sell_price_currency: "USD", price_source: "ebay_ref" }, // generate-data-entry.js <- wiki/marketing/Siemens/MotorProtection/3UF7020-1AU01-0/营销素材包/04-独立站内容包/3UF7020-1AU01-0.md
   { brand: "Siemens", model: "6ES7222-1HH32-0XB0", series: "SIMATIC S7-1200 SM1222", cat: "controllers", spec: "SIMATIC S7-1200 SM1222 digital output module, 16x relay, 30VDC/250VAC 2A/pt", status: "instock", photo: null, linkedin: null, sell_price: 105.81, sell_price_currency: "USD", price_source: "ebay_ref" }, // generate-data-entry.js <- wiki/marketing/Siemens/PLC/6ES7222-1HH32-0XB0/营销素材包/04-独立站内容包/6ES7222-1HH32-0XB0.md
+
+  // ---- generate-data-entry.js additions (2026-09-14) ----
+  { brand: "Balluff", model: "BTL7-E570-M0400-K-SR32", series: "BTL7", cat: "sensors", spec: "Micropulse magnetostrictive displacement sensor, rod style, 4-20mA output, 400mm range, M12 8-pin", status: "instock", photo: null, linkedin: null, sell_price: 969.99, sell_price_currency: "USD", price_source: "procurement_quote_min" }, // generate-data-entry.js <- wiki/marketing/Balluff/DisplacementSensor/BTL7-E570-M0400-K-SR32/营销素材包/04-独立站内容包/BTL7-E570-M0400-K-SR32.md
+
+  // ---- generate-data-entry.js additions (2026-09-16) ----
+  { brand: "Lenze", model: "EVS9324-ES", series: "9300", cat: "servo", spec: "9300 series servo inverter, 3.0kW, 3/PE AC 400-480V input, 7A output", status: "discont", photo: null, linkedin: null, sell_price: 1125.68, sell_price_currency: "USD", price_source: "procurement_quote_min",
+    // 2026-09-16: dead-end EOL SKU — no official replacement identified, only sourcing lead is
+    // refurbished stock (see wiki/marketing/Lenze/ServoAmplifier/EVS9324-ES/营销素材包/00-营销计划/plan.md).
+    // These two fields make js/faq-templates.js / js/i18n-ru.js / build-product-pages(-ru).js /
+    // main.js render honest copy instead of the default discont "replaced by a current
+    // equivalent, genuine, official channels, original packaging" template.
+    no_known_replacement: true,
+    condition_note: 'The only sourcing lead we have found for this part number is refurbished stock, not new production.',
+    condition_note_ru: 'Единственный найденный источник этой детали — восстановленные единицы, не новое производство.' }, // generate-data-entry.js <- wiki/marketing/Lenze/ServoAmplifier/EVS9324-ES/营销素材包/04-独立站内容包/EVS9324-ES.md
 
 ];
 

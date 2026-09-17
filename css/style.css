@@ -51,7 +51,42 @@ a:hover { color: var(--red); }
   gap: 16px;
 }
 .topbar a { color: #e8edfb; }
-.topbar .topbar-links { display: flex; gap: 18px; }
+.topbar .topbar-links { display: flex; gap: 18px; align-items: center; }
+.topbar .lang-switch { border: 1px solid rgba(255,255,255,0.35); border-radius: 5px; padding: 2px 8px; font-weight: 600; }
+.topbar .lang-switch:hover { border-color: #fff; }
+
+.fw-lang-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: #fff6e0;
+  color: #4a3b00;
+  font-size: 13px;
+  padding: 10px 16px;
+  text-align: center;
+  border-bottom: 1px solid #f0dca0;
+}
+.fw-lang-banner-actions { display: flex; gap: 14px; align-items: center; }
+.fw-lang-banner-switch {
+  background: var(--blue);
+  color: #fff;
+  padding: 5px 12px;
+  border-radius: 6px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.fw-lang-banner-dismiss {
+  background: none;
+  border: none;
+  color: #4a3b00;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 13px;
+  padding: 0;
+  white-space: nowrap;
+}
 
 /* ============ Header / Nav ============ */
 .site-header {
@@ -501,6 +536,25 @@ a.pill.cat:hover { text-decoration: underline; }
 .chip:hover { border-color: var(--blue); color: var(--blue); }
 .chip.active { background: var(--blue); border-color: var(--blue); color: #fff; }
 .result-count { font-size: 14px; color: var(--gray-500); margin-bottom: 18px; }
+
+.pagination { display: flex; align-items: center; justify-content: center; gap: 6px; flex-wrap: wrap; margin: 32px 0 8px; }
+.page-btn {
+  border: 1px solid var(--gray-300);
+  background: var(--white);
+  color: var(--gray-700);
+  font-size: 13px;
+  font-weight: 600;
+  min-width: 36px;
+  height: 36px;
+  padding: 0 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+.page-btn:hover:not(:disabled) { border-color: var(--blue); color: var(--blue); }
+.page-btn.active { background: var(--blue); border-color: var(--blue); color: #fff; cursor: default; }
+.page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.page-ellipsis { color: var(--gray-500); padding: 0 4px; font-size: 13px; }
 
 /* ============ About page ============ */
 .about-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 44px; align-items: start; }
@@ -1340,6 +1394,15 @@ a.pill.cat:hover { text-decoration: underline; }
   color: var(--blue-deep, #0a3e75);
   border: 1px solid var(--gray-200, #dfe5ee);
 }
+/* Relationship-type badges (2026-09-17) — see PartNumber字段级Schema提案.md relationship_type.
+   Direct/Successor read as strongest confidence, Cross Reference/Same Series weakest — colors
+   roughly follow that gradient the same way .pill.instock/.legacy/.discont already do above. */
+.pd-compat-type-direct { background: #e6f6ec; color: #1c7c3d; }
+.pd-compat-type-successor { background: #e6f6ec; color: #1c7c3d; }
+.pd-compat-type-functional { background: #fff4e2; color: #a36a00; }
+.pd-compat-type-compatible { background: #fff4e2; color: #a36a00; }
+.pd-compat-type-cross_reference { background: #eef1f6; color: #4a5568; }
+.pd-compat-type-same_series { background: #eef1f6; color: #4a5568; }
 .pd-compat-cta {
   background: var(--gray-100, #f1f4f9);
   border: 1px dashed var(--gray-300, #c9d2e0);

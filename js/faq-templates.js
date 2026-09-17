@@ -30,6 +30,22 @@ function genericFaqFor(p, categoryName) {
       };
     }
     if (p.status === 'discont') {
+      // p.no_known_replacement (2026-09-16, added for Lenze EVS9324-ES): the default copy below
+      // asserts "replaced by a current equivalent" — true for every discont SKU so far (e.g.
+      // FR-A740-7.5K -> FR-A840-7.5K, 3G3MX2-AB002-V1 -> V2, both real catalog entries), but
+      // false for a genuinely dead-end EOL part with no identified successor. Asserting a
+      // replacement exists when none has been verified is exactly the kind of unsupported claim
+      // the site's own copy rules forbid (schema/products-schema.md "每个主张必须有具体数字或可验证
+      // 事实背书") — this flag lets the FAQ stay accurate for that case instead of defaulting to
+      // the optimistic wording. Condition (refurbished/used, since no new stock exists for a
+      // dead EOL part) is handled separately, not by this flag — see p.condition_note below.
+      const conditionNote = p.condition_note ? ' ' + p.condition_note : '';
+      if (p.no_known_replacement) {
+        return {
+          q: 'The ' + p.model + ' shows as discontinued — is it still available, and is there a replacement?',
+          a: 'The ' + p.model + ' has been discontinued by ' + p.brand + ', and we have not identified an official replacement model for it yet.' + conditionNote + ' We can search our supplier network for remaining stock — send your application details to info@fouwell.com and we’ll confirm what’s available and, where possible, suggest a current-production alternative.'
+        };
+      }
       return {
         q: 'The ' + p.model + ' shows as replaced — is it still available, and what replaces it?',
         a: 'The ' + p.model + ' has been discontinued by ' + p.brand + ' and replaced by a current equivalent. We can still help source remaining ' + p.model + ' stock where available, or recommend the direct replacement — send your application details to info@fouwell.com and we’ll confirm the best option.'
@@ -41,11 +57,50 @@ function genericFaqFor(p, categoryName) {
     };
   })();
 
+  // "Genuine" / "original manufacturer packaging" are factual OEM-authenticity claims —
+  // false for disclosed compatible/non-OEM brands (see NON_GENUINE_BRANDS in js/data.js).
+  // main.js and build-product-pages.js already swap the trust badge + meta description for
+  // these brands (search NON_GENUINE_BRANDS in both) — this generic FAQ template had the
+  // same claim baked into two answers and was never updated to match (found 2026-09-14 by
+  // scripts/seo-audit.js auditing PWERUN FX3U-30MR / General 80ST-M02430: the "Is it
+  // genuine?" answer started with an unqualified "Yes...official brand channels..." directly
+  // contradicting the "not a genuine X product" disclosure shown elsewhere on the same page).
+  const nonGenuine = typeof NON_GENUINE_BRANDS !== 'undefined' && NON_GENUINE_BRANDS.has(p.brand);
+
+  // p.condition_note (2026-09-16, added for Lenze EVS9324-ES): a free-text disclosure for SKUs
+  // where the *brand* is genuine but the *condition* isn't new/original-packaged — e.g. a dead
+  // EOL part where the only located stock is refurbished. This is a separate axis from
+  // NON_GENUINE_BRANDS (that's about brand authenticity; this is about new-vs-refurbished
+  // condition) — a genuinely-branded refurbished unit still shouldn't be described as sourced
+  // "through official brand channels" with "original packaging", since neither is true for
+  // secondary-market refurbished stock. Undefined for every other SKU, so this only changes
+  // copy for products that explicitly set it.
+  const refurbished = !!p.condition_note;
+
+  const genuineQA = nonGenuine
+    ? {
+        q: 'Is the ' + p.brand + ' ' + p.model + ' genuine, and where does Fouwell source it from?',
+        a: 'The ' + p.model + ' is sold under the ' + p.brand + ' name as a disclosed compatible/non-OEM part, not an original-manufacturer product — we state this openly rather than imply otherwise. Every unit is still functionally tested and quality-checked before shipping. If you specifically need the original-brand part, tell us and we can quote that as a separate option.'
+      }
+    : refurbished
+    ? {
+        q: 'Is the ' + p.brand + ' ' + p.model + ' genuine, and where does Fouwell source it from?',
+        a: 'Yes, it is a genuine ' + p.brand + ' part. ' + p.condition_note + ' Every unit is functionally tested and quality-checked before shipping, and we disclose the condition upfront rather than describe it as new.'
+      }
+    : {
+        q: 'Is the ' + p.brand + ' ' + p.model + ' genuine, and where does Fouwell source it from?',
+        a: 'Yes. Fouwell sources every ' + p.brand + ' part through official brand channels or verified authorized distributors, and every unit is 100% inspected before shipping. For the ' + p.model + ' specifically, we can provide original packaging, labeling and, where available, a factory test report on request.'
+      };
+
+  const shippingQA = {
+    q: 'How is the ' + p.model + ' shipped, and can you ship internationally?',
+    a: 'We ship worldwide via DHL, FedEx, UPS (air) or sea freight for larger orders, with full insurance' +
+      (nonGenuine || refurbished ? '' : ' and original manufacturer packaging') +
+      '. We also maintain an HK warehouse for faster regional consolidation on some orders.'
+  };
+
   return [
-    {
-      q: 'Is the ' + p.brand + ' ' + p.model + ' genuine, and where does Fouwell source it from?',
-      a: 'Yes. Fouwell sources every ' + p.brand + ' part through official brand channels or verified authorized distributors, and every unit is 100% inspected before shipping. For the ' + p.model + ' specifically, we can provide original packaging, labeling and, where available, a factory test report on request.'
-    },
+    genuineQA,
     availQA,
     {
       q: 'Is there a minimum order quantity (MOQ) for the ' + p.model + '?',
@@ -59,10 +114,7 @@ function genericFaqFor(p, categoryName) {
       q: 'Can you help cross-reference an older or different ' + p.brand + ' part number?',
       a: 'Yes. Send your exact part number (old or new) to info@fouwell.com and our engineers will confirm the current equivalent, availability and pricing — usually within one business day, often within the hour during Asia/Shanghai office hours.'
     },
-    {
-      q: 'How is the ' + p.model + ' shipped, and can you ship internationally?',
-      a: 'We ship worldwide via DHL, FedEx, UPS (air) or sea freight for larger orders, with full insurance and original manufacturer packaging. We also maintain an HK warehouse for faster regional consolidation on some orders.'
-    }
+    shippingQA
   ];
 }
 

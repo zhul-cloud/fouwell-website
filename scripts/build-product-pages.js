@@ -85,11 +85,22 @@ function buildApplicationsHtml(p) {
 }
 
 /* ---- port of renderProductCompatibility() in js/main.js — static version ---- */
+/* Relationship-type taxonomy (2026-09-17) — keep in sync with js/main.js's COMPAT_TYPE_LABEL. */
+const COMPAT_TYPE_LABEL = {
+  direct: 'Direct Replacement',
+  successor: 'Manufacturer Successor',
+  functional: 'Functional Alternative',
+  compatible: 'Compatible',
+  cross_reference: 'Cross Reference',
+  same_series: 'Same Series'
+};
 function buildCompatibilityHtml(p) {
-  return '<thead><tr><th>Original Part Number</th><th>Compatibility Note</th></tr></thead>' +
+  const hasType = p.compatibility.some(c => c.type);
+  return '<thead><tr><th>Original Part Number</th>' + (hasType ? '<th>Relationship</th>' : '') + '<th>Compatibility Note</th></tr></thead>' +
     '<tbody>' +
       p.compatibility.map(c =>
         '<tr><td><code class="pd-compat-code">' + escHtml(c.from || '') + '</code></td>' +
+        (hasType ? '<td><span class="pill pd-compat-type pd-compat-type-' + escHtml(c.type || '') + '">' + escHtml(COMPAT_TYPE_LABEL[c.type] || c.type || '') + '</span></td>' : '') +
         '<td>' + escHtml(c.note || '') + '</td></tr>'
       ).join('') +
     '</tbody>';
@@ -183,7 +194,10 @@ function buildSchemas(p) {
 
 /* ---- port of the meta-description template added to renderProductDetail() in main.js ---- */
 function buildMetaDescription(p) {
-  const availPhrase = p.status === 'discont' ? 'Replaced by a current equivalent'
+  // p.no_known_replacement (2026-09-16): see js/faq-templates.js genericFaqFor() header comment
+  // for why "Replaced by a current equivalent" isn't safe to assert for every discont SKU.
+  const availPhrase = p.status === 'discont'
+    ? (p.no_known_replacement ? 'Discontinued, refurbished stock only' : 'Replaced by a current equivalent')
     : p.status === 'legacy' ? 'Legacy line, still sourceable'
     : 'In stock, ships in 24h';
   // "Genuine" is a factual OEM-authenticity claim — never true for disclosed
@@ -207,11 +221,16 @@ function renderPage(p) {
   const title = p.brand + ' ' + p.model + ' | Fouwell Industrial Automation';
   const metaDesc = buildMetaDescription(p);
   const url = 'https://fouwell.com' + productUrl(p);
+  const ruUrl = '/ru/products/' + productSlug(p) + '/';
   const schemaTags = buildSchemas(p)
     .map(obj => '<script type="application/ld+json" data-fouwell-dynamic-schema="1">' + JSON.stringify(obj) + '</script>')
     .join('\n  ');
 
   let html = TEMPLATE;
+  html = html
+    .replace(/#EN_URL_ABS#/g, url)
+    .replace(/#RU_URL_ABS#/g, 'https://fouwell.com' + ruUrl)
+    .replace(/#RU_URL#/g, ruUrl);
   html = html.replace(
     /<title>[^<]*<\/title>/,
     '<title>' + escHtml(title) + '</title>'

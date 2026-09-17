@@ -33,6 +33,14 @@ rsync -avz --checksum \
   "${SITE_DIR}/" \
   "${REMOTE}"
 
+# IndexNow (Bing/Yandex/...) push — see scripts/indexnow-submit.js header for why this
+# exists. Runs AFTER the rsync so the key file (<key>.txt at the domain root) is already
+# live before the API call that references it. Non-fatal: a submission hiccup shouldn't
+# fail the whole deploy, so this is best-effort with `|| true`.
+echo ""
+echo "Pinging IndexNow (Bing/Yandex) with the current sitemap..."
+node "${SITE_DIR}/scripts/indexnow-submit.js" || echo "IndexNow submission failed — not fatal, deploy already succeeded."
+
 cat <<'EOF'
 
 Deploy done. Now flush SiteGround Dynamic Cache manually (SSH/curl PURGE won't work):

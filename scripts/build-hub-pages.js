@@ -30,16 +30,45 @@ const {
   ROOT, loadGlobals, productUrl, categoryUrl, brandUrl, brandSlug, escHtml
 } = require('./lib/site-data');
 
-const { PRODUCTS, BRANDS, CATEGORIES, STATUS_LABEL } = loadGlobals('js/data.js', 'js/videos.js');
+const { PRODUCTS, BRANDS, CATEGORIES, STATUS_LABEL, PRODUCT_PHOTOS, PRODUCT_VIDEOS, NON_GENUINE_BRANDS } =
+  loadGlobals('js/data.js', 'js/videos.js', 'js/photos.js');
+
+/* Port of productHasRealPhoto/productHasVideo/productMediaScore in js/main.js — static
+ * version, same duplication pattern as productCard() below. Keep both in sync. */
+function productHasRealPhoto(p) {
+  const photos = PRODUCT_PHOTOS[p.model] || [];
+  return photos.some((x) => x.tag === 'Photo');
+}
+function productHasVideo(p) {
+  return !!(PRODUCT_VIDEOS[p.model] && PRODUCT_VIDEOS[p.model].length);
+}
+function productMediaScore(p) {
+  return (productHasRealPhoto(p) ? 2 : 0) + (productHasVideo(p) ? 1 : 0);
+}
+function sortByMedia(list) {
+  return list.slice().sort((a, b) => productMediaScore(b) - productMediaScore(a));
+}
 
 function brandOf(name) { return BRANDS.find(b => b.name === name); }
 
 /* ---- port of productCard() in js/main.js — static version (no lazy-load JS needed,
    images are still real <img> tags so this degrades identically without JS) ---- */
 function productCard(p) {
-  const st = STATUS_LABEL[p.status] || STATUS_LABEL.instock;
+  // p.no_known_replacement (2026-09-16): see js/main.js statusLabelFor() header comment — the
+  // shared "Replaced" label is wrong on a bare pill (no surrounding explanation) for a dead-end
+  // EOL SKU with no verified successor.
+  const st = (p.status === 'discont' && p.no_known_replacement)
+    ? { label: 'Discontinued', cls: STATUS_LABEL.discont.cls }
+    : (STATUS_LABEL[p.status] || STATUS_LABEL.instock);
   const url = productUrl(p);
-  const img = p.photo
+  // Priority: PRODUCT_PHOTOS (full packaged set, matches the detail-page gallery source) ->
+  // legacy p.photo/p.linkedin fields -> placeholder. See js/main.js productImage() for the
+  // full rationale (2026-09-14 fix — this port previously only checked photo/linkedin).
+  const photos = PRODUCT_PHOTOS[p.model] || [];
+  const img = photos.length
+    ? '<img' + (photos[0].tag === 'Marketing' ? ' class="linkedin-fallback"' : '') +
+      ' src="' + photos[0].src + '" alt="' + escHtml(p.model) + (photos[0].tag === 'Marketing' ? ' (marketing)' : '') + '" loading="lazy">'
+    : p.photo
     ? '<img src="/assets/products/' + p.photo + '" alt="' + escHtml(p.model) + '" loading="lazy">'
     : p.linkedin
     ? '<img class="linkedin-fallback" src="/assets/linkedin/' + p.linkedin + '" alt="' + escHtml(p.model) + ' (marketing)" loading="lazy">'
@@ -68,20 +97,35 @@ const PAGE_SHELL = fs.readFileSync(path.join(ROOT, 'products', 'index.html'), 'u
    footer markup as the rest of the site, with only the mid-page content swapped in. */
 const HERO_START = PAGE_SHELL.indexOf('<section class="page-hero">');
 const CONTENT_END = PAGE_SHELL.indexOf('<footer class="site-footer">');
-const HEAD_AND_NAV = PAGE_SHELL.slice(0, HERO_START);
+// Strip the shell's own hreflang block (always /products/ <-> /ru/products/, since the shell
+// IS products/index.html) — every generated hub page gets its own correct pair injected below
+// instead (2026-09-14, Phase 2/3 fix: previously every category/brand hub page silently
+// inherited this same generic pair, which is wrong per-page hreflang and was never caught
+// because the RU side of it didn't exist as a real page yet).
+const HEAD_AND_NAV = PAGE_SHELL.slice(0, HERO_START)
+  .replace(/\s*<link rel="alternate" hreflang="[^"]*" href="[^"]*">\n/g, '');
 const FOOTER_AND_SCRIPTS = PAGE_SHELL.slice(CONTENT_END);
 
-function renderShell({ title, metaDesc, canonical, breadcrumbHtml, h1, subHtml, bodyHtml, schemas, navActive }) {
+function renderShell({ title, metaDesc, canonical, breadcrumbHtml, h1, subHtml, bodyHtml, schemas, navActive, altUrl }) {
   let head = HEAD_AND_NAV
     .replace(/<title>[^<]*<\/title>/, '<title>' + escHtml(title) + '</title>')
     .replace(/<meta name="description"[^>]*>/, '<meta name="description" content="' + escHtml(metaDesc) + '">')
     .replace('<a href="/products/" class="active">Products</a>', navActive === 'products'
       ? '<a href="/products/" class="active">Products</a>'
-      : '<a href="/products/">Products</a>');
+      : '<a href="/products/">Products</a>')
+    // Per-page lang-switch target (the shell's own copy always points at /ru/products/).
+    .replace(/<a class="lang-switch" href="[^"]*">🇷🇺 RU<\/a>/, '<a class="lang-switch" href="' + altUrl + '">🇷🇺 RU</a>');
   const schemaTags = schemas
     .map(obj => '<script type="application/ld+json">' + JSON.stringify(obj) + '</script>')
     .join('\n  ');
-  head = head.replace('</head>', '  <link rel="canonical" href="' + canonical + '">\n  ' + schemaTags + '\n</head>');
+  const hreflangTags =
+    '<link rel="alternate" hreflang="en" href="' + canonical + '">\n  ' +
+    '<link rel="alternate" hreflang="ru" href="https://fouwell.com' + altUrl + '">\n  ' +
+    '<link rel="alternate" hreflang="x-default" href="' + canonical + '">';
+  head = head.replace('</head>', '  <link rel="canonical" href="' + canonical + '">\n  ' + hreflangTags + '\n  ' + schemaTags + '\n</head>');
+
+  let footer = FOOTER_AND_SCRIPTS
+    .replace(/window\.FOUWELL_ALT_URL = '[^']*';/, "window.FOUWELL_ALT_URL = '" + altUrl + "';");
 
   return head +
     '<section class="page-hero">\n' +
@@ -96,14 +140,14 @@ function renderShell({ title, metaDesc, canonical, breadcrumbHtml, h1, subHtml, 
     bodyHtml +
     '    </div>\n' +
     '  </section>\n\n' +
-    FOOTER_AND_SCRIPTS;
+    footer;
 }
 
 let written = 0;
 
 /* ==================== Category hub pages: /products/<cat>/ ==================== */
 for (const [catKey, catName] of Object.entries(CATEGORIES)) {
-  const products = PRODUCTS.filter(p => p.cat === catKey);
+  const products = sortByMedia(PRODUCTS.filter(p => p.cat === catKey));
   if (!products.length) continue; // no empty shells
 
   const brandsHere = [...new Set(products.map(p => p.brand))].sort();
@@ -166,7 +210,8 @@ for (const [catKey, catName] of Object.entries(CATEGORIES)) {
     metaDesc: 'Genuine ' + catName + ' from ' + brandsHere.slice(0, 5).join(', ') +
       (brandsHere.length > 5 ? ' and more' : '') + ' — ' + products.length + ' models in stock or sourceable. Fast quote from Fouwell, verified industrial automation parts supplier.',
     canonical: url,
-    breadcrumbHtml, h1: catName, subHtml, bodyHtml, schemas, navActive: 'products'
+    breadcrumbHtml, h1: catName, subHtml, bodyHtml, schemas, navActive: 'products',
+    altUrl: '/ru' + categoryUrl(catKey)
   });
 
   const dir = path.join(ROOT, 'products', catKey);
@@ -178,15 +223,19 @@ for (const [catKey, catName] of Object.entries(CATEGORIES)) {
 /* ==================== Brand hub pages: /brands/<brand-slug>/ ==================== */
 const brandsWithProducts = [...new Set(PRODUCTS.map(p => p.brand))].sort();
 for (const brandName of brandsWithProducts) {
-  const products = PRODUCTS.filter(p => p.brand === brandName);
+  const products = sortByMedia(PRODUCTS.filter(p => p.brand === brandName));
   const brand = brandOf(brandName); // may be undefined — hub still builds from real product data
+  // "genuine" is a factual OEM-authenticity claim — false for disclosed compatible/non-OEM
+  // brands (see NON_GENUINE_BRANDS in js/data.js; same rule already applied per-product in
+  // buildMetaDescription()/main.js, found missing here 2026-09-14 while adding the RU mirror).
+  const nonGenuine = NON_GENUINE_BRANDS.has(brandName);
   const url = 'https://fouwell.com' + brandUrl(brandName);
 
   const catsHere = [...new Set(products.map(p => p.cat))];
   const catLine = catsHere.map(c => CATEGORIES[c]).join(', ');
 
   const breadcrumbHtml = '<a href="/">Home</a> / <a href="/brands/">Brands</a> / <span>' + escHtml(brandName) + '</span>';
-  const subHtml = '<p>' + products.length + ' genuine ' + escHtml(brandName) + ' model' + (products.length === 1 ? '' : 's') +
+  const subHtml = '<p>' + products.length + (nonGenuine ? ' ' : ' genuine ') + escHtml(brandName) + ' model' + (products.length === 1 ? '' : 's') +
     (brand ? ' from ' + escHtml(brand.country) : '') + ' — ' + escHtml(catLine) + '. All sourced through official channels, 100% inspected before shipping.</p>';
 
   const catLinksHtml = catsHere.map(c =>
@@ -239,10 +288,11 @@ for (const brandName of brandsWithProducts) {
 
   const html = renderShell({
     title: brandName + ' Parts Supplier | Fouwell Industrial Automation',
-    metaDesc: 'Genuine ' + brandName + ' industrial automation parts' + (brand ? ' (' + brand.country + ')' : '') +
+    metaDesc: (nonGenuine ? '' : 'Genuine ') + brandName + ' industrial automation parts' + (brand ? ' (' + brand.country + ')' : '') +
       ' — ' + products.length + ' models: ' + catLine + '. Official channel sourcing, fast quote from Fouwell.',
     canonical: url,
-    breadcrumbHtml, h1: brandName, subHtml, bodyHtml, schemas, navActive: 'brands'
+    breadcrumbHtml, h1: brandName, subHtml, bodyHtml, schemas, navActive: 'brands',
+    altUrl: '/ru' + brandUrl(brandName)
   });
 
   const dir = path.join(ROOT, 'brands', brandSlug(brandName));
@@ -283,7 +333,8 @@ for (const brandName of brandsWithProducts) {
     metaDesc: 'Fouwell sources genuine industrial automation parts from ' + brandsWithProducts.length +
       ' brands including Siemens, ABB, Mitsubishi, OMRON, Yaskawa and Allen-Bradley — official channels, fast quotes.',
     canonical: url,
-    breadcrumbHtml, h1: 'Brands We Supply', subHtml, bodyHtml, schemas, navActive: 'brands'
+    breadcrumbHtml, h1: 'Brands We Supply', subHtml, bodyHtml, schemas, navActive: 'brands',
+    altUrl: '/ru/brands/'
   });
 
   const dir = path.join(ROOT, 'brands');
@@ -304,18 +355,29 @@ const urls = [
   { loc: 'https://fouwell.com/products/', changefreq: 'daily', priority: '0.9' },
   { loc: 'https://fouwell.com/brands/', changefreq: 'weekly', priority: '0.7' },
   { loc: 'https://fouwell.com/about/', changefreq: 'monthly', priority: '0.5' },
-  { loc: 'https://fouwell.com/contact/', changefreq: 'monthly', priority: '0.5' }
+  { loc: 'https://fouwell.com/contact/', changefreq: 'monthly', priority: '0.5' },
+  // /ru/ — 5 hand-authored core pages (Phase 1, 2026-09-14) + category/brand/product hubs
+  // (Phase 2/3, same date, see wiki/log.md) generated by build-hub-pages-ru.js /
+  // build-product-pages-ru.js — 1:1 with every EN URL below, looped the same way.
+  { loc: 'https://fouwell.com/ru/', changefreq: 'daily', priority: '0.9' },
+  { loc: 'https://fouwell.com/ru/products/', changefreq: 'daily', priority: '0.8' },
+  { loc: 'https://fouwell.com/ru/brands/', changefreq: 'weekly', priority: '0.65' },
+  { loc: 'https://fouwell.com/ru/about/', changefreq: 'monthly', priority: '0.45' },
+  { loc: 'https://fouwell.com/ru/contact/', changefreq: 'monthly', priority: '0.45' }
 ];
 Object.keys(CATEGORIES).forEach(catKey => {
   if (PRODUCTS.some(p => p.cat === catKey)) {
     urls.push({ loc: 'https://fouwell.com' + categoryUrl(catKey), changefreq: 'weekly', priority: '0.8' });
+    urls.push({ loc: 'https://fouwell.com/ru' + categoryUrl(catKey), changefreq: 'weekly', priority: '0.7' });
   }
 });
 brandsWithProducts.forEach(b => {
   urls.push({ loc: 'https://fouwell.com' + brandUrl(b), changefreq: 'weekly', priority: '0.75' });
+  urls.push({ loc: 'https://fouwell.com/ru' + brandUrl(b), changefreq: 'weekly', priority: '0.65' });
 });
 PRODUCTS.forEach(p => {
   urls.push({ loc: 'https://fouwell.com' + productUrl(p), changefreq: 'weekly', priority: '0.8' });
+  urls.push({ loc: 'https://fouwell.com/ru' + productUrl(p), changefreq: 'weekly', priority: '0.7' });
 });
 
 const sitemapXml = '<?xml version=\'1.0\' encoding=\'UTF-8\'?>\n' +

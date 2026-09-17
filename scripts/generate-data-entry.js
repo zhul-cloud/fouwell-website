@@ -95,6 +95,10 @@ function jsStr(s) {
   return JSON.stringify(s == null ? null : String(s));
 }
 
+// Category mapping lives in scripts/lib/category-map.js — shared with seo-audit.js so both
+// scripts validate new AND existing entries against the exact same source of truth.
+const { SITE_CATEGORIES, WIKI_CATEGORY_TO_SITE_CATEGORY } = require('./lib/category-map.js');
+
 function main() {
   const g = loadGlobals('js/data.js');
   const existingModels = new Set(g.PRODUCTS.map((p) => p.model));
@@ -106,6 +110,37 @@ function main() {
     const content = fs.readFileSync(pkgPath, 'utf8');
     const fm = parseFrontmatter(content);
     if (!fm.model || existingModels.has(fm.model)) continue;
+
+    // Path shape: MARKETING_DIR/[Brand]/[WikiCategory]/[Model]/营销素材包/04-独立站内容包/[Model].md
+    const relParts = path.relative(MARKETING_DIR, pkgPath).split(path.sep);
+    const wikiCategory = relParts[1];
+
+    if (!SITE_CATEGORIES.has(fm.category)) {
+      throw new Error(
+        `${fm.brand} ${fm.model}: content package category "${fm.category}" (${pkgPath}) is not ` +
+        `one of the 6 valid site categories (${[...SITE_CATEGORIES].join('/')}). Fix the ` +
+        `category: field in the content package before running this script again.`
+      );
+    }
+    const expectedSiteCategory = WIKI_CATEGORY_TO_SITE_CATEGORY[wikiCategory];
+    if (!expectedSiteCategory) {
+      throw new Error(
+        `${fm.brand} ${fm.model}: wiki category "${wikiCategory}" (from ${pkgPath}) has no entry in ` +
+        `WIKI_CATEGORY_TO_SITE_CATEGORY in this script. Add one deliberately (pick the closest of ` +
+        `controllers/hmi/servo/drives/sensors/spares) before this SKU can be published — do not ` +
+        `guess by leaving it unmapped, that's exactly how the SZR-LY4-N1-AC220V Relay→controllers ` +
+        `bug (2026-09-14) happened.`
+      );
+    }
+    if (fm.category !== expectedSiteCategory) {
+      throw new Error(
+        `${fm.brand} ${fm.model}: content package says category: ${fm.category}, but wiki category ` +
+        `"${wikiCategory}" maps to "${expectedSiteCategory}" (see WIKI_CATEGORY_TO_SITE_CATEGORY). ` +
+        `Fix the category: field in ${pkgPath} — if "${fm.category}" is actually correct for this ` +
+        `SKU despite the usual mapping, update WIKI_CATEGORY_TO_SITE_CATEGORY intentionally instead ` +
+        `of silently overriding it here.`
+      );
+    }
 
     const summary = extractSection(content, '一句话规格摘要') || '';
     const price = parsePriceSection(content);
