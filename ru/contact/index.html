@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Контакты и запрос цены | Fouwell — расчёт в течение нескольких часов</title>
+  <meta name="description" content="Свяжитесь с Fouwell для проверки наличия, расчёта цены и технической поддержки. Email info@fouwell.com, WhatsApp +86 133 8591 5251. Расчёт цены обычно в течение 1 часа в рабочее время.">
+  <link rel="icon" type="image/png" href="/assets/logo-square.png">
+  <link rel="stylesheet" href="/css/style.css?v=20260917190833">
+  <link rel="alternate" hreflang="en" href="https://fouwell.com/contact/">
+  <link rel="alternate" hreflang="ru" href="https://fouwell.com/ru/contact/">
+  <link rel="alternate" hreflang="x-default" href="https://fouwell.com/contact/">
+</head>
+<body>
+
+  <div class="topbar">
+    <div class="container">
+      <span>📧 info@fouwell.com &nbsp;·&nbsp; 📱 +86 133 8591 5251 (WhatsApp)</span>
+      <div class="topbar-links">
+        <span>🇷🇺 Русский</span>
+        <a class="lang-switch" href="/contact/">🇺🇸 EN</a>
+        <a href="#inquiry">Получить расчёт цены</a>
+      </div>
+    </div>
+  </div>
+
+  <header class="site-header">
+    <div class="container">
+      <a href="/ru/" class="brand-lockup">
+        <img src="/assets/logo.png" alt="Fouwell logo">
+        <span class="brand-text">
+          <span class="en">FOUWELL</span><br>
+          <span class="cn">INDUSTRIAL AUTOMATION</span>
+        </span>
+      </a>
+      <button class="nav-toggle" onclick="document.querySelector('.main-nav').classList.toggle('open')">☰</button>
+      <nav class="main-nav">
+        <a href="/ru/">Главная</a>
+        <a href="/ru/products/">Продукция</a>
+        <a href="/ru/brands/">Бренды</a>
+        <a href="/ru/about/">О компании</a>
+        <a href="/ru/contact/" class="active">Контакты</a>
+        <a href="#inquiry" class="nav-cta">Запросить цену</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="page-hero">
+    <div class="container">
+      <div class="breadcrumb"><a href="/ru/">Главная</a> / Контакты</div>
+      <h1>Свяжитесь с нами</h1>
+      <p>Отправьте список артикулов с количеством и пунктом назначения — мы ответим с наличием и расчётом цены, обычно в течение 1 часа в рабочее время (GMT+8).</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="contact-grid">
+
+        <div>
+          <div class="contact-card">
+            <h3>Прямые контакты</h3>
+            <div class="contact-line">
+              <div class="ico">📧</div>
+              <div><div class="k">Email</div><div class="v">info@fouwell.com<small>Лучше всего для списков артикулов и запросов цен</small></div></div>
+            </div>
+            <div class="contact-line">
+              <div class="ico">📱</div>
+              <div><div class="k">Телефон / WhatsApp / WeChat</div><div class="v">+86 133 8591 5251<small>Самый быстрый канал связи</small></div></div>
+            </div>
+            <div class="contact-line">
+              <div class="ico">🌐</div>
+              <div><div class="k">Сайт</div><div class="v">www.fouwell.com</div></div>
+            </div>
+          </div>
+
+          <div class="contact-card">
+            <h3>Компания и склад</h3>
+            <div class="contact-line">
+              <div class="ico">🏢</div>
+              <div><div class="k">Головной офис</div><div class="v">Fuzhou Fouwell Technology Co., Ltd.<small>Unit 1707, Building 2, No. 69 Wulongjiang South Ave., Nanyu Town, Minhou County, Fuzhou, Fujian, China</small></div></div>
+            </div>
+          </div>
+
+          <div class="contact-card">
+            <h3>Рабочее время и оплата</h3>
+            <div class="contact-line">
+              <div class="ico">🕐</div>
+              <div><div class="k">Рабочее время</div><div class="v">Пн–Сб 9:00–18:30 (GMT+8)<small>Срочные сообщения обрабатываются и вне рабочего времени</small></div></div>
+            </div>
+            <div class="contact-line" style="margin-bottom:0;">
+              <div class="ico">💳</div>
+              <div><div class="k">Условия оплаты</div><div class="v">T/T (USD через JPMorgan Singapore) · депозит 30% + остаток перед отгрузкой<small>Гибкие условия для постоянных клиентов</small></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="inquiry-form" id="inquiry">
+          <h2>Отправить запрос</h2>
+          <p class="sub">Поля, отмеченные <span style="color:var(--red)">*</span>, обязательны. Чем больше деталей вы укажете (артикулы, количество, пункт назначения) — тем быстрее и точнее будет расчёт.</p>
+          <div class="form-success" id="form-success"></div>
+          <form id="inquiry-form">
+            <div class="form-grid">
+              <div class="form-field">
+                <label for="if-name">Ваше имя <span class="req">*</span></label>
+                <input id="if-name" type="text" required placeholder="напр. Иван Петров">
+              </div>
+              <div class="form-field">
+                <label for="if-email">Email <span class="req">*</span></label>
+                <input id="if-email" type="email" required placeholder="you@company.com">
+              </div>
+              <div class="form-field">
+                <label for="if-country">Страна / регион</label>
+                <input id="if-country" type="text" placeholder="напр. Россия, Казахстан, Беларусь…">
+              </div>
+              <div class="form-field">
+                <label for="if-type">Я являюсь…</label>
+                <select id="if-type">
+                  <option>Системным интегратором</option>
+                  <option>Закупщиком MRO / обслуживания</option>
+                  <option>Производителем оборудования (OEM)</option>
+                  <option>Дистрибьютором / складом</option>
+                  <option>Другое</option>
+                </select>
+              </div>
+              <div class="form-field full">
+                <label for="if-parts">Артикулы и количество <span class="req">*</span></label>
+                <textarea id="if-parts" required placeholder="По одному в строке, напр.&#10;6ES7212-1AE40-0XB0 × 2&#10;CIMR-AB4A0011FBA × 1"></textarea>
+              </div>
+              <div class="form-field full">
+                <label for="if-message">Сообщение</label>
+                <textarea id="if-message" placeholder="Применение, целевая цена, требуемая дата поставки, условия Incoterms…"></textarea>
+              </div>
+            </div>
+            <div style="margin-top:20px;">
+              <button type="submit" class="btn btn-primary">Отправить запрос →</button>
+            </div>
+            <p class="form-note">Ваш запрос отправляется напрямую на <b>info@fouwell.com</b> — на этом сайте ничего не сохраняется. Удобнее через WhatsApp? Напишите напрямую на +86 133 8591 5251.</p>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="section alt">
+    <div class="container">
+      <div class="section-head">
+        <div class="eyebrow">Перед тем как написать</div>
+        <h2>Что нужно для быстрого и точного расчёта</h2>
+      </div>
+      <div class="process">
+        <div class="step"><h4>Артикул</h4><p>Точный код модели (напр. 6ES7212-1AE40-0XB0), а не только название серии.</p></div>
+        <div class="step"><h4>Количество</h4><p>Количество по каждой позиции — у нас действует ценовая сетка по объёму.</p></div>
+        <div class="step"><h4>Пункт назначения</h4><p>Страна и город — чтобы мы могли предложить оптимальный вариант доставки.</p></div>
+        <div class="step"><h4>Требуемое состояние</h4><p>По умолчанию — новый оригинал, сообщите, если рассматриваете альтернативы.</p></div>
+        <div class="step"><h4>Срок</h4><p>Оборудование встало? Сообщите — товар в наличии отгружается в течение 24 часов.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-main">
+        <div>
+          <img class="footer-logo" src="/assets/logo.png" alt="Fouwell">
+          <p>Fuzhou Fouwell Technology Co., Ltd.<br>10+ лет поставок оригинальных комплектующих промышленной автоматизации от 25+ мировых брендов клиентам по всему миру.</p>
+        </div>
+        <div>
+          <h4>Продукция</h4>
+          <ul>
+            <li><a href="/ru/products/controllers/">ПЛК и контроллеры</a></li>
+            <li><a href="/ru/products/hmi/">Панели HMI</a></li>
+            <li><a href="/ru/products/servo/">Сервомоторы и приводы</a></li>
+            <li><a href="/ru/products/drives/">Преобразователи частоты</a></li>
+            <li><a href="/ru/products/sensors/">Датчики и КИП</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Компания</h4>
+          <ul>
+            <li><a href="/ru/about/">О компании Fouwell</a></li>
+            <li><a href="/ru/about/#founder">Основатель компании</a></li>
+            <li><a href="/ru/contact/">Контакты</a></li>
+            <li><a href="/ru/contact/#inquiry">Запросить цену</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Контакты</h4>
+          <ul>
+            <li>📧 info@fouwell.com</li>
+            <li>📱 +86 133 8591 5251</li>
+            <li>📍 Фучжоу, провинция Фуцзянь, Китай</li>
+            <li>🏬 Склад в Гонконге</li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="container">
+          <span>© 2026 Fuzhou Fouwell Technology Co., Ltd. Все права защищены.</span>
+          <span>Оригинальная продукция · 100% проверка · Доставка по всему миру</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/js/data.js?v=20260917190833"></script>
+  <script src="/js/i18n-ru.js?v=20260917190833"></script>
+  <script src="/js/main.js?v=20260917190833"></script>
+  <script>window.FOUWELL_LANG = 'ru'; window.FOUWELL_ALT_URL = '/contact/';</script>
+  <script src="/js/i18n.js?v=20260917190833"></script>
+</body>
+</html>
