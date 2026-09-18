@@ -193,18 +193,36 @@ function buildSchemas(p) {
 }
 
 /* ---- port of the meta-description template added to renderProductDetail() in main.js ---- */
+// Cuts the whole string to <=155 chars (2026-09-18 audit: 83/84 pages were over budget,
+// mostly from spec text redundantly repeating "{brand} {model}" plus a long fixed CTA) —
+// see truncateSpecTail() below for how the spec portion is shortened to fit.
+function truncateSpecTail(s, budget) {
+  if (s.length <= budget) return s;
+  let cut = s.slice(0, Math.max(budget, 0));
+  const lastSpace = cut.lastIndexOf(' ');
+  if (lastSpace > 0) cut = cut.slice(0, lastSpace);
+  return cut.replace(/[,;:.\-–—]+$/, '');
+}
+function shortSpecFor(p, budget) {
+  // A handful of specs are full sentences ("The Siemens X is a ...") that repeat the
+  // brand+model already in the prefix — strip that lead-in before truncating.
+  let s = p.spec.replace(/^The .*? is (?:a|an) /, '');
+  if (s !== p.spec) s = s.charAt(0).toUpperCase() + s.slice(1);
+  return truncateSpecTail(s, budget);
+}
 function buildMetaDescription(p) {
   // p.no_known_replacement (2026-09-16): see js/faq-templates.js genericFaqFor() header comment
   // for why "Replaced by a current equivalent" isn't safe to assert for every discont SKU.
   const availPhrase = p.status === 'discont'
-    ? (p.no_known_replacement ? 'Discontinued, refurbished stock only' : 'Replaced by a current equivalent')
+    ? (p.no_known_replacement ? 'Discontinued, refurbished stock only' : 'Replaced by current equivalent')
     : p.status === 'legacy' ? 'Legacy line, still sourceable'
     : 'In stock, ships in 24h';
   // "Genuine" is a factual OEM-authenticity claim — never true for disclosed
   // compatible/non-OEM brands (see NON_GENUINE_BRANDS in js/data.js's comment header).
   const qualifier = NON_GENUINE_BRANDS.has(p.brand) ? '' : 'Genuine ';
-  return qualifier + p.brand + ' ' + p.model + ' — ' + p.spec + '. ' +
-    availPhrase + '. Get a fast quote from Fouwell, verified industrial automation parts supplier.';
+  const prefix = qualifier + p.brand + ' ' + p.model + ' — ';
+  const suffix = '. ' + availPhrase + '. Fast quote from Fouwell.';
+  return prefix + shortSpecFor(p, 155 - prefix.length - suffix.length) + suffix;
 }
 
 /* ---- port of the breadcrumb built in renderProductDetail() — keep in sync ---- */

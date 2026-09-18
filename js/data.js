@@ -1698,7 +1698,7 @@ const PRODUCTS = [
         a: "Yes, in stock, genuine Mitsubishi, ships within 24 hours." }
     ]
   }, // generate-data-entry.js <- wiki/marketing/Mitsubishi/HMI/GS2107-WTBD-N/营销素材包/04-独立站内容包/GS2107-WTBD-N.md
-  { brand: "Mitsubishi", model: "A2USCPU-S1", series: "MELSEC-AnS", cat: "controllers", spec: "MELSEC-AnS series CPU module, 1024-point control scale, 14k-step program capacity. Discontinued — legacy stock sourced by Fouwell", status: "discontinued", photo: null, linkedin: null, sell_price: 64.35, sell_price_currency: "USD", price_source: "procurement_quote_min",
+  { brand: "Mitsubishi", model: "A2USCPU-S1", series: "MELSEC-AnS", cat: "controllers", spec: "MELSEC-AnS series CPU module, 1024-point control scale, 14k-step program capacity. Discontinued — legacy stock sourced by Fouwell", status: "discont", photo: null, linkedin: null, sell_price: 64.35, sell_price_currency: "USD", price_source: "procurement_quote_min",
     /* ---- 2026-09-18 batch enrichment: Tier C -> Tier B, Part1-3 chain applied ---- */
     specs: [
       ["Type", "CPU module"],

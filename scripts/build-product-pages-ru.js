@@ -187,6 +187,24 @@ function buildSchemas_ru(p) {
   return schemas;
 }
 
+// Cuts the whole string to <=155 chars (2026-09-18 audit, same fix as the EN version in
+// build-product-pages.js: kept a short inline CTA here rather than UI_RU.metaDescSuffix,
+// since that constant is also reused — at its original longer length — by the hub pages).
+function truncateSpecTailRu(s, budget) {
+  if (s.length <= budget) return s;
+  let cut = s.slice(0, Math.max(budget, 0));
+  const lastSpace = cut.lastIndexOf(' ');
+  if (lastSpace > 0) cut = cut.slice(0, lastSpace);
+  return cut.replace(/[,;:.\-–—]+$/, '');
+}
+function shortSpecFor_ru(p, budget) {
+  // Several RU specs open with "{Brand} {model} — ..." which repeats the brand+model
+  // already in the prefix — strip that lead-in before truncating.
+  const spec = specRu(p);
+  const lead = new RegExp('^' + p.brand.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\s+\\S.{0,60}? — ');
+  const s = spec.replace(lead, '');
+  return truncateSpecTailRu(s, budget);
+}
 function buildMetaDescription_ru(p) {
   // p.no_known_replacement (2026-09-16): see js/faq-templates.js genericFaqFor() header comment.
   const availPhrase = p.status === 'discont'
@@ -194,7 +212,9 @@ function buildMetaDescription_ru(p) {
     : p.status === 'legacy' ? UI_RU.availLegacy
     : UI_RU.availInstock;
   const qualifier = NON_GENUINE_BRANDS.has(p.brand) ? '' : UI_RU.genuinePrefix;
-  return qualifier + p.brand + ' ' + p.model + ' — ' + specRu(p) + '. ' + availPhrase + '. ' + UI_RU.metaDescSuffix;
+  const prefix = qualifier + p.brand + ' ' + p.model + ' — ';
+  const suffix = '. ' + availPhrase + '. Быстрый расчёт от Fouwell.';
+  return prefix + shortSpecFor_ru(p, 155 - prefix.length - suffix.length) + suffix;
 }
 
 function buildBreadcrumbHtml_ru(p) {

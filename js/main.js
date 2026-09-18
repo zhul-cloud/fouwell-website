@@ -594,23 +594,43 @@ function renderProductDetail(p) {
     // p.no_known_replacement (2026-09-16): see js/faq-templates.js genericFaqFor() header
     // comment — "Replaced by a current equivalent" isn't safe to assert when no replacement
     // has actually been verified.
+    // Both branches cut the whole string to <=155 chars (2026-09-18 audit: 83/84 pages were
+    // over budget, mostly from spec text redundantly repeating "{brand} {model}" plus a long
+    // fixed CTA) — kept a short inline CTA in the RU branch rather than UI_RU.metaDescSuffix,
+    // since that constant is also reused — at its original longer length — by the hub pages.
+    // Keep in lockstep with buildMetaDescription()/buildMetaDescription_ru() in
+    // scripts/build-product-pages(-ru).js.
+    const truncateSpecTail = (s, budget) => {
+      if (s.length <= budget) return s;
+      let cut = s.slice(0, Math.max(budget, 0));
+      const lastSpace = cut.lastIndexOf(' ');
+      if (lastSpace > 0) cut = cut.slice(0, lastSpace);
+      return cut.replace(/[,;:.\-–—]+$/, '');
+    };
     if (isRu() && typeof UI_RU !== 'undefined') {
       const availPhraseRu = p.status === 'discont'
         ? (p.no_known_replacement ? UI_RU.availDiscontNoReplacement : UI_RU.availDiscont)
         : p.status === 'legacy' ? UI_RU.availLegacy
         : UI_RU.availInstock;
       const qualifierRu = nonGenuine ? '' : UI_RU.genuinePrefix;
+      const prefixRu = qualifierRu + p.brand + ' ' + p.model + ' — ';
+      const suffixRu = '. ' + availPhraseRu + '. Быстрый расчёт от Fouwell.';
+      const leadRu = new RegExp('^' + p.brand.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\s+\\S.{0,60}? — ');
+      const specRuShort = specTextFor(p).replace(leadRu, '');
       metaDesc.setAttribute('content',
-        qualifierRu + p.brand + ' ' + p.model + ' — ' + specTextFor(p) + '. ' + availPhraseRu + '. ' + UI_RU.metaDescSuffix);
+        prefixRu + truncateSpecTail(specRuShort, 155 - prefixRu.length - suffixRu.length) + suffixRu);
     } else {
       const availPhrase = p.status === 'discont'
-        ? (p.no_known_replacement ? 'Discontinued, refurbished stock only' : 'Replaced by a current equivalent')
+        ? (p.no_known_replacement ? 'Discontinued, refurbished stock only' : 'Replaced by current equivalent')
         : p.status === 'legacy' ? 'Legacy line, still sourceable'
         : 'In stock, ships in 24h';
       const qualifier = nonGenuine ? '' : 'Genuine ';
+      const prefix = qualifier + p.brand + ' ' + p.model + ' — ';
+      const suffix = '. ' + availPhrase + '. Fast quote from Fouwell.';
+      let specShort = p.spec.replace(/^The .*? is (?:a|an) /, '');
+      if (specShort !== p.spec) specShort = specShort.charAt(0).toUpperCase() + specShort.slice(1);
       metaDesc.setAttribute('content',
-        qualifier + p.brand + ' ' + p.model + ' — ' + p.spec + '. ' +
-        availPhrase + '. Get a fast quote from Fouwell, verified industrial automation parts supplier.');
+        prefix + truncateSpecTail(specShort, 155 - prefix.length - suffix.length) + suffix);
     }
   }
 
