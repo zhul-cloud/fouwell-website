@@ -47,7 +47,7 @@ jobs:
       - name: rsync to SiteGround
         run: |
           rsync -avz --checksum \
-            -e "ssh -p 18765 -i ~/.ssh/deploy_key -o UserKnownHostsFile=~/.ssh/known_hosts" \
+            -e "ssh -v -p 18765 -i ~/.ssh/deploy_key -o UserKnownHostsFile=~/.ssh/known_hosts" \
             --exclude='.git' \
             --exclude='.github' \
             --exclude='.gstack' \
