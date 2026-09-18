@@ -1,17 +1,24 @@
 name: Deploy to production
 
-# Auto-syncs fouwell-website/ to the SiteGround production server on every push to main —
-# replaces the old workflow of running scripts/deploy.sh by hand after each local commit.
-# See docs/SEO-GEO-Architecture.md section 11.1 for the SOP this implements, and
-# scripts/deploy.sh (kept as a manual fallback / local dry-run tool) for the rsync this
-# mirrors. One manual step remains after every deploy: flushing SiteGround's Dynamic Cache
-# (Site Tools -> SuperCacher -> Dynamic Cache -> Flush Cache) — SiteGround has no API/CLI
-# purge for it (Nginx ignores curl PURGE), confirmed 2026-09-xx.
+# Auto-syncs fouwell-website/ to the SiteGround production server. Meant to replace running
+# scripts/deploy.sh by hand after each commit — see docs/SEO-GEO-Architecture.md section
+# 11.1 for the intended SOP. One manual step would remain even once this works: flushing
+# SiteGround's Dynamic Cache (Site Tools -> SuperCacher -> Dynamic Cache -> Flush Cache) —
+# SiteGround has no API/CLI purge for it (Nginx ignores curl PURGE).
+#
+# STATUS (2026-09-18): NOT WORKING YET, push trigger disabled on purpose. rsync fails with
+# "Permission denied (publickey)" — root cause confirmed via verbose SSH log: the server
+# does accept the public key, but DEPLOY_SSH_KEY's private key is passphrase-protected, and
+# the runner has no TTY/agent to unlock it (works from a local Mac only because its
+# ssh-agent/Keychain already has the passphrase cached). Fix: re-set the DEPLOY_SSH_KEY
+# secret to a passphrase-stripped copy of the key (`ssh-keygen -p -N ""` on a copy, never
+# the original), then flip `on:` back to include the push trigger below. Until then, use
+# scripts/deploy.sh manually — this workflow only runs via manual workflow_dispatch.
 
 on:
-  push:
-    branches: [main]
   workflow_dispatch: {}
+  # push:
+  #   branches: [main]
 
 concurrency:
   group: production-deploy
@@ -47,7 +54,7 @@ jobs:
       - name: rsync to SiteGround
         run: |
           rsync -avz --checksum \
-            -e "ssh -v -p 18765 -i ~/.ssh/deploy_key -o UserKnownHostsFile=~/.ssh/known_hosts" \
+            -e "ssh -p 18765 -i ~/.ssh/deploy_key -o UserKnownHostsFile=~/.ssh/known_hosts" \
             --exclude='.git' \
             --exclude='.github' \
             --exclude='.gstack' \

@@ -2,10 +2,11 @@
 # Deploys fouwell-website/ to the SiteGround production server via rsync.
 # See docs/SEO-GEO-Architecture.md section 11 for the full deploy/cache-flush SOP.
 #
-# 2026-09-18: this now runs automatically on every push to main via
-# .github/workflows/deploy.yml — you normally don't need to run this by hand
-# anymore. Kept as a manual fallback (e.g. testing an rsync from an uncommitted
-# working tree, or deploying when CI is down).
+# 2026-09-18: this is still the primary way to deploy. .github/workflows/deploy.yml
+# exists but its push trigger is disabled — it fails on DEPLOY_SSH_KEY being
+# passphrase-protected (see that file's header comment for the fix). Once that's
+# sorted and the push trigger is re-enabled, this script goes back to being a manual
+# fallback only.
 set -euo pipefail
 
 SITE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"

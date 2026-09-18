@@ -466,22 +466,35 @@ Sitemap: https://fouwell.com/sitemap.xml
 
 ## 11. 部署与维护流程
 
-### 11.1 部署方式：CI/CD 自动同步（2026-09-18 起）
+### 11.1 部署方式：目前仍是手动，CI/CD 搭好了但还没跑通
 
-`main` 分支每次 push 都会自动触发 `.github/workflows/deploy.yml`（GitHub Actions），自动完成：bump 所有 `.html` 里 `/js/*.js` `/css/*.css` 的 `?v=` 缓存戳 → rsync 到 SiteGround → 调 IndexNow ping。**不再需要手动跑部署命令**——`git push` 到 main 就是部署动作本身，push 前务必确认改动已经过审核（CI 没有额外的人工审批门禁）。
-
-- 手动重跑：GitHub 仓库 → Actions → Deploy to production → Run workflow（`workflow_dispatch`），或 `gh workflow run deploy.yml --repo zhul-cloud/fouwell-website`
-- 查看运行状态：`gh run list --repo zhul-cloud/fouwell-website --workflow=deploy.yml`
-- 部署凭据：SSH 私钥存在 GitHub 仓库的 Actions Secret `DEPLOY_SSH_KEY` 里（加密，仓库管理员可在 Settings → Secrets and variables → Actions 里轮换/查看是否存在，看不到明文）
-- CI 里的缓存戳只发生在 runner 的临时 checkout 上，不会 commit 回仓库——避免了旧手动流程里"本地跑过 deploy.sh 但忘了 commit 那次缓存戳 bump"的问题（历史遗留过好几次）
-
-`scripts/deploy.sh` 保留作为本地手动兜底（CI 挂了，或想在提交前先本地 rsync 一次自查），内容和 CI 里那步一致，带 `--checksum`（按内容比对，不用担心 mtime 陷阱）和常见排除项（`.git`/`.gstack`/`node_modules`/`.DS_Store`）：
+统一用 `scripts/deploy.sh` 部署，不再手动敲 rsync：
 
 ```bash
 ./scripts/deploy.sh
 ```
 
+脚本已带 `--checksum`（按内容比对，不用担心 mtime 陷阱）和常见排除项（`.git`/`.gstack`/`node_modules`/`.DS_Store`），部署完记得走 11.2 手动清缓存。
+
 ⚠️ **rsync 缓存陷阱**（脚本已规避，仅供了解原因）：rsync 默认按 mtime 判断文件是否变化，检测到本地文件与目标 mtime 一致时会跳过（即使本地其实修改过）。`--checksum` 强制按内容比对，所以不会再踩这个坑。
+
+**CI/CD 现状（2026-09-18）**：`.github/workflows/deploy.yml` 已经写好——bump 所有 `.html` 里 `/js/*.js` `/css/*.css` 的 `?v=` 缓存戳（只发生在 runner 的临时 checkout 上，不会 commit 回仓库）→ rsync 到 SiteGround → IndexNow ping，一次跑完不用再敲部署命令。但 push 触发**先注释掉了**，只留 `workflow_dispatch` 手动触发，因为部署一直卡在：
+
+> rsync 报 `Permission denied (publickey)`。排查过密钥内容传输（GitHub Secrets 多行内容 round-trip 校验一致，没损坏）、IP 白名单（SSH Keys Manager 的 Manage IP Access 是空的，没限制）；最后用 `ssh -v` 详细日志确认：服务器其实认可这把公钥（`Server accepts key`），卡在签名阶段——**`DEPLOY_SSH_KEY` 这把私钥本身加了 passphrase**，本机能免密是因为 macOS ssh-agent/钥匙串缓存了密码，GitHub Actions 的 runner 没有 TTY/agent 问不到密码，签不了名。
+
+**要重新启用自动部署时**，按这个修：
+1. 本机跑（会交互式问原密码）：
+   ```bash
+   cp ~/.ssh/fouwell_deploy_key ~/.ssh/fouwell_deploy_key_ci
+   ssh-keygen -p -f ~/.ssh/fouwell_deploy_key_ci -N ""
+   gh secret set DEPLOY_SSH_KEY --repo zhul-cloud/fouwell-website < ~/.ssh/fouwell_deploy_key_ci
+   rm ~/.ssh/fouwell_deploy_key_ci
+   ```
+2. 把 `.github/workflows/deploy.yml` 里 `on:` 下注释掉的 `push: branches: [main]` 取消注释
+3. `gh workflow run deploy.yml --repo zhul-cloud/fouwell-website` 手动跑一次验证，确认 rsync 步骤不再报 `Permission denied`
+4. 查看运行状态：`gh run list --repo zhul-cloud/fouwell-website --workflow=deploy.yml`
+
+部署凭据（SSH 私钥）存在 GitHub 仓库的 Actions Secret `DEPLOY_SSH_KEY` 里（加密，看不到明文，仓库管理员可在 Settings → Secrets and variables → Actions 里轮换）。
 
 ### 11.2 缓存清理
 
