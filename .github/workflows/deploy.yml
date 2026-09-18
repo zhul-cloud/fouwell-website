@@ -1,0 +1,64 @@
+name: Deploy to production
+
+# Auto-syncs fouwell-website/ to the SiteGround production server on every push to main —
+# replaces the old workflow of running scripts/deploy.sh by hand after each local commit.
+# See docs/SEO-GEO-Architecture.md section 11.1 for the SOP this implements, and
+# scripts/deploy.sh (kept as a manual fallback / local dry-run tool) for the rsync this
+# mirrors. One manual step remains after every deploy: flushing SiteGround's Dynamic Cache
+# (Site Tools -> SuperCacher -> Dynamic Cache -> Flush Cache) — SiteGround has no API/CLI
+# purge for it (Nginx ignores curl PURGE), confirmed 2026-09-xx.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+
+concurrency:
+  group: production-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Bump asset cache-busters
+        # All /js/*.js and /css/*.css references carry a "?v=..." cache-buster and the
+        # server sends a 1-year cache-control for both, so every one needs a fresh version
+        # string on every deploy (see scripts/deploy.sh's header comment for the incident
+        # this fixed). Done here, in the runner's checkout only — never committed back —
+        # so the bump can't accidentally get left stale-but-uncommitted the way it did
+        # under the old manual flow.
+        run: |
+          CACHE_VERSION="$(date +%Y%m%d%H%M%S)"
+          echo "Bumping all asset cache-busters to v=${CACHE_VERSION}"
+          find . -name '*.html' -not -path './node_modules/*' -print0 \
+            | xargs -0 sed -i -E "s/\.(js|css)\?v=[A-Za-z0-9]+/.\1?v=${CACHE_VERSION}/g"
+
+      - name: Set up deploy key
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -p 18765 gcam1252.siteground.biz >> ~/.ssh/known_hosts 2>/dev/null
+
+      - name: rsync to SiteGround
+        run: |
+          rsync -avz --checksum \
+            -e "ssh -p 18765 -i ~/.ssh/deploy_key -o UserKnownHostsFile=~/.ssh/known_hosts" \
+            --exclude='.git' \
+            --exclude='.github' \
+            --exclude='.gstack' \
+            --exclude='.DS_Store' \
+            --exclude='node_modules' \
+            ./ \
+            u1796-rxnrbib8x7ji@gcam1252.siteground.biz:www/fouwell.com/public_html/
+
+      - name: Ping IndexNow
+        run: node scripts/indexnow-submit.js || echo "IndexNow submission failed — not fatal, deploy already succeeded."
+
+      - name: Cache flush reminder
+        run: |
+          echo "::notice title=Manual step still required::SiteGround Dynamic Cache must be flushed by hand (Site Tools -> SuperCacher -> Dynamic Cache -> Flush Cache, fouwell.com row) — no API/CLI purge exists for this host. Falls back to auto-expiry after 3h if skipped."

@@ -466,24 +466,22 @@ Sitemap: https://fouwell.com/sitemap.xml
 
 ## 11. 部署与维护流程
 
-### 11.1 部署命令
+### 11.1 部署方式：CI/CD 自动同步（2026-09-18 起）
 
-统一用 `scripts/deploy.sh` 部署，不再手动敲 rsync：
+`main` 分支每次 push 都会自动触发 `.github/workflows/deploy.yml`（GitHub Actions），自动完成：bump 所有 `.html` 里 `/js/*.js` `/css/*.css` 的 `?v=` 缓存戳 → rsync 到 SiteGround → 调 IndexNow ping。**不再需要手动跑部署命令**——`git push` 到 main 就是部署动作本身，push 前务必确认改动已经过审核（CI 没有额外的人工审批门禁）。
+
+- 手动重跑：GitHub 仓库 → Actions → Deploy to production → Run workflow（`workflow_dispatch`），或 `gh workflow run deploy.yml --repo zhul-cloud/fouwell-website`
+- 查看运行状态：`gh run list --repo zhul-cloud/fouwell-website --workflow=deploy.yml`
+- 部署凭据：SSH 私钥存在 GitHub 仓库的 Actions Secret `DEPLOY_SSH_KEY` 里（加密，仓库管理员可在 Settings → Secrets and variables → Actions 里轮换/查看是否存在，看不到明文）
+- CI 里的缓存戳只发生在 runner 的临时 checkout 上，不会 commit 回仓库——避免了旧手动流程里"本地跑过 deploy.sh 但忘了 commit 那次缓存戳 bump"的问题（历史遗留过好几次）
+
+`scripts/deploy.sh` 保留作为本地手动兜底（CI 挂了，或想在提交前先本地 rsync 一次自查），内容和 CI 里那步一致，带 `--checksum`（按内容比对，不用担心 mtime 陷阱）和常见排除项（`.git`/`.gstack`/`node_modules`/`.DS_Store`）：
 
 ```bash
 ./scripts/deploy.sh
 ```
 
-脚本内容就是下面这条 rsync 命令，已经带 `--checksum`（按内容比对，不用担心 mtime 陷阱）和常见排除项（`.git`/`.gstack`/`node_modules`/`.DS_Store`）：
-
-```bash
-rsync -avz --checksum \
-  -e "ssh -p 18765 -i ~/.ssh/fouwell_deploy_key -o StrictHostKeyChecking=no" \
-  /Users/mac/Documents/llm-wiki/fouwell-website/ \
-  u1796-rxnrbib8x7ji@gcam1252.siteground.biz:www/fouwell.com/public_html/
-```
-
-⚠️ **rsync 缓存陷阱**（脚本已规避，仅供了解原因）：rsync 默认按 mtime 判断文件是否变化，检测到本地文件与目标 mtime 一致时会跳过（即使本地其实修改过）。`scripts/deploy.sh` 固定加了 `--checksum` 强制按内容比对，所以不会再踩这个坑。
+⚠️ **rsync 缓存陷阱**（脚本已规避，仅供了解原因）：rsync 默认按 mtime 判断文件是否变化，检测到本地文件与目标 mtime 一致时会跳过（即使本地其实修改过）。`--checksum` 强制按内容比对，所以不会再踩这个坑。
 
 ### 11.2 缓存清理
 
