@@ -44,6 +44,7 @@ rsync -avz --checksum \
   --exclude='.gstack' \
   --exclude='.DS_Store' \
   --exclude='node_modules' \
+  --exclude='/erp' \
   "${SITE_DIR}/" \
   "${REMOTE}"
 

@@ -20,7 +20,7 @@
 const fs = require('fs');
 const path = require('path');
 const {
-  ROOT, loadGlobals, productUrl, productSlug, categoryUrl, brandUrl, brandSlug, escHtml
+  ROOT, loadGlobals, productUrl, productSlug, categoryUrl, brandUrl, brandSlug, escHtml, assetUrl
 } = require('./lib/site-data');
 
 const {
@@ -50,9 +50,9 @@ function productCard(p) {
     ? '<img' + (photos[0].tag === 'Marketing' ? ' class="linkedin-fallback"' : '') +
       ' src="' + photos[0].src + '" alt="' + escHtml(p.model) + (photos[0].tag === 'Marketing' ? ' (маркетинг)' : '') + '" loading="lazy">'
     : p.photo
-    ? '<img src="/assets/products/' + p.photo + '" alt="' + escHtml(p.model) + '" loading="lazy">'
+    ? '<img src="' + assetUrl('/assets/products/', p.photo) + '" alt="' + escHtml(p.model) + '" loading="lazy">'
     : p.linkedin
-    ? '<img class="linkedin-fallback" src="/assets/linkedin/' + p.linkedin + '" alt="' + escHtml(p.model) + ' (маркетинг)" loading="lazy">'
+    ? '<img class="linkedin-fallback" src="' + assetUrl('/assets/linkedin/', p.linkedin) + '" alt="' + escHtml(p.model) + ' (маркетинг)" loading="lazy">'
     : '<div class="noimg">' + escHtml(p.brand) + '<br>' + UI_RU.photoOnRequest + '</div>';
   return (
     '<article class="prod-card">' +
