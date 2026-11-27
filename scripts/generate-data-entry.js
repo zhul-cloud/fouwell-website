@@ -16,7 +16,7 @@
  * This does NOT run build-product-pages.js / build-hub-pages.js / sync-indexing-tracker.js —
  * run those separately after reviewing the diff to js/data.js.
  *
- * Run: node scripts/generate-data-entry.js [--dry-run]
+ * Run: node scripts/generate-data-entry.js [--dry-run] [--model MODEL]
  */
 const fs = require('fs');
 const path = require('path');
@@ -28,6 +28,9 @@ const MARKETING_DIR = path.join(ROOT, 'wiki', 'marketing');
 const DATA_JS_PATH = path.join(SITE_ROOT, 'js', 'data.js');
 
 const DRY_RUN = process.argv.includes('--dry-run');
+const MODEL_ARG_INDEX = process.argv.indexOf('--model');
+const MODEL_FILTER = MODEL_ARG_INDEX >= 0 ? process.argv[MODEL_ARG_INDEX + 1] : null;
+if (MODEL_ARG_INDEX >= 0 && !MODEL_FILTER) throw new Error('--model requires an exact model number');
 
 function findContentPackages(dir, out = []) {
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
@@ -74,7 +77,7 @@ function parsePriceSection(content) {
   if (priceMatch && !isNaN(parseFloat(priceMatch[1]))) {
     return {
       sell_price: parseFloat(priceMatch[1]),
-      sell_price_currency: 'USD',
+      sell_price_currency: (text.match(/币种[^：:]*[：:]\s*([A-Z]{3})\b/) || [null, 'USD'])[1],
       price_source: sourceMatch ? sourceMatch[1] : undefined,
     };
   }
@@ -110,6 +113,7 @@ function main() {
     const content = fs.readFileSync(pkgPath, 'utf8');
     const fm = parseFrontmatter(content);
     if (!fm.model || existingModels.has(fm.model)) continue;
+    if (MODEL_FILTER && fm.model !== MODEL_FILTER) continue;
 
     // Path shape: MARKETING_DIR/[Brand]/[WikiCategory]/[Model]/营销素材包/04-独立站内容包/[Model].md
     const relParts = path.relative(MARKETING_DIR, pkgPath).split(path.sep);
@@ -153,6 +157,12 @@ function main() {
       cat: fm.category,
       spec: summary.replace(/\.$/, ''),
       status: fm.status === 'instock' ? 'instock' : fm.status,
+      overview: fm.overview,
+      overview_ru: fm.overview_ru,
+      meta_description: fm.meta_description,
+      meta_description_ru: fm.meta_description_ru,
+      authenticity_note: fm.authenticity_note,
+      authenticity_note_ru: fm.authenticity_note_ru,
       photo: photo,
       linkedin: null,
       ...price,
@@ -179,6 +189,9 @@ function main() {
       `photo: ${entry.photo ? jsStr(entry.photo) : 'null'}`,
       `linkedin: ${entry.linkedin ? jsStr(entry.linkedin) : 'null'}`,
     ];
+    for (const key of ['overview', 'overview_ru', 'meta_description', 'meta_description_ru', 'authenticity_note', 'authenticity_note_ru']) {
+      if (entry[key]) parts.push(`${key}: ${jsStr(entry[key])}`);
+    }
     if (entry.sell_price != null) {
       parts.push(`sell_price: ${entry.sell_price}`);
       parts.push(`sell_price_currency: ${jsStr(entry.sell_price_currency)}`);

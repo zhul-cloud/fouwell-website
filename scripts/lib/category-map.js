@@ -20,8 +20,8 @@ const SITE_CATEGORIES = new Set(['controllers', 'hmi', 'servo', 'drives', 'senso
 
 const WIKI_CATEGORY_TO_SITE_CATEGORY = {
   // controllers — PLC & Controllers
-  PLC: 'controllers', IOModule: 'controllers', PositioningModule: 'controllers',
-  BaseUnit: 'controllers', MotorProtection: 'controllers',
+  PLC: 'controllers', IOModule: 'controllers', PositioningModule: 'controllers', PLCAccessory: 'controllers',
+  BaseUnit: 'controllers', MotorProtection: 'controllers', ExpansionBoard: 'controllers',
   // hmi — HMI & Panel PCs
   HMI: 'hmi',
   // servo — Servo Systems
@@ -30,15 +30,16 @@ const WIKI_CATEGORY_TO_SITE_CATEGORY = {
   Inverter: 'drives', SoftStarter: 'drives', MotorStarter: 'drives',
   MotorModule: 'drives', GearMotor: 'drives',
   // sensors — Sensors & Instruments
-  ProximitySensor: 'sensors', ProximitySwitch: 'sensors', LevelMeter: 'sensors',
-  PressureSwitch: 'sensors', LimitSwitch: 'sensors', MagneticSwitch: 'sensors',
+  LevelSwitch: 'sensors', ProximitySensor: 'sensors', ProximitySwitch: 'sensors', LevelMeter: 'sensors',
+  PressureSwitch: 'sensors', FlowSwitch: 'sensors', PressureGauge: 'sensors', LimitSwitch: 'sensors', MagneticSwitch: 'sensors',
   TemperatureController: 'sensors', Potentiometer: 'sensors', Encoder: 'sensors',
   Counter: 'sensors', ASiModule: 'sensors', DisplacementSensor: 'sensors',
+  TemperatureSensor: 'sensors', pHElectrode: 'sensors', IndustrialCamera: 'sensors',
   // spares — Spare Parts & Components
-  Cable: 'spares', Contactor: 'spares', DriveBoard: 'spares', SolenoidValve: 'spares',
+  CircuitBreaker: 'spares', Cable: 'spares', Contactor: 'spares', DriveBoard: 'spares', SolenoidValve: 'spares',
   PowerSupply: 'spares', InterfaceModule: 'spares', WaterRegulatingValve: 'spares',
-  VoltageRelay: 'spares', ProtectionRelay: 'spares', Filter: 'spares',
-  AngleSeatValve: 'spares', Relay: 'spares',
+  VoltageRelay: 'spares', SafetyRelay: 'spares', ProtectionRelay: 'spares', SafetyRelay: 'spares', Filter: 'spares', CoolingFan: 'spares',
+  AngleSeatValve: 'spares', Timer: 'spares', Relay: 'spares', SafetyRelay: 'spares', RelayAccessory: 'spares', OverloadRelay: 'spares', SafetyRelay: 'spares',
 };
 
 module.exports = { SITE_CATEGORIES, WIKI_CATEGORY_TO_SITE_CATEGORY };

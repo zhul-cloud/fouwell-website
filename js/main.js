@@ -202,8 +202,8 @@ function injectProductSchema(p) {
       {
         '@type': 'Offer',
         url: url,
-        availability: STATUS_AVAIL[p.status] || 'https://schema.org/InStock',
-        itemCondition: 'https://schema.org/NewCondition',
+        ...(STATUS_AVAIL[p.status] ? { availability: STATUS_AVAIL[p.status] } : {}),
+        ...(p.status === 'quote' ? {} : { itemCondition: 'https://schema.org/NewCondition' }),
         // aggregateRating here is Fouwell's real, verified Alibaba supplier rating
         // (company-wide, not this specific SKU) — accurate on every page since Fouwell
         // is the seller on every page. See js/review-pool.js.
@@ -235,6 +235,12 @@ function injectProductSchema(p) {
         : {}
     )
   };
+  if (p.order_terms_by_quote) {
+    delete product.offers.shippingDetails;
+    delete product.offers.hasMerchantReturnPolicy;
+    delete product.offers.validFrom;
+    delete product.offers.priceValidUntil;
+  }
   if (brand) product.manufacturer = { '@type': 'Organization', name: brand.name };
   if (productRating) {
     product.aggregateRating = { '@type': 'AggregateRating', ...productRating };
@@ -421,7 +427,7 @@ function renderProductCompatibility(p) {
 /* Cache-buster version — bump to force browsers + SiteGround Dynamic Cache
    to discard any stale 403/404 HTML they may still hold from before the
    /products/<slug>/ fix landed. Appended to every photo + video URL below. */
-const ASSET_V = 'v=20260911final';
+const ASSET_V = 'v=20261102120626';
 
 function _assetV(url) {
   if (!url) return url;
@@ -575,7 +581,7 @@ function renderProductDetail(p) {
     ? p.brand + ' ' + p.model + ' | Fouwell — промышленная автоматизация'
     : p.brand + ' ' + p.model + ' | Fouwell Industrial Automation';
   document.getElementById('page-title').textContent = p.brand + ' ' + p.model;
-  document.getElementById('page-sub').textContent = specTextFor(p);
+  document.getElementById('page-sub').textContent = (isRu() ? p.overview_ru : p.overview) || specTextFor(p);
   const crosslinks = document.getElementById('pd-crosslinks');
   if (crosslinks) {
     crosslinks.innerHTML = isRu()
@@ -587,7 +593,9 @@ function renderProductDetail(p) {
 
   // ---- meta description (per-product, was previously a single generic string for all pages) ----
   const metaDesc = document.querySelector('meta[name="description"]');
-  if (metaDesc) {
+  const authoredMeta = isRu() ? p.meta_description_ru : p.meta_description;
+  if (metaDesc && authoredMeta) metaDesc.setAttribute('content', authoredMeta);
+  if (metaDesc && !authoredMeta) {
     // "Genuine" is a factual OEM-authenticity claim — skip it for disclosed compatible/
     // non-OEM brands (see NON_GENUINE_BRANDS in js/data.js).
     const nonGenuine = typeof NON_GENUINE_BRANDS !== 'undefined' && NON_GENUINE_BRANDS.has(p.brand);
@@ -611,8 +619,9 @@ function renderProductDetail(p) {
       const availPhraseRu = p.status === 'discont'
         ? (p.no_known_replacement ? UI_RU.availDiscontNoReplacement : UI_RU.availDiscont)
         : p.status === 'legacy' ? UI_RU.availLegacy
+        : p.status === 'quote' ? UI_RU.availQuote
         : UI_RU.availInstock;
-      const qualifierRu = nonGenuine ? '' : UI_RU.genuinePrefix;
+      const qualifierRu = nonGenuine || p.authenticity_note_ru ? '' : UI_RU.genuinePrefix;
       const prefixRu = qualifierRu + p.brand + ' ' + p.model + ' — ';
       const suffixRu = '. ' + availPhraseRu + '. Быстрый расчёт от Fouwell.';
       const leadRu = new RegExp('^' + p.brand.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\s+\\S.{0,60}? — ');
@@ -623,8 +632,9 @@ function renderProductDetail(p) {
       const availPhrase = p.status === 'discont'
         ? (p.no_known_replacement ? 'Discontinued, refurbished stock only' : 'Replaced by current equivalent')
         : p.status === 'legacy' ? 'Legacy line, still sourceable'
+        : p.status === 'quote' ? 'Availability confirmed on request'
         : 'In stock, ships in 24h';
-      const qualifier = nonGenuine ? '' : 'Genuine ';
+      const qualifier = nonGenuine || p.authenticity_note ? '' : 'Genuine ';
       const prefix = qualifier + p.brand + ' ' + p.model + ' — ';
       const suffix = '. ' + availPhrase + '. Fast quote from Fouwell.';
       let specShort = p.spec.replace(/^The .*? is (?:a|an) /, '');
@@ -715,7 +725,9 @@ function renderProductDetail(p) {
   // non-OEM brands (see NON_GENUINE_BRANDS in js/data.js). Swap the trust-list bullet instead
   // of just hiding it, since compatibility/quality-check is still a real, honest claim.
   const genuineBadge = document.getElementById('pd-genuine-badge');
-  if (genuineBadge && typeof NON_GENUINE_BRANDS !== 'undefined' && NON_GENUINE_BRANDS.has(p.brand)) {
+  if (genuineBadge && (p.authenticity_note || p.authenticity_note_ru)) {
+    genuineBadge.innerHTML = '<span class="pt">i</span> ' + esc(isRu() ? (p.authenticity_note_ru || p.authenticity_note) : p.authenticity_note);
+  } else if (genuineBadge && typeof NON_GENUINE_BRANDS !== 'undefined' && NON_GENUINE_BRANDS.has(p.brand)) {
     genuineBadge.innerHTML = '<span class="pt">✓</span> ' + (isRu() && typeof UI_RU !== 'undefined' ? UI_RU.genuineBadgeNonOem : 'Compatibility verified, quality-checked before shipping');
   }
 
@@ -729,7 +741,7 @@ function renderProductDetail(p) {
   if (priceRef) {
     if (typeof p.sell_price === 'number') {
       const priceLabel = isRu() && typeof UI_RU !== 'undefined' ? UI_RU.priceLabel : 'Price:';
-      priceRef.innerHTML = priceLabel + ' <strong>$' + p.sell_price.toFixed(2) + '</strong>';
+      priceRef.innerHTML = priceLabel + ' <strong>' + ((p.sell_price_currency || 'USD') === 'USD' ? '$' : esc(p.sell_price_currency) + ' ') + p.sell_price.toFixed(2) + '</strong>';
       priceRef.style.display = '';
     } else {
       priceRef.style.display = 'none';
@@ -780,6 +792,10 @@ function renderProductDetail(p) {
   const videos = (typeof PRODUCT_VIDEOS !== 'undefined') ? (PRODUCT_VIDEOS[p.model] || []) : [];
   const vidSection = document.getElementById('detail-video-section');
   if (videos.length) {
+    const videoHead = vidSection && vidSection.querySelector('.section-head h2');
+    const videoDesc = vidSection && vidSection.querySelector('.section-head p');
+    if (videoHead && (isRu() ? p.video_heading_ru : p.video_heading)) videoHead.textContent = isRu() ? p.video_heading_ru : p.video_heading;
+    if (videoDesc && (isRu() ? p.video_description_ru : p.video_description)) videoDesc.textContent = isRu() ? p.video_description_ru : p.video_description;
     const wrap = document.getElementById('pd-videos');
     wrap.innerHTML = videos.map(v =>
       '<div class="pd-video-card">' +

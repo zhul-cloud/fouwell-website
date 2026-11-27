@@ -13,6 +13,14 @@ SITE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 SSH_KEY="${HOME}/.ssh/fouwell_deploy_key"
 REMOTE="u1796-rxnrbib8x7ji@gcam1252.siteground.biz:www/fouwell.com/public_html/"
 
+# The deploy key is passphrase-protected. On macOS, load its already-saved passphrase
+# from Keychain into ssh-agent before rsync; otherwise a non-interactive deploy fails
+# with "Permission denied (publickey)" even though the key is valid. Do this before
+# changing local cache-busters so an auth failure leaves the working tree untouched.
+if [[ "$(uname -s)" == "Darwin" ]]; then
+  ssh-add --apple-load-keychain "${SSH_KEY}" >/dev/null
+fi
+
 # All /js/*.js and /css/*.css asset references carry a "?v=..." cache-buster, and the
 # server sends cache-control: max-age=31536000 (1 year) for both types — so every one of
 # them must get a fresh version string on every deploy, or returning visitors' browsers

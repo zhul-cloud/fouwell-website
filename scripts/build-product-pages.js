@@ -137,8 +137,8 @@ function buildSchemas(p) {
     offers: Object.assign(
       {
         '@type': 'Offer', url,
-        availability: STATUS_AVAIL[p.status] || 'https://schema.org/InStock',
-        itemCondition: 'https://schema.org/NewCondition',
+        ...(STATUS_AVAIL[p.status] ? { availability: STATUS_AVAIL[p.status] } : {}),
+        ...(p.status === 'quote' ? {} : { itemCondition: 'https://schema.org/NewCondition' }),
         // Real, verified Alibaba supplier rating (company-wide) — accurate on every page.
         seller: Object.assign(
           { '@type': 'Organization', name: 'Fuzhou Fouwell Technology Co., Ltd.' },
@@ -153,6 +153,12 @@ function buildSchemas(p) {
         : {}
     )
   };
+  if (p.order_terms_by_quote) {
+    delete product.offers.shippingDetails;
+    delete product.offers.hasMerchantReturnPolicy;
+    delete product.offers.validFrom;
+    delete product.offers.priceValidUntil;
+  }
   if (brand) product.manufacturer = { '@type': 'Organization', name: brand.name };
   if (productRating) {
     product.aggregateRating = { '@type': 'AggregateRating', ...productRating };
@@ -211,15 +217,17 @@ function shortSpecFor(p, budget) {
   return truncateSpecTail(s, budget);
 }
 function buildMetaDescription(p) {
+  if (p.meta_description) return p.meta_description;
   // p.no_known_replacement (2026-09-16): see js/faq-templates.js genericFaqFor() header comment
   // for why "Replaced by a current equivalent" isn't safe to assert for every discont SKU.
   const availPhrase = p.status === 'discont'
     ? (p.no_known_replacement ? 'Discontinued, refurbished stock only' : 'Replaced by current equivalent')
     : p.status === 'legacy' ? 'Legacy line, still sourceable'
+    : p.status === 'quote' ? 'Availability confirmed on request'
     : 'In stock, ships in 24h';
   // "Genuine" is a factual OEM-authenticity claim — never true for disclosed
   // compatible/non-OEM brands (see NON_GENUINE_BRANDS in js/data.js's comment header).
-  const qualifier = NON_GENUINE_BRANDS.has(p.brand) ? '' : 'Genuine ';
+  const qualifier = NON_GENUINE_BRANDS.has(p.brand) || p.authenticity_note ? '' : 'Genuine ';
   const prefix = qualifier + p.brand + ' ' + p.model + ' — ';
   const suffix = '. ' + availPhrase + '. Fast quote from Fouwell.';
   return prefix + shortSpecFor(p, 155 - prefix.length - suffix.length) + suffix;
@@ -274,7 +282,7 @@ function renderPage(p) {
   );
   html = html.replace(
     '<p id="page-sub">Genuine industrial automation parts, sourced from official channels.</p>',
-    '<p id="page-sub">' + escHtml(p.spec) + '</p>'
+    '<p id="page-sub">' + escHtml(p.overview || p.spec) + '</p>'
   );
   // Static cross-links to the category + brand hub pages — real, crawlable version of
   // what main.js's renderProductDetail() also writes into #pd-crosslinks at runtime.
@@ -293,17 +301,31 @@ function renderPage(p) {
   if (typeof p.sell_price === 'number') {
     html = html.replace(
       '<p class="pd-price-ref" id="pd-price-ref" style="display:none;"></p>',
-      '<p class="pd-price-ref" id="pd-price-ref">Price: <strong>$' + p.sell_price.toFixed(2) + '</strong></p>'
+      '<p class="pd-price-ref" id="pd-price-ref">Price: <strong>' + ((p.sell_price_currency || 'USD') === 'USD' ? '$' : escHtml(p.sell_price_currency) + ' ') + p.sell_price.toFixed(2) + '</strong></p>'
     );
   }
   // Static "100% genuine" trust bullet — false for disclosed compatible/non-OEM brands
   // (see NON_GENUINE_BRANDS in js/data.js), so crawlers and non-JS clients must see the
   // corrected claim baked in too, not just after js/main.js hydrates.
-  if (NON_GENUINE_BRANDS.has(p.brand)) {
+  if (p.authenticity_note) {
+    html = html.replace(
+      '<li id="pd-genuine-badge"><span class="pt">✓</span> 100% genuine — official brand channels</li>',
+      '<li id="pd-genuine-badge"><span class="pt">i</span> ' + escHtml(p.authenticity_note) + '</li>'
+    );
+  } else if (p.authenticity_note) {
+    html = html.replace(
+      '<li id="pd-genuine-badge"><span class="pt">✓</span> 100% genuine — official brand channels</li>',
+      '<li id="pd-genuine-badge"><span class="pt">i</span> ' + escHtml(p.authenticity_note) + '</li>'
+    );
+  } else if (NON_GENUINE_BRANDS.has(p.brand)) {
     html = html.replace(
       '<li id="pd-genuine-badge"><span class="pt">✓</span> 100% genuine — official brand channels</li>',
       '<li id="pd-genuine-badge"><span class="pt">✓</span> Compatibility verified, quality-checked before shipping</li>'
     );
+  }
+  if (p.video_heading) {
+    html = html.replace('<h2>See It in Action</h2>', '<h2>' + escHtml(p.video_heading) + '</h2>');
+    html = html.replace('<p>Short demo clips shot on our bench — real units, real operation.</p>', '<p>' + escHtml(p.video_description || '') + '</p>');
   }
   // Static star rating + customer feedback cards — real Alibaba buyer feedback (js/review-pool.js),
   // same data used to compute the JSON-LD Product.aggregateRating/review below (buildSchemas()).
@@ -370,6 +392,10 @@ function renderPage(p) {
         '<div class="pd-compat-cta" id="pd-compat-cta">' + buildCompatibilityCtaHtml(p) + '</div>'
       );
     }
+  }
+  if (p.order_terms_note) {
+    html = html.replace(/<ul class="pd-points">[\s\S]*?<\/ul>/, '<ul class="pd-points"><li>' + escHtml(p.order_terms_note) + '</li></ul>');
+    html = html.replace(/(<p class="pd-email">[\s\S]*?<\/a>)[\s\S]*?<\/p>/, '$1</p>');
   }
   return html;
 }

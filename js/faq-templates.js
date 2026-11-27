@@ -23,6 +23,12 @@
 function genericFaqFor(p, categoryName) {
   const cat = categoryName || p.cat;
   const availQA = (() => {
+    if (p.status === 'quote') {
+      return {
+        q: 'Is the ' + p.model + ' currently available, and what is the lead time?',
+        a: 'Current stock, condition and lead time are not confirmed on this page. Send the exact order code and required quantity to info@fouwell.com so these details can be checked for your enquiry.'
+      };
+    }
     if (p.status === 'legacy') {
       return {
         q: 'Is the ' + p.model + ' still available, and how long does delivery take?',
@@ -77,7 +83,13 @@ function genericFaqFor(p, categoryName) {
   // copy for products that explicitly set it.
   const refurbished = !!p.condition_note;
 
-  const genuineQA = nonGenuine
+  const authenticityUnconfirmed = !!p.authenticity_note;
+  const genuineQA = authenticityUnconfirmed
+    ? {
+        q: 'Is this specific ' + p.brand + ' ' + p.model + ' unit genuine and traceable?',
+        a: 'This page identifies the manufacturer order code and catalog specifications. The source and condition of the offered batch are not confirmed here. Contact us to confirm batch details and any available supporting documents before ordering.'
+      }
+    : nonGenuine
     ? {
         q: 'Is the ' + p.brand + ' ' + p.model + ' genuine, and where does Fouwell source it from?',
         a: 'The ' + p.model + ' is sold under the ' + p.brand + ' name as a disclosed compatible/non-OEM part, not an original-manufacturer product — we state this openly rather than imply otherwise. Every unit is still functionally tested and quality-checked before shipping. If you specifically need the original-brand part, tell us and we can quote that as a separate option.'
@@ -94,7 +106,9 @@ function genericFaqFor(p, categoryName) {
 
   const shippingQA = {
     q: 'How is the ' + p.model + ' shipped, and can you ship internationally?',
-    a: 'We ship worldwide via DHL, FedEx, UPS (air) or sea freight for larger orders, with full insurance' +
+    a: p.status === 'quote'
+      ? 'Shipping method, insurance, packaging and delivery time depend on the confirmed order. Contact us with your destination and required quantity so the available terms can be checked.'
+      : 'We ship worldwide via DHL, FedEx, UPS (air) or sea freight for larger orders, with full insurance' +
       (nonGenuine || refurbished ? '' : ' and original manufacturer packaging') +
       '. We also maintain an HK warehouse for faster regional consolidation on some orders.'
   };
@@ -104,15 +118,21 @@ function genericFaqFor(p, categoryName) {
     availQA,
     {
       q: 'Is there a minimum order quantity (MOQ) for the ' + p.model + '?',
-      a: 'No fixed MOQ for standard parts — we regularly ship single units for maintenance and spare-part orders as well as bulk quantities for production lines. Larger quantities qualify for better per-unit pricing; send your required quantity for a quote.'
+      a: p.status === 'quote'
+        ? 'Minimum order quantity and price depend on the confirmed offer. Send your required quantity so the terms can be checked.'
+        : 'No fixed MOQ for standard parts — we regularly ship single units for maintenance and spare-part orders as well as bulk quantities for production lines. Larger quantities qualify for better per-unit pricing; send your required quantity for a quote.'
     },
     {
       q: 'Do you offer a warranty on this ' + cat + '?',
-      a: 'Yes. Every Fouwell-supplied part is backed by a 12-month replacement warranty against manufacturing defects. Warranty does not cover damage from improper installation, incorrect wiring or voltage, or use outside the manufacturer’s official specifications.'
+      a: p.status === 'quote'
+        ? 'Any warranty applicable to the offered batch must be confirmed with the quotation before ordering.'
+        : 'Yes. Every Fouwell-supplied part is backed by a 12-month replacement warranty against manufacturing defects. Warranty does not cover damage from improper installation, incorrect wiring or voltage, or use outside the manufacturer’s official specifications.'
     },
     {
       q: 'Can you help cross-reference an older or different ' + p.brand + ' part number?',
-      a: 'Yes. Send your exact part number (old or new) to info@fouwell.com and our engineers will confirm the current equivalent, availability and pricing — usually within one business day, often within the hour during Asia/Shanghai office hours.'
+      a: p.status === 'quote'
+        ? 'Send the full part number and application details to info@fouwell.com. We can review the information and confirm whether a compatible equivalent can be identified for your application.'
+        : 'Yes. Send your exact part number (old or new) to info@fouwell.com and our engineers will confirm the current equivalent, availability and pricing — usually within one business day, often within the hour during Asia/Shanghai office hours.'
     },
     shippingQA
   ];

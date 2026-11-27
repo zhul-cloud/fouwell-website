@@ -468,6 +468,7 @@ a.pill.cat:hover { text-decoration: underline; }
 .pill.instock { background: #e6f6ec; color: #1c7c3d; }
 .pill.legacy { background: #fff4e2; color: #a36a00; }
 .pill.discont { background: #fdeaea; color: var(--red); }
+.pill.quote { background: #edf2f7; color: #45566b; }
 .inq-link { font-size: 13px; font-weight: 700; color: var(--blue); }
 .inq-link:hover { color: var(--red); }
 

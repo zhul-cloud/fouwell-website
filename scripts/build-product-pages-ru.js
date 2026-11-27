@@ -133,8 +133,8 @@ function buildSchemas_ru(p) {
     offers: Object.assign(
       {
         '@type': 'Offer', url,
-        availability: STATUS_AVAIL[p.status] || 'https://schema.org/InStock',
-        itemCondition: 'https://schema.org/NewCondition',
+        ...(STATUS_AVAIL[p.status] ? { availability: STATUS_AVAIL[p.status] } : {}),
+        ...(p.status === 'quote' ? {} : { itemCondition: 'https://schema.org/NewCondition' }),
         seller: Object.assign(
           { '@type': 'Organization', name: 'Fuzhou Fouwell Technology Co., Ltd.' },
           { aggregateRating: { '@type': 'AggregateRating', ...SELLER_AGGREGATE_RATING } }
@@ -148,6 +148,12 @@ function buildSchemas_ru(p) {
         : {}
     )
   };
+  if (p.order_terms_by_quote) {
+    delete product.offers.shippingDetails;
+    delete product.offers.hasMerchantReturnPolicy;
+    delete product.offers.validFrom;
+    delete product.offers.priceValidUntil;
+  }
   if (brand) product.manufacturer = { '@type': 'Organization', name: brand.name };
   if (productRating) {
     product.aggregateRating = { '@type': 'AggregateRating', ...productRating };
@@ -206,12 +212,14 @@ function shortSpecFor_ru(p, budget) {
   return truncateSpecTailRu(s, budget);
 }
 function buildMetaDescription_ru(p) {
+  if (p.meta_description_ru) return p.meta_description_ru;
   // p.no_known_replacement (2026-09-16): see js/faq-templates.js genericFaqFor() header comment.
   const availPhrase = p.status === 'discont'
     ? (p.no_known_replacement ? UI_RU.availDiscontNoReplacement : UI_RU.availDiscont)
     : p.status === 'legacy' ? UI_RU.availLegacy
+    : p.status === 'quote' ? UI_RU.availQuote
     : UI_RU.availInstock;
-  const qualifier = NON_GENUINE_BRANDS.has(p.brand) ? '' : UI_RU.genuinePrefix;
+  const qualifier = NON_GENUINE_BRANDS.has(p.brand) || p.authenticity_note_ru ? '' : UI_RU.genuinePrefix;
   const prefix = qualifier + p.brand + ' ' + p.model + ' — ';
   const suffix = '. ' + availPhrase + '. Быстрый расчёт от Fouwell.';
   return prefix + shortSpecFor_ru(p, 155 - prefix.length - suffix.length) + suffix;
@@ -252,7 +260,7 @@ function renderPage_ru(p) {
   );
   html = html.replace(
     '<p id="page-sub">Оригинальные детали промышленной автоматизации, поставляемые по официальным каналам.</p>',
-    '<p id="page-sub">' + escHtml(specRu(p)) + '</p>'
+    '<p id="page-sub">' + escHtml(p.overview_ru || specRu(p)) + '</p>'
   );
   html = html.replace(
     '<p class="pd-crosslinks" id="pd-crosslinks"></p>',
@@ -263,10 +271,15 @@ function renderPage_ru(p) {
   if (typeof p.sell_price === 'number') {
     html = html.replace(
       '<p class="pd-price-ref" id="pd-price-ref" style="display:none;"></p>',
-      '<p class="pd-price-ref" id="pd-price-ref">' + UI_RU.priceLabel + ' <strong>$' + p.sell_price.toFixed(2) + '</strong></p>'
+      '<p class="pd-price-ref" id="pd-price-ref">' + UI_RU.priceLabel + ' <strong>' + ((p.sell_price_currency || 'USD') === 'USD' ? '$' : escHtml(p.sell_price_currency) + ' ') + p.sell_price.toFixed(2) + '</strong></p>'
     );
   }
-  if (NON_GENUINE_BRANDS.has(p.brand)) {
+  if (p.authenticity_note_ru) {
+    html = html.replace(
+      '<li id="pd-genuine-badge"><span class="pt">✓</span> 100% оригинал — официальные каналы бренда</li>',
+      '<li id="pd-genuine-badge"><span class="pt">i</span> ' + escHtml(p.authenticity_note_ru) + '</li>'
+    );
+  } else if (NON_GENUINE_BRANDS.has(p.brand)) {
     html = html.replace(
       '<li id="pd-genuine-badge"><span class="pt">✓</span> 100% оригинал — официальные каналы бренда</li>',
       '<li id="pd-genuine-badge"><span class="pt">✓</span> ' + UI_RU.genuineBadgeNonOem + '</li>'
@@ -338,6 +351,10 @@ function renderPage_ru(p) {
       '<div class="pd-ds-sub" id="pd-ds-sub">Siemens 6ES7212-1AE40-0XB0 — технический паспорт, руководства и CAD-символы — скачайте для инженерных расчётов.</div>',
       '<div class="pd-ds-sub" id="pd-ds-sub">' + escHtml(p.brand + ' ' + p.model) + ' — технический паспорт, руководства и CAD-символы — скачайте для инженерных расчётов.</div>'
     );
+  }
+  if (p.order_terms_note_ru) {
+    html = html.replace(/<ul class="pd-points">[\s\S]*?<\/ul>/, '<ul class="pd-points"><li>' + escHtml(p.order_terms_note_ru) + '</li></ul>');
+    html = html.replace(/(<p class="pd-email">[\s\S]*?<\/a>)[\s\S]*?<\/p>/, '$1</p>');
   }
   return html;
 }

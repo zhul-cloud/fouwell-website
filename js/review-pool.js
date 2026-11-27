@@ -166,6 +166,7 @@ function pickDisplayCount(p, reviewCount) {
 /* Model-specific reviews win when confirmed; otherwise a deterministic (reproducible, not
    random-per-render) rotation through the shared pool — see file header for why. */
 function pickProductReviews(p, count) {
+  if (p.reviews_verified === false) return [];
   if (count == null) {
     const reviewCount = pickReviewCount(p);
     count = pickDisplayCount(p, reviewCount);

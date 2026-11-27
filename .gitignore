@@ -1,3 +1,9 @@
 .DS_Store
 **/.DS_Store
 .gstack/
+
+# New images/videos are served from object storage, not committed. Assets already in the
+# repo stay tracked; new files under these folders stay local (deploy.sh still rsyncs them).
+/assets/products/
+/assets/videos/
+/assets/linkedin/
