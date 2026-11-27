@@ -1,0 +1,11 @@
+{
+  "name": "fouwell-website-erp-adapter",
+  "private": true,
+  "description": "ERP adapter for fouwell.com: build from site-data.json, verify pages, export existing products. See README.md.",
+  "scripts": {
+    "test": "node --test test/*.test.js"
+  },
+  "dependencies": {
+    "playwright": "1.58.2"
+  }
+}

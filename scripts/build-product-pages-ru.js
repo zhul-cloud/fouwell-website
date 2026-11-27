@@ -27,7 +27,7 @@
 const fs = require('fs');
 const path = require('path');
 const {
-  ROOT, loadGlobals, productSlug, productUrl, brandSlug, STATUS_AVAIL, escHtml
+  ROOT, loadGlobals, productSlug, productUrl, brandSlug, STATUS_AVAIL, escHtml, assetUrl
 } = require('./lib/site-data');
 
 const {
@@ -117,8 +117,8 @@ function buildCompatibilityCtaHtml_ru(p) {
 function buildSchemas_ru(p) {
   const url = 'https://fouwell.com' + ruUrl(p);
   const brand = BRANDS.find(b => b.name === p.brand);
-  const imgAbs = p.photo ? 'https://fouwell.com/assets/products/' + p.photo
-    : p.linkedin ? 'https://fouwell.com/assets/linkedin/' + p.linkedin
+  const imgAbs = p.photo ? assetUrl('https://fouwell.com/assets/products/', p.photo)
+    : p.linkedin ? assetUrl('https://fouwell.com/assets/linkedin/', p.linkedin)
     : 'https://fouwell.com/assets/logo.png';
 
   const productReviews = pickProductReviews(p);

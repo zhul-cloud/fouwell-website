@@ -54,6 +54,13 @@ const STATUS_AVAIL = {
   discont: 'https://schema.org/Discontinued'
 };
 
+/* p.photo / p.linkedin are file names under a fixed assets folder, except for products
+   published by ERP, whose media live in object storage and arrive as full https:// URLs
+   (see erp/README.md). Keep in lockstep with assetUrl() in js/main.js. */
+function assetUrl(prefix, name) {
+  return /^https?:\/\//.test(name) ? name : prefix + name;
+}
+
 function escHtml(s) {
   return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
@@ -61,5 +68,5 @@ function escHtml(s) {
 module.exports = {
   ROOT, loadGlobals, slugPiece, productSlug, productUrl,
   categorySlug, categoryUrl, brandSlug, brandUrl,
-  STATUS_AVAIL, escHtml
+  STATUS_AVAIL, escHtml, assetUrl
 };

@@ -172,8 +172,8 @@ function injectProductSchema(p) {
   const url = 'https://fouwell.com' + productUrlFor(p);
   const brand = (typeof BRANDS !== 'undefined') ? BRANDS.find(b => b.name === p.brand) : null;
   const imgAbs = (() => {
-    if (p.photo) return 'https://fouwell.com/assets/products/' + p.photo;
-    if (p.linkedin) return 'https://fouwell.com/assets/linkedin/' + p.linkedin;
+    if (p.photo) return assetUrl('https://fouwell.com/assets/products/', p.photo);
+    if (p.linkedin) return assetUrl('https://fouwell.com/assets/linkedin/', p.linkedin);
     return 'https://fouwell.com/assets/logo.png';
   })();
 
@@ -429,6 +429,13 @@ function renderProductCompatibility(p) {
    /products/<slug>/ fix landed. Appended to every photo + video URL below. */
 const ASSET_V = 'v=20261102120626';
 
+/* p.photo / p.linkedin are file names under a fixed assets folder, except for products
+   published by ERP (full https:// URLs to object storage). Keep in lockstep with
+   assetUrl() in scripts/lib/site-data.js. */
+function assetUrl(prefix, name) {
+  return /^https?:\/\//.test(name) ? name : prefix + name;
+}
+
 function _assetV(url) {
   if (!url) return url;
   return url + (url.indexOf('?') === -1 ? '?' : '&') + ASSET_V;
@@ -471,10 +478,10 @@ function productImage(p) {
     return '<img' + cls + ' src="' + _assetV(first.src) + '" alt="' + alt + '" loading="lazy">';
   }
   if (p.photo) {
-    return '<img src="/assets/products/' + p.photo + '?' + ASSET_V + '" alt="' + p.model + '" loading="lazy">';
+    return '<img src="' + _assetV(assetUrl('/assets/products/', p.photo)) + '" alt="' + p.model + '" loading="lazy">';
   }
   if (p.linkedin) {
-    return '<img class="linkedin-fallback" src="/assets/linkedin/' + p.linkedin + '?' + ASSET_V + '" alt="' + p.model + ' (marketing)" loading="lazy">';
+    return '<img class="linkedin-fallback" src="' + _assetV(assetUrl('/assets/linkedin/', p.linkedin)) + '" alt="' + p.model + ' (marketing)" loading="lazy">';
   }
   return '<div class="noimg">' + p.brand + '<br>' + (isRu() && typeof UI_RU !== 'undefined' ? UI_RU.photoOnRequest : 'Photo on request') + '</div>';
 }
@@ -554,8 +561,8 @@ function productGallery(p) {
     PRODUCT_PHOTOS[p.model].forEach(it => imgs.push({ src: _assetV(it.src), tag: it.tag }));
     return imgs;
   }
-  if (p.photo) imgs.push({ src: _assetV('/assets/products/' + p.photo), tag: 'Photo' });
-  if (p.linkedin) imgs.push({ src: _assetV('/assets/linkedin/' + p.linkedin), tag: 'Marketing' });
+  if (p.photo) imgs.push({ src: _assetV(assetUrl('/assets/products/', p.photo)), tag: 'Photo' });
+  if (p.linkedin) imgs.push({ src: _assetV(assetUrl('/assets/linkedin/', p.linkedin)), tag: 'Marketing' });
   return imgs;
 }
 

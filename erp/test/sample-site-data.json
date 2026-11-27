@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "site": { "code": "fouwell.com", "nonGenuineBrands": ["PWERUN", "Generic", "General"] },
+  "generatedAt": "2026-11-27T08:00:00.000Z",
+  "release": "WP10001",
+  "products": [
+    {
+      "brand": "Siemens",
+      "model": "6ES7214-1AG40-0XB0",
+      "series": "S7-1200",
+      "cat": "controllers",
+      "spec": "CPU 1214C DC/DC/DC, 14DI/10DO/2AI, 24VDC",
+      "status": "instock",
+      "photo": "https://zhul-erp-prod-public.oss-cn-hangzhou.aliyuncs.com/website/1/siemens-s7-1200-6es7214-1ag40-0xb0/101.jpg",
+      "linkedin": null,
+      "sell_price": 318.5,
+      "sell_price_currency": "USD",
+      "price_source": "erp:sourcing_quote",
+      "overview": "Compact S7-1200 CPU with 14 digital inputs, 10 digital outputs and 2 analog inputs.",
+      "overview_ru": "Компактный ЦПУ S7-1200: 14 дискретных входов, 10 дискретных выходов и 2 аналоговых входа.",
+      "meta_description": "Siemens 6ES7214-1AG40-0XB0 CPU 1214C DC/DC/DC in stock. Tested, shipped worldwide.",
+      "meta_description_ru": "Siemens 6ES7214-1AG40-0XB0 CPU 1214C DC/DC/DC в наличии. Проверено, доставка по миру.",
+      "specs": [["Product type", "CPU 1214C"], ["Power supply", "24 V DC"]],
+      "applications": [{ "icon": "🏭", "title": "Machine control", "desc": "Mid-size machines with up to 24 onboard I/O." }],
+      "faq": [{ "q": "Is 6ES7214-1AG40-0XB0 new?", "a": "Yes, new in original packaging." }],
+      "slug": "siemens-s7-1200-6es7214-1ag40-0xb0",
+      "release": "WP10001",
+      "photos": [
+        { "src": "https://zhul-erp-prod-public.oss-cn-hangzhou.aliyuncs.com/website/1/siemens-s7-1200-6es7214-1ag40-0xb0/101.jpg", "tag": "Photo" },
+        { "src": "https://zhul-erp-prod-public.oss-cn-hangzhou.aliyuncs.com/website/1/siemens-s7-1200-6es7214-1ag40-0xb0/102.jpg", "tag": "Photo" }
+      ],
+      "videos": [
+        { "src": "https://zhul-erp-prod-public.oss-cn-hangzhou.aliyuncs.com/website/1/siemens-s7-1200-6es7214-1ag40-0xb0/103.mp4", "title": "Full Model Check" }
+      ],
+      "spec_ru": "ЦПУ 1214C DC/DC/DC, 14DI/10DO/2AI, 24 В DC",
+      "deep_ru": {
+        "faq": [{ "q": "6ES7214-1AG40-0XB0 новый?", "a": "Да, новый в оригинальной упаковке." }]
+      }
+    }
+  ]
+}
